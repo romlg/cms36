@@ -1,0 +1,8 @@
+<div style="padding:10px">
+<?php if (empty($this->name) && empty($this->text)) : ?>
+	<?=$this->STR_NOHELP?>
+<?php else: ?>
+	<h1><?=$this->name?></h1>
+	<?=$this->text?>
+<?php endif; ?>
+</div>

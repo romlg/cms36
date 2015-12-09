@@ -1,0 +1,41 @@
+<script type="text/javascript">
+{literal}
+
+function MyProcess() {
+	document.forms.editform.submit();
+}
+
+{/literal}
+
+var TABLE = '{$thisname}';
+var ID = '{$id}';
+</script>
+
+<form action="page.php" method="post" name="editform" id="editform" target="tmp{$thisname}{$id}" onSubmit="MyProcess()">
+<input type="hidden" name="default" value="0" />
+
+<table width="100%">
+<tr>
+	<td valign="top">{$STR_ANALYZE}: </td>
+	<td valign="top">{$analyze.from|date_format:"%d.%m.%Y %H:%M"} - {$analyze.to|date_format:"%d.%m.%Y %H:%M"}</td>
+</tr>
+<tr>
+	<td valign="top">{$STR_NOT_PROCESS}: </td>
+	<td valign="top">{$process.from|date_format:"%d.%m.%Y %H:%M"} - {$process.to|date_format:"%d.%m.%Y %H:%M"} ({$STR_TOTAL} {$total} {$STR_RECORDS})</td>
+</tr>
+</table>
+
+<div id="process_log"></div>
+<div id="process_log2"></div>
+
+<input type="hidden" name="page" value="stat/stat_process" />
+<input type="hidden" name="do" value="edit" />
+
+<script>
+var process_log = document.getElementById('process_log');
+var process_log2 = document.getElementById('process_log2');
+</script>
+
+</form>
+
+<iframe id="tmp{$thisname}{$id}" name="tmp{$thisname}{$id}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

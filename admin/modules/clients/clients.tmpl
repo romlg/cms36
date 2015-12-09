@@ -1,0 +1,64 @@
+<script type="text/javascript">
+var ID = 0;
+var thisname = '{$thisname}';
+
+{literal}
+
+function mySubmit(item) {
+	item.subm.disabled = true;
+	return true;
+}
+
+function close() {
+	if(window.top.opener)
+	window.top.opener.focus();
+	window.top.close();
+	return false;
+}
+
+function editItem(id) {
+	if (id == null) id = ID;
+	window.open("crm.php?page=clients&do=showclientinfo&client_id="+id, "edit" + thisname, "width=840, height=550, resizable=1, status=1").focus();
+}
+
+function addItem(id) {
+	if (id == null) id = ID;
+	window.open("crm.php?page=clients&do=add&", "edit"+thisname, "width=760, height=520, resizable=1, status=1").focus();
+}
+
+function createEmail() {
+	window.open("about:blank", "create_email", "width=800, height=600, resizable=1, status=1").focus();
+	f = document.forms.editform;
+	f.method = "get";
+	f.target = "create_email";
+	f.action = "ced.php";
+	page_value = f.elements["page"].value;
+	do_value = f.elements["do"].value;
+	f.elements["page"].value = "send_email";
+	f.elements["do"].value = "Show_Selection";
+	f.submit();
+	f.target = '_self';
+	f.action = "page.php";
+	f.elements["page"].value = page_value;
+	f.elements["do"].value = do_value;
+}
+
+function createOrder(id){
+	if (id == null) id = ID;
+	window.open("ced.php?page=orders&do=editformfromclients&client_id="+id, "edit" + thisname, "width=760, height=520, resizable=1, status=1").focus();
+}
+
+function showStat(id) {
+if (id == null) id = ID;
+window.open("crm.php?page=stats&do=showstats&client_id="+id, "edit" + thisname, "width=760, height=520, resizable=1, status=1").focus();
+}
+{/literal}
+var A{$thisname}0 = new Array(0,0,1,0,0,0,0,0); // никто не выбран
+var A{$thisname}1 = new Array(0,1,1,1,0,0,0,0); // 1 выбран
+var A{$thisname}2 = new Array(0,0,1,1,0,0,0,0); // несколько
+window.parent.elemActions(thisname, 0);
+
+</script>
+{$table}
+
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

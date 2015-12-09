@@ -1,0 +1,103 @@
+<html>
+<head>
+<script type="text/javascript" src="../../js/jquery-1.5.2.min.js"></script>
+<style type="text/css">
+body {
+	background-color: buttonface;
+}
+body, td, input, select, textarea, button {
+	font-size: 11px;
+	font-family: 'Microsoft Sans Serif' , Tahoma, Arial, Verdana, Sans-Serif;
+}
+.selcolor {
+	cursor: hand;
+}
+td {
+	height:15px;
+	width:15px;
+}
+</style>
+
+<script language="JavaScript">
+function colorClick(obj) {
+    selhicolor.style.backgroundColor = $(obj).attr('title');
+    selcolor.value = $(obj).attr('title');
+}
+function colorMouseover(obj) {
+    hicolortext.innerText = $(obj).attr('title');
+    hicolor.style.backgroundColor = $(obj).attr('title');
+}
+function colorMouseout(obj) {
+    hicolortext.innerText = "";
+    hicolor.style.backgroundColor = "";
+}
+function btnClearClick() {
+    selhicolor.style.backgroundColor = '';
+    selcolor.value='';
+}
+
+function ok() {
+	window.returnValue = selcolor.value;
+	window.close();
+}
+
+document.write("<title>Выбор цвета</title>");
+
+function setDefaults() {
+	//dialogArguments.AvailableLangs.TranslatePage(document);
+	var color = dialogArguments;
+	selhicolor.style.backgroundColor = color;
+	selcolor.value = color;
+}
+
+document.onkeydown = function () {
+	switch (event.keyCode) {
+		case 13 : ok(); break; // ENTER
+		case 27 : window.close(); break; // ESC
+	}
+}
+</script>
+</head>
+
+<body bgcolor="ThreeDFace" leftmargin="7" topmargin="7" onload="setDefaults()">
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+	<td id="ColorTableCell" valign="top" align="left" nowrap style="font-family:Arial; font-size:11px;"></td>
+	<td></td>
+	<td valign="top" align="left" nowrap style="font-family:Arial; font-size:11px; padding-left: 5px;">
+		<input type="button" fckLang="DlgBtnOK" value="OK" name="btnOK" style="width:75px; height:22px; margin-bottom:6px" onclick="ok();" /><br />
+		<input type="button" fckLang="DlgBtnCancel" value="Cancel" name="btnCancel" onclick="window.close();" style="width:75px; height:22px; margin-bottom:6px" /><br />
+		<input type="button" fckLang="DlgColorBtnClear" value="Clear" name="btnClear" style="width:75px; height:22px; margin-bottom:6px" onclick="btnClearClick(); return false;" /><br />
+
+		<span fckLang="DlgColorHighlight">Highlight</span>:
+		<div style="height:20px; width:74px; border-width:1px; border-style:solid;" id="hicolor"></div>
+		<div style="width:75px; text-align:right; margin-bottom:7px;" id="hicolortext"></div>
+
+		<span fckLang="DlgColorSelected">Selected</span>:
+		<div style="height:20px; width:74px; border-width:1px; border-style:solid;" id="selhicolor"></div>
+		<input type="text" id="selcolor" style="width:75px; height:20px; margin-top:0px; margin-bottom:7px;" maxlength="20">
+	</td>
+</tr>
+</table>
+
+<script type="text/javascript">
+// by Ciro Bernini
+var ac=['00','33','66','99','cc','ff'];
+var txt='<table id="ColorTable" border="0" cellspacing="0" cellpadding="0" width="270" class="selcolor">';
+
+for (var i=0; i<3;i++){txt+='<tr>';for (var j=0; j<3;j++){for (var n=0; n<6;n++){txt+='<td bgcolor="#'+ac[j]+ac[n]+ac[i]+'" title="#'+ac[j]+ac[n]+ac[i]+'" onclick="colorClick(this); return false;" onmouseover="colorMouseover(this); return false;" onmouseout="colorMouseout(this); return false;"></td>';}}txt+='</tr>';}
+for (var i=3; i<6;i++){txt+='<tr>';for (var j=0; j<3;j++){for (var n=0; n<6;n++){txt+='<td bgcolor="#'+ac[j]+ac[n]+ac[i]+'" title="#'+ac[j]+ac[n]+ac[i]+'" onclick="colorClick(this); return false;" onmouseover="colorMouseover(this); return false;" onmouseout="colorMouseout(this); return false;"></td>';}}txt+='</tr>';}
+for (var i=0; i<3;i++){txt+='<tr>';for (var j=3; j<6;j++){for (var n=0; n<6;n++){txt+='<td bgcolor="#'+ac[j]+ac[n]+ac[i]+'" title="#'+ac[j]+ac[n]+ac[i]+'" onclick="colorClick(this); return false;" onmouseover="colorMouseover(this); return false;" onmouseout="colorMouseout(this); return false;"></td>';}}txt+='</tr>';}
+for (var i=3; i<6;i++){txt+='<tr>';for (var j=3; j<6;j++){for (var n=0; n<6;n++){txt+='<td bgcolor="#'+ac[j]+ac[n]+ac[i]+'" title="#'+ac[j]+ac[n]+ac[i]+'" onclick="colorClick(this); return false;" onmouseover="colorMouseover(this); return false;" onmouseout="colorMouseout(this); return false;"></td>';}}txt+='</tr>';}
+
+txt+='<tr>';for (var n=0; n<6;n++){txt+='<td bgcolor="#'+ac[n]+ac[n]+ac[n]+'"title="#'+ac[n]+ac[n]+ac[n]+'" onclick="colorClick(this); return false;" onmouseover="colorMouseover(this); return false;" onmouseout="colorMouseout(this); return false;"></td>';}
+for (var i=0;i<12;i++){txt+='<td bgcolor="#000000" title="#000000" onclick="colorClick(this); return false;" onmouseover="colorMouseover(this); return false;" onmouseout="colorMouseout(this); return false;"></td>';}
+txt+='</tr>';
+txt+='</table>';
+
+document.getElementById('ColorTableCell').innerHTML = txt;
+</script>
+
+</body>
+</html>

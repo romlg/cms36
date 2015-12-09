@@ -1,0 +1,23 @@
+{$script}
+
+<script>
+function mySubmit(item) {ldelim}
+	item.subm.disabled = true;
+	return true;
+{rdelim}
+
+var ID = 0;
+var thisname = '{$thisname}';
+
+function editItem(id) {ldelim}
+	if (id == null) id = ID;
+	window.open("ed.php?page=" + thisname + "&id=" + id + "&frame=single", "edit" + thisname, "width=700, height=550, resizable=1").focus();
+{rdelim}
+
+var A{$thisname}0 = new Array(0,0);
+var A{$thisname}1 = new Array(1,1);
+var A{$thisname}2 = new Array(0,1);
+window.parent.elemActions('{$thisname}', ID==0?0:1);
+</script>
+{$params}
+<IFRAME id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

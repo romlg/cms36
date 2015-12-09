@@ -1,0 +1,23 @@
+<?php if ($this->gallery): ?>
+<a name="gallery"></a>
+<table class="gallery">
+	<tr class="sepTop">
+		<td></td>
+		<td class="sep"></td>
+		<td></td>
+		<td class="sep"></td>
+		<td></td>
+		<td class="sep"></td>
+		<td></td>
+	</tr>
+<?php foreach ($this->gallery as $subgallery) : ?>
+	<tr>
+	<?php foreach ($subgallery as $k=>$row): ?>
+		<td><a rel="group" href="<?=$row['image_large']?>" title="<?=$row['name']?>"><img src="<?=$row['image_small']?>" alt="" /></a></td>
+		<?php if ($k != count($subgallery)-1): ?><td class="sep"></td><?php endif; ?>
+        <?php endforeach; ?>
+	</tr>
+<?php endforeach; ?>
+</table>
+
+<?php endif; ?>

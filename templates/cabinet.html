@@ -1,0 +1,66 @@
+<?php if ($this->profile_form): ?>
+
+<!-- Профиль -->
+<?=$this->profile_form?>
+
+<?php endif; ?>
+
+<?php if ($this->socials_list): ?>
+
+<!-- Подключенные профили -->
+<table>
+    <tr>
+        <th>Сервис</th>
+        <th>Имя</th>
+        <th></th>
+    </tr>
+    <?php foreach ($this->socials_list as $item):?>
+    <tr>
+        <td>
+            <a target="_blank" href="<?=$item['profileURL']?>"><?=$item['provider']?></a>
+        </td>
+        <td>
+            <a target="_blank" href="<?=$item['profileURL']?>"><?=$item['name']?></a>
+        </td>
+        <td>
+            <a href="javascript:void(0);" class="delSocial" id="delSocial<?=$item['id']?>">Удалить</a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+</table>
+
+<?php endif; ?>
+
+<?php if ($this->providers): ?>
+
+<!-- Подключить новые профили -->
+<script language="JavaScript" type="text/javascript" src="/javascripts/socials.js"></script>
+
+<div id="idps">
+    <?php foreach ($this->providers as $item): ?>
+    <img class="idpico" idp="<?=$item?>" src="/images/hybridauth/<?=$item?>.png" alt="<?=$item?>" title="<?=$item?>"/>
+    <?php endforeach; ?>
+</div>
+<div id="openidid" style="display:none;">
+    <table width="100%" border="0">
+        <tr>
+            <td align="center"><img id="openidimg" src="/images/hybridauth/loading.gif" alt=""/></td>
+        </tr>
+        <tr>
+            <td align="center"><p id="openidm">Введите имя пользователя или название блога</p></td>
+        </tr>
+        <tr>
+            <td align="center">
+                <input type="text" class="text" name="openidun" id="openidun"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <a class="button" href="javascript:void(0);" id="openidbtn">Войти</a>
+                <a class="button" href="#" id="backtolist">Назад</a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<?php endif; ?>

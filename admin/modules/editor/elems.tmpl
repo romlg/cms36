@@ -1,0 +1,9 @@
+<?php echo $this->obj;?>
+<?php if ($this->type == "multi" & empty($this->tmp)):?>
+<table width="100%">
+<tr>
+<td colspan="2" align="center"><input type="submit" value="<?php echo $this->STR_ADD;?>" name="btnAdd" onclick="window.close()" /></td>
+</tr>
+<input type="hidden" name="elem_id" value="<?php echo $this->elem_id;?>" />
+</table>
+<?php endif;?>

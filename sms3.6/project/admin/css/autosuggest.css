@@ -1,0 +1,49 @@
+.js-autosuggest-holder {
+	display:block;
+	position:relative;
+	float:left;
+	padding:0 0 10px 0;
+	zoom:1;
+}
+
+	.js-autosuggest-holder input.text {
+		margin:0;
+	}
+	
+	.js-autosuggest-holder dt {
+		position:relative;
+		zoom:1;
+	}
+
+.js-autosuggest-output  {
+	width: 280px;
+	position:absolute;
+	left:0;
+	background-color:#fff;
+	z-index:1010;
+	margin: 0 !important;
+}
+.js-autosuggest-output  div {
+	padding:3px 0 3px 3px;
+	font-size:0.9em;
+	border:1px solid #D4CFC2;
+	border-top:none;
+	text-align:left;
+	cursor:pointer;
+}
+.js-autosuggest-output  div.active {
+	background-color:#fdf5e6;
+}
+.js-autosuggest-output  div em {
+	font-weight:bold;
+	font-style:normal;
+}
+.hidden { display:none; }
+
+.js-autosuggest-holder dt:after {
+	content:'';
+	clear:both;
+	display:block;
+	overflow:hidden;
+	height:0;
+}

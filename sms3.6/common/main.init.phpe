@@ -1,0 +1,151 @@
+<?
+//------------------------------------------------------------------
+// @author: vetal
+//------------------------------------------------------------------
+
+class TMainInit{
+
+	var $cache;
+	var $data_cache;
+	var $page_cache;
+	var $block_cache;
+	var $template;
+	var $json;
+	var $db;
+    var $domains = ""; // разрешенные домены, задаются строкой через запятую rusoft.ru,rusoft1.ru
+
+	//------------------------------------------------------------------
+
+	function TMainInit(){
+	    //проверим разрешено ли использование на данном домене
+	    if (!$this->host_protection()) {
+            die("Текущая версия сайта не предназначенна для работы на данном домене, по всем вопросам обращатся info@rusoft.ru");
+	    }
+
+		//подстраиваем сервер
+		$this->compatibility();
+
+		//session
+		$this->start_session();
+
+		require_once (common_controller('db'));
+		//инициализируем контроллер работы с бд
+		$this->db = & Registry::get('DB_Controller');
+		//подключаем алиаса
+		require_once (common_lib('db'));
+
+		require_once(common_class('cache'));
+		$this->cache = & Registry::get('Cache');
+		//подключаем класс кэширования массивов
+
+		if (CACHE_DATA === true){
+			$this->data_cache = & Registry::get('TDataCache');
+		}
+
+		require_once (common_class('rusoft_view'));
+		//инициализируем контроллер работы с шаблонами
+		$this->template = & Registry::get('TRusoft_View');
+		$this->template->addScriptPath('');
+        $this->template->addScriptPath('templates');
+        if (!empty($site_domains[$domain]['templates'])) {
+            $this->template->addScriptPath($site_domains[$domain]['templates']);
+        }
+
+		require_once (common_class('json'));
+		//инициализируем json encoder
+		$this->json = & Registry::get('Json');
+
+		//инициализируем sabreAmf
+		require_once (common_class('amf'));
+
+	}
+
+	//------------------------------------------------------------------
+
+	function compatibility(){
+
+		//проверяем настройки сервера
+		if (!get_magic_quotes_gpc()){
+			ini_set('magic_quotes_gpc', 1);
+		}
+
+		if (DEV_MODE) {
+			ini_set('error_reporting', E_ALL);
+			ini_set('track_errors', true);
+			ini_set('display_errors', 'on');
+			//ini_set('error_reporting', 0);
+			//ini_set('track_errors', false);
+			//ini_set('display_errors', 'off');
+		}
+		else{
+			ini_set('error_reporting', 0);
+			ini_set('track_errors', false);
+			ini_set('display_errors', 'off');
+		}
+	}
+
+	//------------------------------------------------------------------
+	// Старт сессии
+	function start_session() {
+
+		// задаем параметры сессии
+		session_set_cookie_params(SESSION_LIFETIME);
+		session_save_path(SESSION_SAVE_PATH);
+		ini_set('session.use_trans_sid', SESSION_USE_TRANS_SID);
+
+		//устанавливаем куки по гету, елси есть
+		if (isset($_GET['sid']) && !isset($_COOKIE['sid'])){
+			$phpsessid = $_GET['sid'];
+		}
+
+		if (!isset($phpsessid) && isset($_COOKIE['PHPSESSID'])){
+			$phpsessid = $_COOKIE['PHPSESSID'];
+		}
+
+		if (!isset($phpsessid) && isset($_COOKIE['sid'])){
+			$phpsessid = $_COOKIE['sid'];
+		}
+
+		session_name('sid');
+
+		if (!isset($phpsessid)){
+			session_start();
+			$phpsessid = session_id();
+			session_write_close();
+		}
+
+		if (!isset($_COOKIE['sid']) || $_COOKIE['sid'] != $phpsessid){
+			setcookie('sid', $phpsessid, time()+SESSION_LIFETIME, BASE);
+		}
+		if (!isset($_COOKIE['PHPSESSID']) || $_COOKIE['PHPSESSID'] != $phpsessid){
+			setcookie('PHPSESSID', $phpsessid, time()+SESSION_LIFETIME, BASE);
+		}
+		session_id($phpsessid);
+
+		session_start(); //иначе не можем залогинится в админке
+
+	}
+	//------------------------------------------------------------------
+
+    function host_protection() {
+        $http_host = getenv('HTTP_HOST');
+        if (strpos($http_host, '.')===false) return true;
+        if ($this->domains) {
+            $domains = explode(',', $this->domains);
+            foreach ($domains as $domain) {
+            $domain = trim($domain);
+                if ($http_host==$domain || $http_host=='www.'.$domain) {
+                    return true;
+                }
+            }
+        } else {
+            $host = getenv('HOST');
+            $admin = getenv('SERVER_ADMIN');
+            if (strpos($host, '.rusoft.ru')!==false || strpos($host, '.rusoft.lan')!==false || $admin=='info@rusoft.ru') {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+?>

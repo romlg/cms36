@@ -1,0 +1,48 @@
+<?php if ($this->search['query']): ?>
+
+	<?php if ($this->search['type'] || isset($this->search['html'])): ?>
+
+        <?php if ($this->search['total']!=0): ?>
+        <p style="color: red;"><?=$this->messages['search_find']?>: <?=$this->search['total']?>, <?=$this->messages['search_show']?>: <?=($this->search['offset']+1)?>-<?=($this->search['selected'] + $this->search['offset'])?></p>
+        <?php endif; ?>
+
+		<?php if ($this->search['query']):?><a href="/<?=$this->dirs_lang?>search/?search=<?=urlencode($this->search['query']);?>"><?=$this->messages['search_return']?></a><br><br><?php endif; ?>
+
+		<?php if (isset($this->search['html'])): ?>
+			<?=$this->search['html'];?>
+		<?php else: ?>
+			<?php if ($this->search['total'] > 0): ?>
+			<ol start="<?=($this->search['offset']+1);?>" style="margin-left: 20px">
+			<?php foreach ($this->search['results'] as $key=>$item): ?>
+				<li><a href="<?=$item['href'];?>" title="<?php echo strip_tags($item['name']);?>"><strong><?=$item['name'];?></strong></a></li>
+				<div><?=$item['text'];?></div>
+				<div><?=$item['path'];?></div><br>
+			<?php endforeach; ?>
+			</ol>
+            <?php endif; ?>
+		<?php endif; ?>
+
+		<?php if ($this->search['limit'] < $this->search['total']): ?>
+		<br clear="all"><div align="center"><?=$this->pages;?></div>
+        <?php endif; ?>
+	
+	<?php else: ?>
+	
+		<p style="color: red;">
+            <?php if ($this->search['total']!=0): ?>
+            <?=$this->messages['search_find'];?>: <?=$this->search['total'];?>
+            <?php else: ?>
+            <?=$this->messages['search_sorry'];?>
+            <?php endif; ?>
+        </p>
+		<?php if ($this->search['total'] > 0): ?>
+		<ul style="margin-left: 20px">
+            <?php foreach ($this->search['results'] as $key=>$item): ?>
+			<li><a href="/<?=$this->dirs_lang?>search/?search=<?=urlencode($this->search['query']);?>&type=<?=$item['name'];?>"><strong><?=$item['total'];?></strong> - <?php echo $item['title']; ?></a></li>
+            <?php endforeach; ?>
+		</ul>
+        <?php endif; ?>
+	
+    <?php endif; ?>
+
+<?php endif; ?>

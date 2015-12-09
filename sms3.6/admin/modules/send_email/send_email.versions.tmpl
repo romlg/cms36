@@ -1,0 +1,51 @@
+<style>
+{literal}
+body {background-color: #E5E5E5}
+tr.over {background-color: #D1FFD1; cursor: hand}
+tr.out {background-color: white; cursor: hand}
+{/literal}
+</style>
+
+<script>
+function onOver(Row) {ldelim}
+	Row.className = 'over';
+{rdelim}
+function onOut(Row) {ldelim}
+	Row.className = 'out';
+{rdelim}
+function onClick(Row) {ldelim}
+	document.forms.editform.id.value = Row.getAttribute('id');
+	document.forms.editform.target = 'tmp{$thisname}';
+	document.forms.editform.submit();
+	window.close();
+{rdelim}
+</script>
+
+<form method=post name=editform action='page.php'>
+<div style='height: 200px; overflow-y: auto'>
+<table cellpadding=2 cellspacing=2 bgcolor=white width=100%>
+<tr>
+	<td bgcolor=#0F89DA style='border: 1px solid #1C5180; color: white' colspan=4><b>{$STR_TEMPLATES}</b></td>
+</tr><tr>
+	<td bgcolor=#E5E5E5 style='border: 1px solid #C7C7C7' class=mbox><b>{$STR_TEMPLATE_ID}</b></td>
+	<td bgcolor=#E5E5E5 style='border: 1px solid #C7C7C7' class=mbox><b>{$STR_SUBJECT}</b></td>
+	<td bgcolor=#E5E5E5 style='border: 1px solid #C7C7C7' class=mbox><b>{$STR_DESCRIPTION}</b></td></td>
+</tr>
+{foreach from=$rows item=item}
+<tr class=out onmouseover='onOver(this)' onmouseout='onOut(this)' onclick='onClick(this)' id='{$item.id}'>
+	<td><b>{$item.id}</b></td>
+	<td>{$item.subject}</td>
+	<td>{$item.description}</td>
+</tr>
+{/foreach}
+<tr>
+	<td colspan="4" style="padding: 5px">{$empty}</td>
+</tr>
+</table>
+</div>
+<input type=hidden name='page' value='{$thisname}'>
+<input type=hidden name='do' value='EditPasteTemplate'>
+<input type=hidden name='id' value='{$item.id}'>
+<br>
+<div align=right style='margin-right: 1em'><input type=button value='{$close}' onclick='window.close()'></div>
+</form>

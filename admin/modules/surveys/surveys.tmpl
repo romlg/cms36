@@ -1,0 +1,10 @@
+<script type="text/javascript">
+    var thisname = '<?php echo $this->thisname;?>';
+
+    function copyItem() {
+        var id = getSelectedItems();
+        location.href = '/admin/?page=' + thisname + '&do=editcopy&id=' + id;
+    }
+</script>
+
+<?php echo $this->table;?>

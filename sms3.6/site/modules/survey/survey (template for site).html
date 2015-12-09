@@ -1,0 +1,229 @@
+<?php if (!empty($this->error)): ?><p class="error"><?=$this->error;?></p><?php endif; ?>
+
+<?php if (!empty($this->current_survey)): ?>
+    <!-- Показ опроса в блоке -->
+    <?php if ($this->current_survey['questions'] || $this->current_survey['results']): ?>
+    <div class="block"><div><div><div>
+        <b><?=$this->current_survey['name']?></b>
+    </div></div></div></div>
+
+    <p><?=$this->current_survey['description']?></p>
+
+    <div class="blockContent">
+        <?php if ($this->current_survey['questions']): ?>
+        <form method="post" action="/<?=$this->params['url']?>/surveydo" id="survey_form">
+            <?php foreach ($this->current_survey['questions'] as $key=>$item): ?>
+                <div class="clear"></div>
+                <p style="font-weight: bold;"><?=$item['text']?><?php if ($item['req']): ?><span>*</span><?php endif; ?></p>
+
+                <?php foreach ($item['variants'] as $var): ?>
+                    <?php if ($item['type'] == 'text'): ?><!-- Простое текстовое поле -->
+
+                    <input type="hidden" name="item[<?=$var['id_quest']?>][]" value="<?=$var['id']?>" />
+                    <input class="text" type="text" name="free[<?=$var['free_form']['id']?>]" <?php if (isset($this->current_free_answers[$var['id']])): ?>value="<?=htmlspecialchars($this->current_free_answers[$var['id']])?>"<?php endif;?> />
+
+                    <?php elseif ($item['type'] == 'catalog'): ?> <!-- Варианты из справочника -->
+                        <select name="catalog[<?=$item['id']?>][<?=$item['variants'][0]['id']?>]">
+                            <option value="0" disabled>-- Выберите вариант ответа --</option>
+                        <?foreach($item['variants'][0]['list'] as $variant) {?>
+                            <option value="<?=$variant['value']?>" <?php if (isset($this->current_catalog_answers[$item['id']]) && $this->current_catalog_answers[$item['id']][$var['id']] == $variant['value']): ?>selected<?php endif;?>><?=$variant['name']?></option>
+                        <?}?>
+                        </select><div class="clear"></div>
+
+                    <?php elseif ($item['type'] == 'textarea'): ?> <!-- Многострочное текстовое поле -->
+
+                    <input type="hidden" name="item[<?=$var['id_quest']?>][]" value="<?=$var['id']?>" />
+                    <textarea name="free[<?=$var['free_form']['id']?>]"><?php if (isset($this->current_free_answers[$var['id']])): ?><?=htmlspecialchars($this->current_free_answers[$var['id']])?><?php endif;?></textarea>
+
+                    <?php else: ?> <!-- чекбокс или радио -->
+
+                    <input class="check" id="<?=$var['id']?>" type="<?=$var['type']?>" name="item[<?=$var['id_quest']?>][]" value="<?=$var['id']?>" <?php if (isset($this->current_answers[$item['id']]) && is_array($this->current_answers[$item['id']]) && in_array($var['id'], $this->current_answers[$item['id']])): ?>checked="checked"<?php endif;?> />
+                    <label class="check" for="<?=$var['id']?>"><?=$var['text']?></label><br>
+
+                    <?php if ($var['free_form']): ?> <!-- Ответ в свободной форме как вариант к вопросы с вариантами ответов -->
+
+                    <input class="text" type="text" onkeyup="changeFreeText('<?=$var['free_form']['id']?>');" name="free[<?=$var['free_form']['id']?>]" <?php if (isset($this->current_free_answers[$var['id']])): ?>value="<?=htmlspecialchars($this->current_free_answers[$var['id']])?>"<?php endif;?> />
+
+                    <?php endif; ?>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+            <br />
+            <input type="image" src="/images/null.gif">
+            <a class="button" href="javascript:void(0);" onclick="$('#survey_form').submit(); return false;"><span><?=$this->messages['survey_answer']?></span></a>
+            <input type="hidden" name="id" value="<?=$this->current_survey['id']?>">
+            <input type="hidden" name="from" value="<?=$this->content['dir']?>">
+        </form>
+        <?php elseif ($this->current_survey['results']): ?>
+        <table class="noBorder">
+        <?php foreach ($this->current_survey['results'] as $key=>$item): ?>
+       	    <tr><td colspan="2" style="font-weight: bold;"><p>
+                <?=$item['text']?>
+            </p></td></tr>
+            <?php foreach ($item['variants'] as $var): ?>
+            <tr>
+       		    <td style="width:190px;"><?=$var['text']?></td>
+       			<td style="width:300px; padding-left:90px;">
+       			    <div style="float: left; margin: 5px 5px 0 -80px; background-color:#D9D9D9; height: 7px; width: <?=$var['percent']?>%"></div><?=$var['percent']?>%&nbsp;(<?=$var['cnt']?>)
+       		    </td>
+       		</tr>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+        </table>
+        <?php endif; ?>
+
+        <?php if ($this->params['show_list']): ?><a class="button red" href="/<?=$this->params['url']?>/list"><span><?=$this->messages['survey_list']?></span></a><?php endif; ?>
+        <?php if ($this->params['show_archive']): ?><a class="button red" href="/<?=$this->params['url']?>/archive"><span><?=$this->messages['survey_arch']?></span></a><?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+<?php elseif (isset($this->survey['results'])): ?>
+    <!-- Показ результатов опроса по всем вопросам в целом -->
+    <h2><?=$this->survey['name']?></h2>
+	<p><?php if ($this->survey['date_from'] && $this->survey['date_from'] <> '0000-00-00'):?><?=$this->messages['survey_start']?>: <?=$this->survey['date_from']; endif; ?><?php if ($this->survey['date_till'] && $this->survey['date_till'] <> '0000-00-00'):?>, <?=$this->messages['survey_finish']?>: <?=$this->survey['date_till']; endif; ?></p>
+    <?=$this->survey['description']?>
+	<table class="noBorder">
+        <?php foreach ($this->survey['results']['questions'] as $key=>$item): ?>
+			<tr><td colspan="2" style="font-weight: bold;"><p>
+                <?php if ($this->params['show_quest_results']): ?>
+                <a href="/<?=$this->params['url']?>?id=<?=$this->survey['id']?>&qid=<?=$item['id']?>"><?=$item['text']?></a>
+                <?php else: ?>
+                <?=$item['text']?>
+                <?php endif; ?>
+            </p></td></tr>
+            <?php foreach ($item['variants'] as $var): ?>
+            <tr>
+			    <td style="width:190px;"><?=$var['text']?></td>
+				<td style="width:300px; padding-left:90px;">
+					<div style="float: left; margin: 5px 5px 0 -80px; background-color:#D9D9D9; height: 7px; width: <?=$var['percent']?>%"></div><?=$var['percent']?>%&nbsp;(<?=$var['cnt']?>)
+				</td>
+			</tr>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+    </table>
+    <?=$this->messages['survey_totalvote']?>: <?=$this->survey['total']?>
+    <div class="clear"></div>
+    <?php if ($this->content['page'] != 'survey_popup' && $this->params['show_list']): ?><a class="button red" href="/<?=$this->params['url']?>/list"><span><?=$this->messages['survey_list']?></span></a><?php endif; ?>
+    <?php if ($this->content['page'] != 'survey_popup' && $this->params['show_list']): ?><a class="button red" href="/<?=$this->params['url']?>/archive"><span><?=$this->messages['survey_arch']?></span></a><?php endif; ?>
+
+<?php elseif (isset($this->survey['results_more'])): ?>
+    <!-- Показ результатов опроса в срезе одного вопроса -->
+    <h2><?=$this->survey['name']?></h2>
+	<p><?php if ($this->survey['date_from'] && $this->survey['date_from'] <> '0000-00-00'):?><?=$this->messages['survey_start']?>: <?=$this->survey['date_from']; endif; ?><?php if ($this->survey['date_till'] && $this->survey['date_till'] <> '0000-00-00'):?>, <?=$this->messages['survey_finish']?>: <?=$this->survey['date_till']; endif; ?></p>
+    <p><?=$this->messages['survey_r_on_quest']?> "<?=$this->survey['results_more']['question']['text']?>"</p>
+    <table class="noBorder">
+        <?php foreach ($this->survey['results_more']['rows'] as $row): ?>
+        <tr>
+            <td colspan="2" valign="bottom"><h4><?=$this->messages['survey_r_answered']?> "<?=$row['text']?>", <?=$this->messages['survey_r_from']?>:</h4></td>
+        </tr>
+        <?php foreach ($row['questions'] as $quest_id => $quest): ?>
+        <tr>
+            <td colspan="2" style="font-weight: bold;"><?=$quest['text']?></td>
+        </tr>
+        <?php foreach ($quest['vars'] as $var): ?>
+        <tr>
+            <td style="width:190px; vertical-align: middle;"><?=$var['text']?></td>
+            <td style="width:300px; padding-left:90px;">
+                <div style="float: left; margin: 5px 5px 0 -80px; background-color:#D9D9D9; height: 7px; width: <?=$var['percent']?>%"></div><?=$var['percent']?>%&nbsp;(<?=$var['cnt']?>)
+            </td>
+        </tr>
+        <?php endforeach; ?>
+        <?php endforeach; ?>
+        <?php endforeach; ?>
+    </table>
+    <a class="button" href="/<?=$this->params['url']?>?id=<?=$this->survey['id']?>"><span><?=$this->messages['survey_back']?></span></a>
+
+<?php elseif (isset($this->survey['questions'])): ?>
+    <!-- Вывод списка вопросов, чтобы можно было проголосовать -->
+    <h2><?=$this->survey['name']?></h2>
+    <p><?=$this->survey['description']?></p>
+    <div class="blockContent">
+        <form method="post" action="/<?=$this->params['url']?>/surveydo" id="survey_form">
+            <?php foreach ($this->survey['questions'] as $key=>$item): ?>
+                <div class="clear"></div>
+                <p style="font-weight: bold; margin-top: 6px;"><?=$item['text']?><?php if ($item['req']): ?><span>*</span><?php endif; ?></p>
+                <?php foreach ($item['variants'] as $var): ?>
+
+                                <?php if ($item['type'] == 'text'): ?><!-- Простое текстовое поле -->
+
+                                <input type="hidden" name="item[<?=$var['id_quest']?>][]" value="<?=$var['id']?>" />
+                                <input class="text" type="text" name="free[<?=$var['free_form']['id']?>]" <?php if (isset($this->current_free_answers[$var['id']])): ?>value="<?=htmlspecialchars($this->current_free_answers[$var['id']])?>"<?php endif;?> />
+
+                                <?php elseif ($item['type'] == 'textarea'): ?> <!-- Многострочное текстовое поле -->
+
+                                <input type="hidden" name="item[<?=$var['id_quest']?>][]" value="<?=$var['id']?>" />
+                                <textarea name="free[<?=$var['free_form']['id']?>]"><?php if (isset($this->current_free_answers[$var['id']])): ?><?=htmlspecialchars($this->current_free_answers[$var['id']])?><?php endif;?></textarea>
+
+                                 <?php elseif ($item['type'] == 'catalog'): ?> <!-- Варианты из справочника -->
+
+                                    <select name="catalog[<?=$item['id']?>][<?=$item['variants'][0]['id']?>]">
+                                    <option value="0" disabled>-- Выберите вариант ответа --</option>
+                                    <?foreach($item['variants'][0]['list'] as $variant) {?>
+                                        <option value="<?=$variant['value']?>" <?php if (isset($this->current_catalog_answers[$item['id']]) && $this->current_catalog_answers[$item['id']][$var['id']] == $variant['value']): ?>selected<?php endif;?>><?=$variant['name']?></option>
+                                    <?}?>
+                                    </select><div class="clear"></div>
+
+                                <?php else: ?> <!-- чекбокс или радио -->
+
+                                <input class="check" id="<?=$var['id']?>" type="<?=$var['type']?>" name="item[<?=$var['id_quest']?>][]" value="<?=$var['id']?>" <?php if (isset($this->current_answers[$item['id']]) && is_array($this->current_answers[$item['id']]) && in_array($var['id'], $this->current_answers[$item['id']])): ?>checked="checked"<?php endif;?> />
+                                <label class="check" for="<?=$var['id']?>"><?=$var['text']?></label><br>
+
+                                <?php if ($var['free_form']): ?> <!-- Ответ в свободной форме как вариант к вопросы с вариантами ответов -->
+
+                                <input class="text" type="text" onkeyup="changeFreeText('<?=$var['free_form']['id']?>');" name="free[<?=$var['free_form']['id']?>]" <?php if (isset($this->current_free_answers[$var['id']])): ?>value="<?=htmlspecialchars($this->current_free_answers[$var['id']])?>"<?php endif;?> />
+
+                                <?php endif; ?>
+
+                            <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+            <br />
+            <input type="image" src="/images/null.gif">
+            <a class="button" href="javascript:void(0);" onclick="$('#survey_form').submit(); return false;"><span><?=$this->messages['survey_answer']?></span></a>
+            <input type="hidden" name="id" value="<?=$this->survey['id']?>">
+            <input type="hidden" name="from" value="<?=$this->content['dir']?>">
+        </form>
+        <?php if ($this->params['show_list']): ?><a class="button red" href="/<?=$this->params['url']?>/list"><span><?=$this->messages['survey_list']?></span></a><?php endif; ?>
+        <?php if ($this->params['show_archive']): ?><a class="button red" href="/<?=$this->params['url']?>/archive"><span><?=$this->messages['survey_arch']?></span></a><?php endif; ?>
+    </div>
+
+<?php elseif ($this->content['page'] == 'archive'): ?>
+    <!-- Архив опросов -->
+    <h2><?=$this->messages['survey_arch']?></h2>
+    <?php foreach ($this->rows as $item): ?>
+    <p>
+        <a href="/<?=$this->params['url']?>?id=<?=$item['id']?>"><?=$item['name']?></a><br />
+        <span><?php if ($item['date_from']):?><?=$this->messages['survey_start']?>: <?=$item['date_from']; endif; ?><?php if ($item['date_from']):?>, <?=$this->messages['survey_finish']?>: <?=$item['date_till']; endif; ?></span>
+    </p>
+    <?php endforeach; ?>
+    <?php if ($this->params['show_list']): ?><a class="button red" href="/<?=$this->params['url']?>/list"><span><?=$this->messages['survey_list']?></span></a><?php endif; ?>
+
+<?php elseif ($this->content['page'] == 'list'): ?>
+    <!-- Список текущих открытых опросов -->
+    <h2><?=$this->messages['survey_list']?></h2>
+	<ul>
+        <?php foreach ($this->rows as $item): ?>
+        <li><a href="/<?=$this->params['url']?>?id=<?=$item['id']?>"><?=$item['name']?></a></li>
+        <?php endforeach; ?>
+	</ul>
+    <?php if ($this->params['show_archive']): ?><a class="button red" href="/<?=$this->params['url']?>/archive"><span><?=$this->messages['survey_arch']?></span></a><?php endif; ?>
+
+<?php elseif (isset($this->survey['total'])): ?>
+	<h2><?=$this->survey['name']?></h2>
+    <p><?php if ($this->survey['date_from']):?><?=$this->messages['survey_start']?>: <?=$this->survey['date_from']; endif; ?><?php if ($this->survey['date_from']):?>, <?=$this->messages['survey_finish']?>: <?=$this->survey['date_till']; endif; ?></p>
+    <?=$this->messages['survey_totalvote']?>: <?=$this->survey['total']?>
+    <div class="clear"></div>
+    <?php if ($this->content['page'] != 'survey_popup' && $this->params['show_list']): ?><a class="button red" href="/<?=$this->params['url']?>/list"><span><?=$this->messages['survey_list']?></span></a><?php endif; ?>
+    <?php if ($this->content['page'] != 'survey_popup' && $this->params['show_list']): ?><a class="button red" href="/<?=$this->params['url']?>/archive"><span><?=$this->messages['survey_arch']?></span></a><?php endif; ?>
+
+<?php endif; ?>
+
+<script type="text/javascript">
+function changeFreeText(variant_id) {
+    var text = $("[name=free\\[" + variant_id + "\\]]").val();
+    var el = $("input[value=" + variant_id + "]");
+    if (el.length) {
+        el.attr("checked", text ? true : false);
+    }
+}
+</script>

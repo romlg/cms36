@@ -1,0 +1,34 @@
+{$script}
+
+<script>
+function mySubmit(item) {ldelim}
+	item.subm.disabled = true;
+	return true;
+{rdelim}
+
+var ID = 0;
+var thisname = '{$thisname}';
+
+function editItem(id) {ldelim}
+	if (id == null) id = ID;
+	window.showModalDialog("dialog.php?page={$thisname}&do=editform&id="+id, "", "dialogWidth:450px; dialogHeight:500px;")
+//	window.open("ced.php?page={$thisname}&do=editform&id="+id, "", "width=500, height=450")
+
+
+{rdelim}
+
+function EditPriority(move) {ldelim}
+	if (!ID) {ldelim}
+		alert('Select item first');
+		return;
+	{rdelim}
+	window.open('page.php?page=' + thisname + '&do=EditPriority&id=' + ID + '&move=' + move, 'tmp' + thisname);
+{rdelim}
+
+var A{$thisname}0 = new Array(0,1,0,0,0);
+var A{$thisname}1 = new Array(1,1,1,1,1);
+var A{$thisname}2 = new Array(0,1,1,1,1);
+window.parent.elemActions('{$thisname}', ID==0?0:1);
+</script>
+{$table}
+<IFRAME id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

@@ -1,0 +1,13 @@
+<?php if (!empty($this->actions)): ?>
+<ul class="navPanel">
+	<?php foreach ($this->actions AS $action):?>
+	<li style="display:<?php if($action['display']=='block'){echo"block";}else{echo$action['display'];}?>;">
+		<a hidefocus="hidefocus" href="javascript:void(0);" onclick="callFunct(this,'<?php echo$action['link'];?>',<?php echo $action['funct_arg'];?>,<?php echo $action['multiaction'];?>); return false;" ondrop="<?php echo$action['ondrop'];?>" ondragenter="<?php echo$action['ondragenter'];?>" ondragleave="<?php echo$action['ondragleave'];?>" ondragover="<?php echo$action['ondragover'];?>" title="<?php echo$action['str'];?> <?php if($action['hint']){echo ": ".$action['hint'];}?>">
+			<img src="<?php echo$action['img'];?>" alt="<?php echo$action['str'];?> <?php if($action['hint']){echo ": ".$action['hint'];}?>">
+			<?php if($action['show_title']){echo $action['str'];}?>
+		</a>
+	</li>
+	<?php endforeach;?>
+</ul>
+<?php endif;?>
+<?php /*?><?php if(!empty($this->select)){if (int_lang() == 'ru') {echo 'Версия&nbsp;сайта:&nbsp;';} else {echo 'Site&nbsp;version:&nbsp;';} echo $this->select;}else{echo"&nbsp;";} ?><?php */?>

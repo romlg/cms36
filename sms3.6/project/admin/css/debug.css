@@ -1,0 +1,63 @@
+body, table{
+	font-family: Tahoma;
+	font-size: 12px;
+	padding: 0px;
+	margin: 4px;	
+	background-color: #E5E5E5;
+}
+
+table{
+	width: 360px;
+	background-color: #ffffff;
+	padding: 2px 2px 2px 2px;
+	margin-bottom: 0px;
+}
+.main{
+	border-collapse: collapse;
+	padding: 0px;
+	margin-top: 0px;	
+}
+.header{
+	background-color: #118ADA;
+	color: #ffffff;
+	padding: 5px 5px 5px 5px;
+	border: 1px solid black;
+}
+.sql_time{
+	border-bottom: 1px solid #2F4874;
+	padding: 2px 2px 2px 2px;
+}
+.sql_query{
+	border-left: 1px solid #2F4874;
+	border-bottom: 1px solid #2F4874;
+	padding: 2px 2px 2px 2px;
+}
+.sql_info{
+	padding: 2px 2px 2px 2px;
+	font-size: 10px;
+}
+.sql_error{
+	border-bottom: 1px solid #2F4874;
+	padding: 2px 2px 2px 2px;
+	color: red;
+}
+.sql_error_info{
+	padding: 2px 2px 2px 2px;
+	font-size: 10px;
+}
+.error{
+	border-bottom: 1px solid #2F4874;
+	padding: 2px 2px 2px 2px;
+	color: red;
+}
+.error_type{
+	border-left: 1px solid #2F4874;
+	border-bottom: 1px solid #2F4874;
+	padding: 2px 2px 2px 2px;
+}
+.error_info{
+	border-left: 1px solid #2F4874;
+	border-bottom: 1px solid #2F4874;
+	padding: 2px 2px 2px 2px;
+	font-size: 10px;
+}

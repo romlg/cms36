@@ -1,0 +1,279 @@
+<script type="text/javascript" language="javascript">
+<?=$this->tmpl['script'];?>
+</script>
+
+<?php foreach ($this->obj AS $key=>$item): ?>
+    <?php
+    $this->colspan=$item['display']['colspan'];
+    $current_id = isset($item['display']['elem']) ? $item['display']['elem'] : $item['name'];
+    if (!empty($item['display']['name']) && $item['type']!="checkbox") $item['display']['name'] .= ':';
+    ?>
+
+    <?php if($item['type']=="text"): ?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+            <label class="float"><?=$item['display']['name'];?></label>
+            <input id="<?=$item['name'];?>" class="text" <?php foreach($item AS $k=>$v) {if ($k!="display" && $k!="lang_select"){echo $k.'="'.$v.'" ';}}?>>
+        </div>
+
+    <?php elseif($item['type']=="password"): ?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+            <label class="float"><?=$item['display']['name'];?></label>
+            <input id="<?=$item['name'];?>" class="text" <?php foreach($item AS $k=>$v) {if ($k!="display" && $k!="lang_select" && $k!="value"){echo $k."='".$v."' ";}}?>>
+        </div>
+
+    <?php elseif($item['type']=="checkbox"):?>
+        <div id="tr_<?=$current_id?>" class="checkBox">
+            <input type="hidden" name="<?=$item['name'];?>" value="<?=$item['display']['value0'];?>">
+            <input id="<?=$item['name'];?>" class="check" <?php foreach($item AS $k=>$v) {if ($k!="display"){echo $k."='".$v."' ";}}?>>
+            <label class="check" for="<?=$item['name'];?>"><?=$item['display']['name'];?></label>
+        </div>
+
+    <?php elseif($item['type']=="radio"):?>
+        <label class="float"><?=$item['display']['name'];?></label>
+        <div id="tr_<?=$current_id?>" class="checkBox" style="margin-left: 210px; clear: none;">
+            <?php foreach ($item['option'] as $mk=>$mv) : ?>
+            <input id="<?=$item['name'].$mk;?>" name="<?=$item['name'];?>" class="check" type="radio" value="<?=$mk;?>" <?php if ($mk == $item['value']) echo 'checked';?>> <label style="margin-right: 10px;" for="<?=$item['name'].$mk;?>" class="check"><?=$mv;?></label>
+            <?php if ($item['br']) echo '<br>'; ?>
+            <?php endforeach; ?>
+ 		</div>
+
+    <?php elseif($item['type']=="hidden"):?>
+        <input <?php foreach($item AS $k=>$v) {if ($k!="display"){echo $k."='".$v."' ";}}?>>
+
+    <?php elseif($item['type']=="fck"):?>
+        <p><?=$item['display']['name'];?></p>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+            <?=$item['display']['value'];?>
+        </div>
+
+    <?php elseif($item['type']=="textarea"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+            <label class="float"><?=$item['display']['name'];?></label>
+            <textarea id="<?=$item['name'];?>" <?php foreach($item AS $k=>$v) {if ($k!="display" && $k!="value"){echo $k."='".$v."' ";}}?>><?=$item['value'];?></textarea>
+        </div>
+
+    <?php elseif($item['type']=="select"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+            <label class="float"><?=$item['display']['name'];?></label>
+            <select id="<?=$item['name'];?>" name="<?=$item['name'];?>" <?php if(!empty($item['onChange'])){echo "onChange='".$item['onChange']."'";}?> <?php if($item['disabled']){echo"disabled";}?>>
+            	<?=$item['option']; ?>
+            </select>
+        </div>
+
+    <?php elseif($item['type']=="multi_select"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+			<label class="float"><?=$item['display']['name'];?></label>
+            <select id="<?=$item['name'];?>[]" name="<?=$item['name'];?>[]" multiple <?php if(!empty($item['onChange'])){echo "onChange='".$item['onChange']."'";}?> <?php if(!empty($item['style'])){echo "style='".$item['style']."'";}?>>
+                <?=$item['option']; ?>
+            </select>
+		</div>
+
+    <?php elseif($item['type']=="image_server"):?>
+		<div id="tr_<?=$current_id?>" class="elemBox">
+			<label class="float"><?=$item['display']['name'];?></label>
+            <input class="text" <?php foreach($item AS $k=>$v) {if ($k!="display"){echo $k."='".$v."' ";}}?>>
+
+            <a class="button noClear DEV_MOD" href="#">...</a>
+            <a class="button noClear DEV_MOD" href="#">С сервера</a>
+
+            <button onClick="showFiles('', '<?=$item['name'];?>', this.form.name); return false;">&nbsp;...&nbsp;</button>
+            <button onClick="if(!this.form.elements['<?=$item['name'];?>'].value) return false; showImage(this.form.elements['<?=$item['name'];?>'].value)"><?=$this->STR_PREVIEW;?></button>
+		</div>
+
+    <?php elseif($item['type']=="input_file"):?>
+		<div id="tr_<?=$current_id?>" class="elemBox">
+            <label class="float"><?=$item['display']['name'];?></label>
+
+            <!-- Поле для поста -->
+            <input class="text" type="text" <?php if($item['disabled']):?>readonly<?php endif;?> value_temp="<?=$item['value_temp'];?>" name="<?=$item['name'];?>" id="<?=$item['name'];?>" readonly <?php foreach ($item AS $k=>$v) {if ($k!="display" && $k!="disabled") {if ($k=="value" && empty($v)) {echo $k."='".$item['value_empty']."'";} else {echo $k."='".$v."' ";}}}?>>
+            <?php if($item['disabled']):?><input type="hidden" value="@temp..<?=$item['value_temp'];?>" name='<?=$item['name'];?>'><?php endif;?>
+
+            <!-- Ввод имени файла для закачки -->
+            <span class="fileButton">
+                <input type="file" title="<?=$this->STR_KOMP;?>" name="<?=$item['name'];?>[0]" onChange="this.form.elements['<?=$item['name'];?>'].value = this.value;" class="input_image_file">
+                Обзор...
+            </span>
+
+            <?php if(!$item['browse_only']):?>
+            <span class="formSep">или</span>
+            <!-- Кнопка для загрузки -->
+            <a class="button noClear" href="javascript:void(0);" onClick="showFiles('', '<?=$item['name'];?>', ''); return false;" title="<?=$this->STR_SERV;?>"><?=$this->STR_SERVER;?></a>
+            <?php endif;?>
+        </div>
+
+    <?php elseif($item['type']=="input_image"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+            <label class="float"><?=$item['display']['name'];?></label>
+
+            <!-- Поле для поста -->
+            <input type='text' value='<?=$item['value'];?>' <?php if($item['disabled']):?>disabled<?php endif;?> value_temp='<?=$item['value_temp'];?>' name='<?=$item['name'];?>' id='<?=$item['name'];?>' style="display:inline-block;float:left;margin-right:5px;" onpropertychange="changeView('<?=$item['name'];?>'); <?php if(isset($item['display']['friend'])):?>setFriend('<?=$item['display']['friend'];?>','<?=$item['name'];?>','<?=$item['tab'];?>','<?php if(isset($item['display']['elem_id'])){echo $item['display']['elem_id'];}?>');<?php endif;?>">
+            <?php if($item['disabled']):?><input type="hidden" value="@temp..<?=$item['value_temp'];?>" name='<?=$item['name'];?>'><?php endif;?>
+
+            <!-- Ввод имени файла для закачки -->
+            <span class="fileButton">
+                <input type="file" title="<?=$this->STR_KOMP;?>" name="<?=$item['name'];?>[0]" onChange="this.form.elements['<?=$item['name'];?>'].value = this.value;" class="input_image_file">
+                Обзор...
+            </span>
+
+            <?php if(!$item['browse_only']):?>
+            <!-- Кнопка для загрузки -->
+            <a class="button noClear" href="javascript:void(0);" onClick="showFiles('', '<?=$item['name'];?>', ''); return false;" title="<?=$this->STR_SERV;?>" alt="<?=$this->STR_SERV;?>"><?=$this->STR_SERVER;?></a>
+            <?php endif;?>
+
+            <!-- Просмотр -->
+            <img class="fileView" src="images/icons/icon.preview.png" title="<?=$this->STR_PREVIEW;?>" alt="<?=$this->STR_PREVIEW;?>" name="preview['<?=$item['name'];?>']" onclick="show_preview(this, '<?=$item['name'];?>'); return false;">
+
+            <script>
+                var agent = navigator.userAgent.toLowerCase();
+                var major = parseInt(navigator.appVersion);
+                var minor = parseFloat(navigator.appVersion);
+
+                var isNN = ((agent.indexOf('mozilla') != -1) && ((agent.indexOf('spoofer') == -1) && (agent.indexOf('compatible') == -1)));
+                var isOPERA = agent.indexOf("opera")>-1 && window.opera;
+                var isIE = (agent.indexOf("msie") != -1 && !isOPERA);
+
+                if (!isIE && '<?=$item['name'];?>') {
+                    var image_value_<?=$key;?> = document.getElementById('<?=$item['name'];?>').value;
+                    setInterval(function() {
+                        var input = document.getElementById('<?=$item['name'];?>');
+                        if (input && input.value != image_value_<?=$key;?>){
+                            changeView('<?=$item['name'];?>');
+
+                            <?php if(isset($item['display']['friend'])):?>
+                            //if (!(isNN && major >=5))
+                            setFriend('<?=$item['display']['friend'];?>','<?=$item['name'];?>','<?=$item['tab'];?>','<?php if(isset($item['display']['elem_id'])){echo $item['display']['elem_id'];}?>');
+                            <?php endif;?>
+                            image_value_<?=$key;?> = input.value;
+                        }
+                    }, 250);
+                }
+            </script>
+        </div>
+
+    <?php elseif($item['type']=="words"):?>
+        <div id="tr_<?=$current_id?>" class="textBox">
+            <?=$item['value'];?>
+        </div>
+
+    <?php elseif($item['type']=="input_url"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+            <label class="float"><?=$item['display']['name'];?></label>
+            <input class="text" id='<?=$item['name'] ?>' <?php foreach($item AS $k=>$v) {if ($k!="display"){echo $k."='".$v."' ";}}?>>
+            <a class="button noClear" href="./dialog.php?page=tree/treeurl&fieldname=<?=$item['name'];?>" onclick="frame_button(this); return false;">...</a>
+        </div>
+
+    <?php elseif($item['type']=="input_treeid"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+
+            <?php if ($item['value']): ?>
+                <script type="text/javascript">
+                    $(document).ready(function(){
+                        getTreeLinkHtml(
+                            '<?=$item['value']?>',
+                            '<?=str_replace(array("[", "]"), array("\\\\[", "\\\\]"), $item['name']);?>'
+                            <?=(isset($item['add_path_with_id'])?", '".$item['add_path_with_id']."/".@$_GET['id']."'":"")?>
+                        );
+                    });
+                </script>
+            <?php endif; ?>
+
+            <span id="treeid_<?=$item['name']?>"></span>
+            <a id="input_treeid_link_<?=$item['name']?>" href="./dialog.php?page=tree/treeid&fieldname=<?=$item['name'];?>&formname=&returnid=treeid_<?=$item['name']?>" onclick="frame_button(this); return false;"><?=str_replace(":", "", $item['display']['name']);?></a>
+
+            <input type="hidden" id="<?=$item['name'];?>" name="<?=$item['name'];?>" value="<?=$item['value'];?>">
+
+        </div>
+
+    <?php elseif($item['type']=="input_treecheck"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox<?php if (isset($item['depends_show']) && $item['depends_show']): ?> if_show_<?=$item['depends_show']?><?php endif; ?>">
+
+            <?php if ($item['value']): ?>
+                <script type="text/javascript">
+                    $(document).ready(function(){
+                        getTreeLinksHtml(
+                            '<?=$item['value']?>',
+                            '<?=str_replace(array("[", "]"), array("\\\\[", "\\\\]"), $item['name']);?>'
+                            <?=(isset($item['add_path_with_id'])?", '".$item['add_path_with_id']."/".@$_GET['id']."'":"")?>
+                        );
+                    });
+                </script>
+            <?php endif; ?>
+
+            <span id="treecheck_<?=$item['name']?>"></span>
+            <a href="./dialog.php?page=tree/treecheck&fieldname=<?=$item['name'];?>" onclick="var values = $('#<?=str_replace(array("[", "]"), array("\\\\[", "\\\\]"), $item['name']);?>').val(); this.href += '&target_ids=' + values; frame_button(this); return false;"><?=str_replace(":", "", $item['display']['name']);?></a>
+
+            <input type="hidden" id='<?=$item['name'];?>' <?php foreach($item AS $k=>$v) {if ($k!="display"){echo $k."='".$v."' ";}}?>>
+
+        </div>
+
+    <?php elseif($item['type']=="input_calendar"):?>
+		<?php $this->calendar=true; ?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+        	<label class="float"><?=$item['display']['name'];?></label>
+            <input id="datepicker_<?=$current_id?>" class="text datepicker_elem" <?php foreach($item AS $k=>$v) {if ($k!="display"){echo $k."='".$v."' ";}}?> readonly>
+            <a class="button noClear" href="javascript:void(0);" onClick="document.getElementById('datepicker_<?=$current_id?>').value='';">&nbsp;<?=$this->STR_RESET;?>&nbsp;</a>
+        </div>
+
+    <?php elseif($item['type']=="input_color"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox colorSelect">
+            <label class="float"><?=$item['display']['name'];?></label>
+            <input class="text" type="text" name="<?=$item['name'];?>" value="<?=$item['value'];?>" onkeyup="try {document.getElementById('preview<?=$key;?>').style.backgroundColor=this.value;} catch(e) {document.getElementById('preview<?=$key;?>').style.backgroundColor=''}">
+            <div id="preview<?=$key;?>" class="colorPreview" style="height: 20px; width: 40px; <?php if(!empty($item['value'])):?>background-color:<?=$item['value'];?><?php endif;?>"></div>
+            <a class="button noClear" href="javascript:void(0);" onclick="showColors('<?=$item['name'];?>', '<?=$item['name'];?>', 'preview<?=$key;?>');"><img src="images/icons/button.color.gif" width="17" height="17" alt=""></a>
+        </div>
+
+    <?php elseif($item['type']=="text_range"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox textRange">
+            <?php if($item['display']['name']){echo "<label class='float'>".$item['display']['name']."</label>";}?>
+            <span class="formSep">от</span>
+            <input class="text" id="<?=$item['name'];?>0" <?php foreach ($item['0'] AS $k=>$v){if ($k!="display" && $k!="lang_select"){echo $k."='".$v."' ";}}?>>
+           <span class="formSep">до</span>
+            <input class="text" id="<?=$item['name'];?>1" <?php foreach ($item['1'] AS $k=>$v){if ($k!="display" && $k!="lang_select"){echo $k."='".$v."' ";}}?>>
+        </div>
+
+    <?php elseif($item['type']=="autosuggest"):?>
+		<div id="tr_<?=$current_id?>" class="elemBox">
+            <?php if($item['display']['name']){echo "<label class='float'>".$item['display']['name']."</label>";}?>
+
+			<?php if(!$this->z){$this->z=1000;}?>
+            <?php $this->z=$this->z-1;?>
+
+            <dl class="js-field-holder js-autosuggest-holder" style="z-index:<?=$this->z;?>">
+                <dt>
+                    <input autocomplete='off' id='<?=$key;?>' class='text textfield wide js-field-data js-required js-autosuggest-field' name='<?=$item['name'];?>' value='<?=$item['value'];?>' type='text' size='<?php echo ($item['size'])?$item['size']:'40';?>' <?php if($item['disabled']):?>disabled<?php endif;?>>
+                </dt>
+                <dd class="js-autosuggest-output hidden"></dd>
+            </dl>
+            <script>
+                $(document).ready(function(){
+                    if ($('#<?=$key;?>')) {
+                        var Autosuggest_<?=$item['tab'];?>_<?=$key;?> = new autosuggestClass($('#<?=$key;?>'), 'tags', '<?=$item['multiply'];?>', ',', '/admin/page.php?page=<?=$item['page'];?>&do=showAutosuggestList&table=<?=$item['table'];?>&field=<?=$item['field'];?>&where={<?=$item['where'];?>}&lang_select=<?=$item['langselect'];?>');
+                    }
+                });
+            </script>
+        </div>
+
+    <?php elseif($item['type']=="input_customtreeid"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+            <label class="float"><?=$item['display']['name'];?></label>
+            <input class="text" type="text" id="treeid_<?=$item['name']?>" name="treeid_<?=$item['name']?>" value="<?=$item['tree_name'];?>" disabled>
+            <input type="hidden" id="<?=$item['name'];?>" name="<?=$item['name'];?>" value="<?=$item['value'];?>">
+            <a class="button noClear" href="./dialog.php?page=custom_tree/custom_treeid&fieldname=<?=$item['name'];?>&formname=&returnid=treeid_<?=$item['name']?>&table=<?=$item['table']?>" onclick="frame_button(this); return false;">...</a>
+            <a class="button noClear" href="javascript:void(0);" onClick="document.getElementById('treeid_<?=$item['name']?>').value=''; document.getElementById('<?=$item['name']?>').value='';">&nbsp;<?=$this->STR_RESET;?>&nbsp;</a>
+        </div>
+
+    <?php elseif($item['type']=="input_customtreecheck"):?>
+        <div id="tr_<?=$current_id?>" class="elemBox">
+            <label class="float"><?=$item['display']['name'];?></label>
+            <input class="text" type="text" id="treecheck_<?=$item['name']?>" name="treecheck_<?=$item['name']?>" value="<?=$item['tree_name'];?>" disabled>
+            <input type="hidden" id='<?=$item['name'];?>' <?php foreach($item AS $k=>$v) {if ($k!="display"){echo $k."='".$v."' ";}}?>>
+            <a class="button noClear" href="./dialog.php?page=custom_tree/custom_treecheck&fieldname=<?=$item['name'];?>&target_ids=<?=$item['value'];?>&table=<?=$item['table']?>" onclick="frame_button(this); return false;">...</a>
+            <a class="button noClear" href="javascript:void(0);" onClick="document.getElementById('treecheck_<?=$item['name']?>').value=''; document.getElementById('<?=$item['name']?>').value='';">&nbsp;<?=$this->STR_RESET;?>&nbsp;</a>
+        </div>
+
+    <?php endif;?>
+<?php endforeach;?>
+
+<?php if($this->calendar):?>
+<iframe width=188 height=166 name="gToday:datetime:/admin/third/calendar/agenda.js:gfPop:plugins_24.js" id="gToday:datetime:/admin/third/calendar/agenda.js:gfPop:plugins_24.js" src="/admin/third/calendar/ipopeng.htm" scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; left:-500px; top:0px;"></iframe>
+<?php endif;?>

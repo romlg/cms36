@@ -1,0 +1,15 @@
+<?php echo $this->ul_open; ?>
+<?php foreach ($this->items AS $item):?>
+    <li>
+        <a name="item<?=$item['id']?>"></a>
+        <?=$item['plus'];?>
+        <a href='<?=$item['href']?>' class='name<?=$item['class'];?>' style='background-image: url(<?=$item['icon'];?>);'>
+            <input type="checkbox" name="item2[<?=$item['id'];?>]" id="item2_<?=$item['id'];?>" <?=$item['checkbox'];?> onclick="checkbox_click(<?=$item['id'];?>);">
+            <label style="float: none; display: inline; font-weight: inherit;<?php if ($item['class'] == ' hide') echo 'color: #848484;';?>" for="item2_<?=$item['id'];?>"><?php echo $item['name'];?></label>
+            <?php echo (!empty($item['note'])?'<span>('.$item['note'].')</span> ':'');?>
+        </a>
+
+        <?php if(isset($item['subtree'])) echo $item['subtree'];?>
+    </li>
+<?php endforeach;?>
+<?php echo $this->ul_close; ?>

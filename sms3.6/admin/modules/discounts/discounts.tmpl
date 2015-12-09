@@ -1,0 +1,48 @@
+{$script}
+<script>
+function mySubmit(item) {ldelim}
+	item.subm.disabled = true;
+	return true;
+{rdelim}
+
+function modified(mod) {ldelim}
+	A{$thisname}0[0] = A{$thisname}1[0] = A{$thisname}2[0] = mod;
+	window.parent.elemActions('{$thisname}mod', mod);
+	document.forms[formname].actions.value='editchanges';
+{rdelim}
+
+function editItem(id) {ldelim}
+	if (id == null) id = ID;
+	window.showModalDialog("dialog.php?page=" + thisname + "&do=editform&auth_group={$auth_group}&id="+id, "edit" + thisname, "dialogWidth:150, dialogHeight:130; status: no;");
+{rdelim}
+
+function deleteItems() {ldelim}
+	id = ID;
+	document.getElementById('tmp{$thisname}').src = "page.php?page=" + thisname + "&do=delitem&id="+id;
+{rdelim}
+
+
+var TABLE = '{$thisname}';
+var ID = '{$id}';
+var ID2 = '{$id2}';
+var auth_group = '{$auth_group}';
+var auth_group_type = '{$auth_group_type}';
+
+if (auth_group_type == 'volume'){ldelim}var A{$thisname}0 = new Array(0,1,0,0);{rdelim}
+else{ldelim}var A{$thisname}0 = new Array(0,0,0,0);{rdelim}
+
+var A{$thisname}1 = new Array(0,0,1,0);
+var A{$thisname}2 = new Array(0,0,1,0);
+var A{$thisname}mod2 = new Array(1, 1, 0,null);
+var A{$thisname}mod1 = new Array(1, 0, 0,null);
+var A{$thisname}mod0 = new Array(0, 0, 0,null);
+window.parent.elemActions('{$thisname}', ID==0?0:1);
+
+</script>
+<fieldset>
+{$STR_DISCOUNT_GROUP}:&nbsp;<select onChange='window.location="cnt.php?page={$thisname}&auth_group="+this.value' name=auth_group>
+{html_options options=$auth_groups  selected=$auth_group}
+</select>
+</fieldset>
+{$table}
+<IFRAME id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

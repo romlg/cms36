@@ -1,0 +1,48 @@
+<?php if ($this->list) : ?>
+<?php foreach ($this->list as $num => $block) : ?>
+    <?php if ($block['title']): ?>
+        <div class="block">
+            <div>
+                <div>
+                    <div>
+                        <?php if ($block['title_link']):?><a href="<?=$block['title_link']?>"><?php endif; ?>
+                        <?=$block['title'];?>
+                        <?php if ($block['title_link']):?></a><?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+    <div class="blockContent banner">
+        <?=$block['header_text'];?>
+        <?php if (isset($block['publications']) && $block['publications']): ?>
+        <ul class="publ">
+            <?php foreach ($block['publications'] as $num => $publication) : 
+            /**
+             * @var Publication $publication
+             */
+            $path = $publication->getMainPath();
+            ?>
+            <li>
+                <?php $date = $publication->getDate(); if ($date && $date != '0000-00-00 00:00:00'): ?>
+                <?=date("d.m.Y", strtotime($date)); ?>
+                <?php endif; ?>
+                <p class="name"><a href="<?=$path?>"><?=$publication->getName();?></a></p>
+                <?php $image = $publication->getImage(array('100', '100'), 'adaptiveResize'); if ($image) : ?>
+                <a href="<?=$path?>">
+                    <img src="<?=$image;?>" alt="<?=$publication->getName();?>"/>
+                </a>
+                <?php endif; ?>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+        <?php endif; ?>
+        <?=$block['footer_text']; ?>
+        <?php if ($block['footer_title']): ?>
+           <?php if ($block['footer_title_link']):?><a href="<?=$block['footer_title_link']?>"><?php endif; ?>
+           <?=$block['footer_title'];?>
+           <?php if ($block['footer_title_link']):?></a><?php endif; ?>
+        <?php endif; ?>
+    </div>
+    <?php endforeach; ?>
+<?php endif; ?>

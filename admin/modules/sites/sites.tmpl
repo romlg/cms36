@@ -1,0 +1,11 @@
+<script type="text/javascript">
+    var thisname = '<?php echo $this->thisname;?>';
+    function copyItems() {
+        var formname = 'editform';
+        document.forms[formname].elements['do'].value = 'editCopy';
+        document.forms[formname].submit();
+    }
+
+</script>
+
+<?php echo $this->table; ?>

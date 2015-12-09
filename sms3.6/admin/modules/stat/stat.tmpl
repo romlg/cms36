@@ -1,0 +1,300 @@
+<script type="text/javascript">
+{literal}
+parent.disable_loading();
+function ViewIn(method) {
+	f = document.forms.navigform;
+	f.elements['show'].value = method;
+	f.submit();
+	parent.enable_loading();
+}
+
+function onOver(Row) {
+	Row.className = 'over';
+}
+function onOut(Row) {
+	Row.className = 'out';
+}
+
+function SetPeriod(days) {
+	f = document.forms.navigform;
+	f.period.value = days;
+	if (f.disp_by) {
+		if (days < 7) {
+			f.disp_by.value = 'hour';
+		}
+		else if (days == 'all') {
+			f.disp_by.value = 'month';
+		}
+		else {
+			f.disp_by.value = 'dayofmonth';
+		}
+	}
+	if (f.offset) f.offset.value = "0";
+	f.submit();
+	parent.enable_loading();
+}
+
+function SetForm(from, to, disp_by) {
+	f = document.forms.navigform;
+	f.from_date.value = from;
+	f.to_date.value = to;
+	f.disp_by.value = disp_by;
+	f.submit();
+	parent.enable_loading();
+}
+
+function roll(name) {
+	div = document.getElementById(name);
+	if (!div) return;
+	if (!div.style.display || div.style.display == 'none') {
+		div.style.display = 'block';
+	}
+	else {
+		div.style.display = 'none';
+	}
+}
+
+function showSearch() {
+	document.getElementById('search_div').style.display = 'block';
+	document.getElementById('search_link').style.display = 'none';
+}
+function resetSearch() {
+	f = document.forms.navigform;
+	f.find.value='';
+	f.submit();
+}
+function ReklamaSettings(){
+	window.open("act.php?page=stat/reklama_obj&do=show", "" , "width=600, height=400, resizable=1").focus();
+}
+{/literal}
+</script>
+
+<link href="css/table.css" rel="stylesheet" type="text/css" />
+<link href="css/stat.css" rel="stylesheet" type="text/css" />
+
+{if count($site_select.sites) > 1}
+<!-- Start Переключение сайтов -->
+<form action="cnt.php" name="langform" id="langform" target="_self" style="margin: 0px; float: right; text-align: right" onsubmit="parent.enable_loading();">
+{foreach from=$site_select.hidden item=hidden}
+<input type="hidden" name="{$hidden.name}" value="{$hidden.value}" />
+{/foreach}
+<span style="font-size: 90%; font-weight: bold">{$site_select.STR_SITE_SELECTION}</span>:&nbsp;<select name="site" onchange="document.forms.langform.submit()" style="font-size: 90%"><option label="{$site_select.STR_ALL}" value="-1"{if $site_select.site eq '-1'} selected{/if}>{$site_select.STR_ALL}</option>{html_options options=$site_select.sites selected=$site_select.site}</select>
+</form><br clear="all">
+<!-- End Переключение сайтов -->
+{/if}
+
+<form action="cnt.php" name="navigform" id="navigform" target="_self" style="margin: 0px;" onsubmit="parent.enable_loading();">
+{if $navig}
+
+{foreach from=$navig.hidden item=hidden}
+<input type="hidden" name="{$hidden.name}" value="{$hidden.value}" />
+{/foreach}
+{if count($site_select.sites) <= 1}
+<input type="hidden" name="site" value="-1" />
+{/if}
+
+<fieldset>
+<legend>{$navig.STR_NAV_PERIOD}</legend>
+<table cellpadding="0" cellspacing="2" width="100%"><tr>
+<td nowrap="nowrap" valign="top" >
+	{$navig.STR_SHOW_FROM} <span class="show_date">{$navig.show_from}</span> {$navig.STR_SHOW_TO} <span class="show_date">{$navig.show_to}</span><br>
+	{$navig.STR_NAV_SELECT_PERIOD} :
+	   {*<a href="#" onclick="SetPeriod(0); return false;" class="navig" title="{$navig.STR_NAV_TODAY_TITLE}">{$navig.STR_NAV_TODAY}</a>*}
+		<a href="#" onclick="SetPeriod(1); return false;" class="navig" title="{$navig.STR_NAV_YESTERDAY_TITLE}">{$navig.STR_NAV_YESTERDAY}</a>
+		<a href="#" onclick="SetPeriod(7); return false;" class="navig" title="{$navig.STR_NAV_WEEK_TITLE}">{$navig.STR_NAV_WEEK}</a>
+		<a href="#" onclick="SetPeriod(30); return false;" class="navig" title="{$navig.STR_NAV_MONTH_TITLE}">{$navig.STR_NAV_MONTH}</a>
+		{*<a href="#" onclick="SetPeriod('all'); return false;" class="navig" title="{$navig.STR_NAV_ALL_TITLE}">{$navig.STR_NAV_ALL}</a>*}
+	<br />
+	<input name="from_date" value="{$navig.from_date}" size="12" onfocus="this.blur()" readonly="readonly" />
+	<a href="javascript:void(0)" onclick="if(self.gfPop)gfPop.fStartPop(document.navigform.from_date,document.navigform.to_date); return false;" hidefocus><img align="absmiddle" src="third/calendar/images/calbtn.gif" width="34" height="22" border="0" alt="{$navig.STR_SELECT_DATE}" /></a>
+	&nbsp;&nbsp;-&nbsp;&nbsp;
+	<input name="to_date" value="{$navig.to_date}" size="12" onfocus="this.blur()" readonly="readonly" />
+	<a href="javascript:void(0)" onclick="if(self.gfPop)gfPop.fEndPop(document.navigform.from_date,document.navigform.to_date); return false;" hidefocus><img align="absmiddle" src="third/calendar/images/calbtn.gif" width="34" height="22" border="0" alt="{$navig.STR_SELECT_DATE}" /></a>
+
+
+	</td>
+	<td valign="top" nowrap style="padding-left: 20px;" width="100%">
+	{if $navig.interval}
+		{$navig.STR_NAV_INTERVAL}: <select name="disp_by">{$navig.interval.select_interval}</select>
+		<br />
+		<input type="hidden" name="group" value="0" />
+		<input type="checkbox" name="group" style="border: 0px;" value="1" {$navig.interval.group_checked} id="group" />
+		<label for="group">{$navig.STR_NAV_SUM}</label>
+	{/if}
+</td></tr>
+</tr>
+<tr><td colspan="2" align="left">
+	{if $navig.attendance}
+		<input type="hidden" name="show_visit" value="0" />
+		<input type="checkbox" name="show_visit" style="border: 0px;" value="1" {$navig.attendance.show_visit} id="show_visit" />
+			<label for="show_visit">{$navig.STR_NAV_SHOW_VISIT}</label><br />
+		<input type="hidden" name="show_no_reklama" value="0" />
+		<input type="checkbox" name="show_no_reklama" style="border: 0px;" value="1" {$navig.attendance.show_no_reklama} id="show_no_reklama" />
+			<label for="show_no_reklama">{$navig.STR_NAV_SHOW_NO_REKLAMA}</label><br />
+		<input type="hidden" name="show_clients" value="0" />
+		<input type="checkbox" name="show_clients" style="border: 0px;" value="1" {$navig.attendance.show_clients} id="show_clients" />
+			<label for="show_clients">{$navig.STR_NAV_SHOW_CLIENTS}</label><br />
+		<input type="hidden" name="show_uvisit" value="0" />
+		<input type="checkbox" name="show_uvisit" style="border: 0px;" value="1" {$navig.attendance.show_uvisit} id="show_uvisit" />
+			<label for="show_uvisit">{$navig.STR_NAV_SHOW_UVISIT}</label><br>
+		<input type="hidden" name="show_hosts" value="0" />
+		<input type="checkbox" name="show_hosts" style="border: 0px;" value="1" {$navig.attendance.show_hosts} id="show_hosts" />
+			<label for="show_hosts">{$navig.STR_NAV_SHOW_HOSTS}</label><br />
+		<input type="hidden" name="show_loads" value="0" />
+		<input type="checkbox" name="show_loads" style="border: 0px;" value="1" {$navig.attendance.show_loads} id="show_loads" />
+			<label for="show_loads">{$navig.STR_NAV_SHOW_LOADS}</label><br />
+	{assign var="l" value="0"}
+	{foreach from=$navig.events item=item key=key}
+		{assign var="temp" value="show_event_`$l`"}
+		{assign var="temp2" value="STR_NAV_SHOW_EVENT_`$l`"}
+		{assign var="temp2" value="str_nav_show_event_`$l`"}
+		<input type="hidden" name="{$temp}" value="0" />
+		<input type="checkbox" name="{$temp}" style="border: 0px;" value="1" {$navig.attendance.$temp} id="{$temp}" />
+			<label for="{$temp}">{$navig.attendance.$temp2}</label><br />
+	{assign var="l" value="`$l+1`"}
+	{/foreach}
+	</tr></td>
+{/if}
+<tr><td colspan="2" align="left">
+{if $analyze_page}
+<hr size=1 noshade>
+{$navig.STR_NAV_ANALYZE_PAGE}: <input type="text" name="analyze_page" size="40" value="{$analyze_page}"/>
+&nbsp;&nbsp;&nbsp;
+{/if}
+</td></tr>
+<tr><td colspan="2" align="center">
+
+    {literal}
+    <script type="text/javascript">
+    function clickBtnShow(btn) {
+        var form = document.forms['navigform'];
+        if (form.elements['show']) {
+            if (form.elements['show'].value!='csv') {
+                if (form.elements['analyze_page']) {
+                    if(form.elements['analyze_page'].value!='' && form.elements['analyze_page'].value!='http://') {
+                        form.elements['page'].value = 'stat/stat_attendance';
+                    }
+                }
+                parent.enable_loading();
+            }
+        }
+        btn.name='show_button';
+        btn.form.submit();
+        btn.name='';
+    }
+    </script>
+    {/literal}
+
+	<button onclick="clickBtnShow(this);"><img src="images/icons/icon.save.gif" width="16" height="16" align="absmiddle" alt="{$navig.STR_NAV_SHOW}" border="0" /> {$navig.STR_NAV_SHOW}</button>
+</td></tr>
+</table>
+
+</fieldset>
+{/if}
+
+{if !empty($show_search)}
+<a href="#" id="search_link" onclick="showSearch();" class="navig" {if empty($smarty.get.find)}style="display: block; margin: 4px 0px 0px 3px;"{else}style="display: none;"{/if}>{$navig.STR_SEARCH}</a>
+<div id="search_div" {if empty($smarty.get.find)}style="display: none;"{else}style="display: block;"{/if}>
+<fieldset>
+<legend><strong>{$navig.STR_SEARCH}</strong></legend>
+<NOBR>{$navig.STR_FIND}: <input type="text" size="30" maxlength="255" name="find" value="{$smarty.get.find}" /></NOBR>
+<input type="submit" value="{$navig.STR_OK}" />
+<input type="reset" value="{$navig.STR_RESET}" onclick="resetSearch();" />
+{$navig.STR_HELP}
+{if !empty($smarty.get.find) and count($table.rows) > 0}
+<br /><span class="THoliday">{$navig.STR_COUNT_FIND}:</span> <strong>{$table.count}</strong>
+{elseif count($table.rows) < 1}
+<br /><span class="THoliday">{$navig.STR_NOT_FIND}</span>
+{/if}
+</fieldset>
+</div>
+{/if}
+
+{if $table}
+{if count($table.rows) > 0}<br /><table cellpadding="2" cellspacing="1" class="ttotal" width="100%">
+<tr>
+{foreach from=$table.total_head item=item}
+	<th align="center">{$item|default:"&nbsp;"}</th>
+{/foreach}
+</tr>
+{foreach from=$table.total item=item}
+	<tr>
+		{foreach from=$item.cells item=cell}
+			<td align="{$cell.align}" {$cell.nowrap}>{$cell.value|default:"&nbsp;"}</td>
+		{/foreach}
+	</tr>
+{/foreach}
+</table>
+{/if}
+<br /><table cellpadding="2" cellspacing="1" class="framed" width="100%">
+<tr class="thead">
+	{foreach from=$table.header item=head}
+	<td align="{$head.align}" width="{$head.width}" class="thead">{$head.title}</td>
+	{/foreach}
+</tr>
+{foreach from=$table.rows item=row}
+<tr class="out" onmouseover="onOver(this)" onmouseout="onOut(this)">
+	{foreach from=$row.cells item=cell}
+	<td align="{$cell.align}" valign="{$cell.valign}" class="{$cell.class}" {$cell.nowrap}>{$cell.value}</td>
+	{/foreach}
+</tr>
+{/foreach}
+</table>
+{if $table.empty}
+	<br /><div class="note">{$table.empty.value}</div><br>
+{/if}
+<table cellpadding="2" cellspacing="1" class="framed" width="100%">
+<tr><td class="tfoot">
+{if $table.footer}
+	{$navig.STR_COUNT_ROWS}: {$table.footer.count}
+	<input class="small" type="submit" name="page_first" value="&lt;&lt;" {$table.footer.btn_prev_disabled} onclick="this.form.offset.selectedIndex=0;this.form.submit();parent.enable_loading();" />
+	<input class="small" type="submit" name="page_prev" value=" &lt; " {$table.footer.btn_prev_disabled} onclick="this.form.offset.selectedIndex-=1;this.form.submit();parent.enable_loading();" />
+	{$table.footer.page}:&nbsp;<select class="small" name="offset" align="absmiddle" onchange="this.form.submit();parent.enable_loading();">{$table.footer.pages}</select>
+	{$table.footer.limit}:&nbsp;<select class="small" name="limit" align="absmiddle" onchange="this.form.offset.selectedIndex=0;this.form.submit();parent.enable_loading();">{$table.footer.limits}</select>
+	<input class="small" type="submit" name="page_next" value=" &gt; " {$table.footer.btn_next_disabled} onclick="this.form.offset.selectedIndex+=1;this.form.submit();parent.enable_loading();" />
+	<input class="small" type="submit" name="page_last" value="&gt;&gt;" {$table.footer.btn_next_disabled} onclick="this.form.offset.selectedIndex=this.form.offset.options.length-1;this.form.submit();parent.enable_loading();" />
+{/if}
+</td></tr>
+</table>
+<br />
+{/if}
+</form>
+
+{if $pathes}
+<br />
+<table border="0" cellspacing="0" cellpadding="1">
+{foreach from=$pathes.row item=row}
+<tr>
+	<td class="Tpath" valign="top"><b>[{$row.key}]</b>&nbsp;&nbsp;</td>
+	<td class="TSmall"><b><a href="http://{$row.href}" target="_blank">http://{$row.href}</b></td>
+</tr>
+{/foreach}
+</table>
+{/if}
+
+{if $info}
+<fieldset style="width:400px;">
+	<legend>{$info.STATINFO}</legend>
+	<table width="100%">
+	{foreach from=$info.rows item=row}
+	<tr>
+		<td nowrap="nowrap">{$row.key}</td>
+		<td align="right" nowrap="nowrap"><b>{$row.val}</b></td>
+	</tr>
+	{/foreach}
+	</table>
+</fieldset>
+{/if}
+
+{if $image}
+<div align="center">
+	<img src="{$image.src}" border="0" alt="{$image.alt}" />
+</div>
+{/if}
+
+{if $tip}
+	<div class="tip"><img src="images/icons/icon32.info.gif" width="32" height="32" alt="" align="left" hspace="5" vspace="5" />{$tip.text}</div>
+{/if}
+
+<iframe width="0" height="0" id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" border="0" style="visibility:hidden"></iframe>
+<iframe width="174" height="189" name="gToday:normal:agenda.js:gfPop:plugins_range.js" id="gToday:normal:agenda.js:gfPop:plugins_range.js" src="third/calendar/ipopeng.htm" scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; left:-500px; top:0px;"></iframe>

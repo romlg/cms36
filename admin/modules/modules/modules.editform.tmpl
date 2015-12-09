@@ -1,0 +1,27 @@
+<script for="editform" event="onkeydown">
+	if (event.keyCode==27) window.close();
+	else if (event.keyCode==13) document.forms['editform'].submit();
+</script>
+<form target="tmp{$thisname}" action="page.php" method="post" name="editform" id="editform" onsubmit="window.close()">
+<fieldset>
+<legend></legend>
+<table>
+<tr><td>{$STR_NAME}:</td><td><input type="text" size="32" maxlength="32" name="fld[name]" value="{$name}" {$disabled} /></td></tr>
+<tr><td>{$STR_DISPLAY_RU}:</td><td><input type="text" size="40" maxlength="255" name="fld[display_ru]" value="{$display_ru}" {$disabled} /></td></tr>
+<tr><td>{$STR_DISPLAY_EN}:</td><td><input type="text" size="40" maxlength="255" name="fld[display_en]" value="{$display_en}" {$disabled} /></td></tr>
+<tr><td>{$STR_PID}:</td><td><select name="fld[pid]" {$disabled}>{$pid}</select></td></tr>
+<tr><td>{$STR_TYPE}:</td><td><select name="fld[type][]" size="2" multiple="multiple" {$disabled}>{$type}</select></td></tr>
+<tr><td></td><td><input id="fld_allowed" type="checkbox" name="fld[allowed]" value="1" {$allowed} {$disabled} />&nbsp;<label for="fld_allowed">{$STR_ALLOWED}</label></td></tr>
+<tr><td></td><td><input id="fld_required" type="checkbox" name="fld[required]" value="1" {$required} {$disabled} />&nbsp;<label for="fld_required">{$STR_REQUIRED}</label></td></tr>
+<tr><td></td><td><input id="fld_enabled" type="checkbox" name="fld[enabled]" value="1" {$enabled} />&nbsp;<label for="fld_enabled">{$STR_ENABLED}</label></td></tr>
+</table>
+</fieldset>
+<br>
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+<div align="center">
+<input type="submit" class="btn" value="{$STR_SAVE}" />
+<input type="button" value="{$STR_CANCEL}" onClick="window.close()" />
+</div>
+</form>

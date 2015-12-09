@@ -1,0 +1,43 @@
+<ul>
+
+    <li><?php echo $error; ?></li>
+
+    <?php
+    foreach ($this->outputresp as $otziv2) :?>
+
+        <li><B>
+            <a href = "/guestbook/message/<?=$otziv2['id']?>"><?=$otziv2['name'] ?></a> &nbsp &nbsp &nbsp &nbsp <font color='green'><?=$otziv2['date'] ?> </font>
+        </B><br>
+            <?=$otziv2['message'] ?>
+            <?php if ($otziv2['admin_comment'] != '') : ?>
+                <br><br><font color='blue'>
+                    <?=$otziv2['admin_comment'] ?>
+                </font>
+                <? endif?>
+
+
+        </li>
+
+        <hr>
+        <? endforeach?>
+
+</ul>
+
+<?= $this->nav ?>
+
+<form id="sent"  action="/guestbook/" method="post">
+     <label for="name" class="optional">name</label>
+     <input type="text" name="name" id="name" value class="text">
+  <label for="message" class="optional">Message</label>
+  <textarea name="message" id="message" class="text" rows="24" cols="80"></textarea>
+
+    <button type="submit">Отправить форму</button></p>
+    <input type="hidden" name="fld[act]" value="order">
+</form>
+
+<?=$errors ?>
+
+<br>
+<br>
+<br>
+<?=$this->formoutput ?>

@@ -1,0 +1,34 @@
+<script>
+var ID = 0; var thisname = '{$thisname}';
+var A{$thisname}0 = new Array(1,0,0,0,0,0,0,0,1);
+var A{$thisname}mod1 = new Array(1, null);
+var A{$thisname}mod0 = new Array(0, null);
+window.parent.elemActions(thisname, ID==0?0:1);
+function undo()
+{ldelim}  alert("ок?"); {rdelim}
+function mySubmit()
+{ldelim}  document.forms.{$thisname}editform.submit(); {rdelim}
+</script>
+<form method=post target=tmpcrm name={$thisname}editform action='page.php'>
+<fieldset><legend>{$STR_CLIENT_INFO}</legend>
+<input type=hidden name='page' value='{$thisname}'>
+<input type=hidden name='do' value='doAdd'>
+<table cellpadding=0 cellspacing=0 width=100%>
+<td width=40%>{$STR_LNAME}:</td><td><input type=text size=30 maxlength=99 name=fld[lname] value="{$lname}"></td></tr>
+<tr><td>{$STR_NAME}:</td><td><input type=text size=30 maxlength=99 name=fld[name] value="{$name}"></td></tr>
+<tr><td>{$STR_TNAME}:</td><td><input type=text size=30 maxlength=99 name=fld[tname] value="{$tname}"></td></tr>
+<tr><td>{$STR_ADDR}:</td><td><input type=text size=30 maxlength=99 name=fld[addr] value="{$addr}"></td></tr>
+<tr><td>{$STR_PHONE}:</td><td><input type=text size=30 maxlength=99 name=fld[phone] value="{$phone}"></td></tr>
+<tr><td>{$STR_FAX}:</td><td><input type=text size=30 maxlength=99 name=fld[fax] value="{$fax}"></td></tr>
+</table>
+</td><tr>
+</fieldset>
+<fieldset><legend>{$STR_SYSTEM_INFO}</legend>
+<table cellpadding=0 cellspacing=0 width=100%>
+<tr><td width="40%">{$STR_LOGIN}:</td><td><input type=text size=30 maxlength=99 name=fld[login] value="{$login}" {$readonly}></td></tr>
+<!--<tr><td>{$STR_EMAIL}:</td><td><input type=text size=30 maxlength=99 name=fld[email] value="{$email}" {$readonly}></td></tr>-->
+<tr><td>{$STR_PASS1}:</td><td><input type=password size=30 maxlength=99 name=fld[pass1] {$readonly}></td></tr>
+<tr><td>{$STR_PASS2}:</td><td><input type=password size=30 maxlength=99 name=fld[pass2] {$readonly}></td></tr>
+</table>
+</td><tr>
+</fieldset>

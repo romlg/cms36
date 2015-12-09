@@ -1,0 +1,60 @@
+/* Table */
+.ttotal {
+	background-color: white; font-weight: bold;
+	border-right: 1px solid buttonshadow;
+}
+.ttotal th{
+	background-color: #F89000;
+	color: white;
+	font-size: 70%;
+}
+.ttotal td{
+	border-left: 1px solid buttonshadow;
+	border-bottom: 1px solid buttonshadow;
+	font-size: 70%;
+}
+td.tFirst {background-color: #FFDCAC;}
+.tSmall {font-size : xx-small;color : #3165A4;}
+.THoliday {color: #DC143C;}
+/* Pathes */
+.Tpath, a.Tpath:link, a.Tpath:active, a.Tpath:visited, a.Tpath:hover {
+	font-size : xx-small;
+	color : #3165A4;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+
+/* Navigation Form */
+a.navig:link, a.navig:visited {
+	text-decoration: none;
+	color: #108ADE;
+	font-weight: bold;
+	padding-left: 10px;
+}
+a.navig:hover {
+	text-decoration: underline;
+	color: #0E5586;
+	font-weight: bold;
+}
+a.navig:active {
+	text-decoration: underline;
+	color: #50B6F7;
+	font-weight: bold;
+}
+span.show_date {
+	color: #075587;
+	font-weight: bold;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+/* Tip */
+.tip {
+	border: 1px solid #AAA;
+	background-color: #FFFFE0;
+	margin: 5px;
+	padding: 5px;
+	height: 52px;
+}
+

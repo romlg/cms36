@@ -1,0 +1,26 @@
+<style type="text/css">
+body {background-color: #D6DEEC}
+</style>
+
+<script for="editform" event="onkeydown" type="text/javascript">
+	if (event.keyCode==27) window.close();
+</script>
+
+<table cellpadding="10" width="100%">
+<tr>
+<td align="right"><img src="images/icons/icon32.ask.gif" width="32" height="32" alt="" /></td>
+<td>
+<form name="editform" id="editform" action="page.php" target="toc">
+<div><?php echo $this->ask;?>"<?php echo $this->name;?>"?</div>
+</td></tr>
+</table>
+<br>
+<div align="center">
+<a href="javascript:void();" class="button noClear margRight" onclick="window.returnValue=true; document.getElementById('editform').submit(); window.close();"><?php echo $this->yes;?></a>
+<a href="javascript:void();" class="button noClear" onclick="window.close();"><?php echo $this->no;?></a>
+</div>
+<input type="hidden" name="page" value="<?php echo $this->thisname;?>" />
+<input type="hidden" name="do" value="delete" />
+<input type="hidden" name="id" value="<?php echo $this->id;?>" />
+<input type="hidden" name="confirm" value="1" />
+</form>

@@ -1,0 +1,222 @@
+<script>
+var smallSetted = false;
+var bigSetted = false;
+function SelectPic(name) {
+    document.getElementById('pic').src = '<?php echo $this->filesdir;?>/'+name;
+    document.forms.pasteform.pic.value = name;
+}
+
+function SetPic() {
+    sActiveImage = '<?php echo $this->filesdir;?>/' + document.forms.pasteform.pic.value ;
+
+    if (opener) {
+        if(typeof(opener.document.forms.edit)!='undefined') {
+            opener.document.forms.edit.elements['fld[<?php echo $this->image; ?>]<?php echo $this->aimage; ?>'].value = document.forms.pasteform.pic.value;
+            opener.focus();
+            self.close();
+        }
+        else {
+            opener.document.getElementById('<?php echo $this->fld; ?>').value = sActiveImage;
+            self.close();
+        }
+    }
+    else alert('No opener window');
+}
+
+function startProc(item) {
+    if (!item.file.value) {
+        alert('<?php echo $this->err_no_file;?>');
+        return false;
+    }
+    item.sbm.disabled = true;
+    if (item.file.value) item.sbm.value = '<?php echo $this->wait;?>';
+    return true;
+}
+
+function mkdir() {
+    dirname = document.getElementById('createfolder').value;
+    if (!dirname) {
+        alert('<?php echo $this->err_no_dirname;?>');
+        return false;
+    }
+    window.location = '<?php echo $this->dirname;?>';
+}
+
+function toggleFieldsetBox(el) {
+	$(el).parent('fieldset').toggleClass('open');
+}
+</script>
+<!-- Блок отображения файлов -->
+<div class="fileManager">
+    <div class="fileLeft">
+        <?php if(isset($this->error)) echo "<p class='error'>".$this->error."</p>";?>
+
+        <div class="fileFieldsetBox">
+        	<p class="searchTitle png">Поиск</p>
+            <input class="text" type="text" value="<?php echo $this->FF;?>" id="search_text">
+
+            <select onchange="var form=document.forms.limitform; form.elements['file_sort'].value=this.value; document.forms.limitform.submit();">
+                <?php foreach ($this->option_search AS $k=>$v) :?>
+                <option <?php echo $v['selected'];?> value="<?php echo $v['value'];?>"><?php echo $v['title'];?></option>
+                <?php endforeach;?>
+            </select>
+
+            <a class="button noClear margRight margBottom" href="javascript:void(0);" onclick="var form=document.forms.limitform; form.elements['FF'].value = document.getElementById('search_text').value; form.submit(); return false;">Искать</a>
+            <?php if($this->FF):?>
+                <a class="button noClear margBottom" href="javascript:void(0);" onclick="window.location='?page=<?php echo $this->name;?>&do=<?php echo $this->select;?>&sort=<?php echo $this->sort;?>&limit=<?php echo $this->limit;?>&dir=<?php echo $this->dir;?>&image=<?php echo $this->image;?>&aimage=<?php echo $this->aimage;?>'; return false;">Сброс</a>
+            <?php endif;?>
+        </div>
+
+        <table class='list' cellspacing='1' style='margin-bottom:5px;'>
+        <tr>
+            <th class='del'>x</th>
+            <?php foreach ($this->header_titles AS $k=>$v):?>
+            <th class='<?php echo $v['class'];?>'><a href='<?php echo $v['href'];?>' title='<?php echo $v['str_sort_this'];?>'><?php echo $v['value'];?></a></th>
+            <?php endforeach;?>
+        </tr>
+        <form method="post" name="delform" id="delform" action="">
+            <?php if ($this->dir_link):?>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td colspan="<?php echo $this->dir_link['sizeof_fields'];?>"><a href='<?php echo $this->dir_link['href'];?>'><b>..</b></a></td>
+                </tr>
+            <?php endif;?>
+
+            <?php if($this->counter):?>
+                <?php foreach ($this->files_arr AS $v):?>
+                <tr>
+                    <td class="del"><input type="checkbox" name="files[]" value='<?php echo $v['name'];?>'></td>
+                    <td nowrap="nowrap"><a href='<?php echo $v['href'];?>'><?php echo $v['name'];?></a></td>
+
+                    <?php if ($v['select'] == 'selectthumb' && $v['type'] == 'dir'):?>
+                    <td></td>
+                    <?php elseif($v['select'] == 'selectthumb' && $v['type'] != 'dir'):?>
+                    <td><a href='javascript:BigPic("<?php echo $this->dir.$v['name'];?>")' title='<?php echo $this->str_set_big;?>'><img src='images/icons/big.gif' width=16 height=16 border=0></a></td>
+                    <?php endif;?>
+
+                    <td nowrap><?php echo $v['date'];?></td>
+                    <td align=right><?php echo $v['type_file'];?></td>
+
+                    <?php if ($v['select'] && $v['type'] == 'dir'):?>
+                    <td>&nbsp;</td>
+                    <?php elseif($v['select'] && $v['type'] != 'dir'):?>
+                    <td><a href='javascript:void(0);' onclick='SelectPic("<?php echo $this->dir.'/'.$v['name'];?>", "<?php echo $v['img'];?>"); SetPic(); return false;'>Выбрать</a></td>
+                    <?php endif;?>
+                </tr>
+                <?php endforeach;?>
+
+            <?php else:?>
+                <tr><td>&nbsp;</td><td colspan="<?php echo $this->dir_link['sizeof_fields'];?>"><?php echo $this->str_empty;?></td></tr>
+            <?php endif;?>
+
+            <input type=hidden name="do" value="delete">
+            <input type=hidden name="page" value="<?php echo $this->name;?>">
+            <input type=hidden name="dir" value="<?php echo $this->dir;?>">
+        </form>
+        </table>
+
+        <!-- table footer -->
+        <form method="get" name="limitform" action="">
+            <input type='hidden' name='page'      value='<?php echo $this->name;?>' />
+            <input type='hidden' name='dir'       value='<?php echo $this->dir;?>' />
+            <input type='hidden' name='do'        value='<?php echo $this->select;?>' />
+            <input type='hidden' name='image'     value='<?php echo $this->image;?>' />
+            <input type='hidden' name='aimage'    value='<?php echo $this->aimage;?>' />
+            <input type='hidden' name='cur_image' value='<?php echo $this->cur_image;?>' />
+            <input type='hidden' name='FF'        value='<?php echo $this->FF;?>' />
+            <input type='hidden' name='file_sort' value='<?php echo $this->file_sort;?>' />
+            <input type='hidden' name='sort'      value='<?php echo $this->sort;?>' />
+            <input type='hidden' name='field'     value='<?php echo $this->field;?>' />
+
+            <a class='del' style='margin-bottom:5px; clear:left;' href='#' onclick='javascript:if (confirm("<?php echo $this->str_del;?>")) {document.forms.delform.submit();} return false;'>Удалить выделенные</a>
+            <div class='clear'></div>
+
+            <div class='showPo'>
+                <label><?php echo $this->str_display;?>:</label>
+                <select name='limit' onchange='document.forms.limitform.submit()'><?php echo $this->limit_arr;?></select>
+            </div>
+
+            <?php echo $this->navig; ?>
+        </form>
+
+        <!-- Блок вставки файла -->
+        <fieldset>
+            <legend>Вставка файла</legend>
+            <form name='pasteform'>
+                <input class='text' style='float:left;' name='pic' type='text' readonly='readonly'>
+                <a class='button noClear' href='#' onclick='SetPic(); return false;'><span><?php echo $this->str_paste;?></span></a>
+            </form>
+        </fieldset>
+
+        <!-- Блок закачки -->
+        <form id='addFile' method='post' name='edit' onsubmit='return startProc(this)' enctype='multipart/form-data'>
+            <fieldset>
+                <legend><?php echo $this->str_upload;?></legend>
+                <!-- файловый инпут -->
+                <div class="elemBox file">
+                    <a class="fileButton" title="выберите файл"><input type="file" name="file" onchange='document.getElementById("input_file_name").value=this.value'>Обзор...</a>
+                    <div class="inputBox">
+                        <input id="input_file_name" class="text" type="text" value="" name="" readonly="readonly">
+                    </div>
+                </div>
+
+                <label><?php echo $this->str_resample;?></label>
+                <?php if($this->resamle_options): ?>
+                    <select class="resize" name="resample"><?php echo $this->resamle_options; ?></select>
+                    <span class='formDesc'><?php echo $this->str_note_resample;?></span>
+                <?php endif;?>
+                <?php if(isset($this->watermark_cfg)) {echo "<input type=checkbox name=watermark>".$this->str_watermark;} ?>
+                <a class="button margBottom" href="javascript:document.getElementById('addFile').submit();">Закачать</a>
+            </fieldset>
+
+            <input type='hidden' name='page'      value='<?php echo $this->name;?>' />
+            <input type='hidden' name='dir'       value='<?php echo $this->dir;?>' />
+            <input type='hidden' name='do'        value='edit' />
+            <input type='hidden' name='image'     value='<?php echo $this->image;?>' />
+            <input type='hidden' name='aimage'    value='<?php echo $this->aimage;?>' />
+            <input type='hidden' name='cur_image' value='<?php echo $this->cur_image;?>' />
+            <input type='hidden' name='FF'        value='<?php echo $this->FF;?>' />
+            <input type='hidden' name='file_sort' value='<?php echo $this->file_sort;?>' />
+            <input type='hidden' name='sort'      value='<?php echo $this->sort;?>' />
+            <input type='hidden' name='whatdo'    value='<?php echo $this->whatdo;?>' />
+            <input type='hidden' name='field'     value='<?php echo $this->field;?>' />
+        </form>
+
+        <form id="newFolder" method="post" name="edit" action="">
+            <fieldset class="fileFieldsetBox hidden">
+                <legend onclick="toggleFieldsetBox(this);" title="создать новую папку">Новая папка</legend>
+                <div id="createFolder_block" class="hiddenContent">
+                    <label>Название папки (латинскими буквами)</label>
+                    <input id="createfolder" class="text" name="createfolder" type="text">
+                    <a class="button noClear" href="javascript:document.getElementById('newFolder').submit();">Создать</a>
+                </div>
+            </fieldset>
+
+            <input type=hidden name=select value=select>
+            <input type='hidden' name='page'      value='<?php echo $this->name;?>' />
+            <input type='hidden' name='dir'       value='<?php echo $this->dir;?>' />
+            <input type='hidden' name='do'        value='makedir' />
+            <input type='hidden' name='image'     value='<?php echo $this->image;?>' />
+            <input type='hidden' name='aimage'    value='<?php echo $this->aimage;?>' />
+            <input type='hidden' name='cur_image' value='<?php echo $this->cur_image;?>' />
+            <input type='hidden' name='FF'        value='<?php echo $this->FF;?>' />
+            <input type='hidden' name='file_sort' value='<?php echo $this->file_sort;?>' />
+            <input type='hidden' name='sort'      value='<?php echo $this->sort;?>' />
+            <input type='hidden' name='whatdo'    value='<?php echo $this->whatdo;?>' />
+            <input type='hidden' name='field'     value='<?php echo $this->field;?>' />
+        </form>
+
+    </div>
+    <div class="fileRight">
+        <div class="picBox">
+            <img id="pic" src="/admin/images/empty.gif" alt="">
+        </div>
+    </div>
+</div>
+
+<?php if (!empty($this->cur_image)): ?>
+<!-- Делаем картинку если она есть -->
+<script defer>
+SelectPic("<?php echo $this->dir.$this->cur_image;?>" , 1);
+</script>
+<?php endif;?>

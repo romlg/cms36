@@ -1,0 +1,31 @@
+<hr color="gray" noshade="noshade" size="1" />
+<table align="center" width=80%>
+<?php foreach ($this->menu AS $grp): ?>
+    <tr><td height=10></td></tr>
+    <tr>
+        <!-- название селекторов -->
+        <td align=center><?php echo $this->str_none; ?></td>
+        <td align=center><?php echo $this->str_read; ?></td>
+        <td align=center><?php echo $this->str_edit; ?></td>
+        <td align=center><?php echo $this->str_delete; ?></td>
+        <!-- пишем название раздела -->
+    	<td><b><?php echo $grp['title']; ?></b></td>
+    </tr>
+
+    <?php foreach ($grp['rows'] AS $row): ?>
+    <tr>
+        <?php foreach ($this->radios AS $radios_key => $radios_val): ?>
+        <td align=center>
+        <!-- рисуем селекторы для модуля -->
+            <input type="radio" id="<?php echo $row['name']?>" value="<?php echo $radios_key; ?>" name="<?php echo $row['name']?>" <?php if($radios_key==$row['selected']) echo " checked='checked'"; ?>>
+        <!-- пишем название модуля -->
+        </td>
+        <?php endforeach; ?>
+        <td><?php echo $row['title']; ?></td>
+    </tr>
+    <?php endforeach; ?>
+
+<?php endforeach; ?>
+<tr><td height=10></td></tr>
+</table>
+<hr color="gray" noshade="noshade" size="1" />

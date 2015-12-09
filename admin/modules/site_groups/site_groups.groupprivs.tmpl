@@ -1,0 +1,33 @@
+<script for="editform" event="onkeydown">
+	if (event.keyCode==27) window.close();
+</script>
+
+<script language="javascript">
+{literal}
+	window.onload = function() {
+		var dH = document.forms['editform'].offsetHeight;
+		var dW = document.forms['editform'].offsetWidth;
+		window.dialogWidth = (dW - 0 + 50) + 'px';
+		window.dialogHeight = (dH  - 0 + 50) + 'px';
+	}
+{/literal}
+</script>
+
+<form method="post" target="tmp{$thisname}" name="editform" onsubmit="window.close()" action="page.php">
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="saveprivs" />
+<input type="hidden" name="id" value="{$id}" />
+<fieldset>
+{foreach from=$modules item=module}
+<div><b>{$module.module_title}</b></div>
+	{foreach from=$module.privs item=priv}
+	<div><input id="priv_{$priv.priv_code}" type="checkbox" name="privs[{$priv.priv_code}]" value="1"{if $priv.checked} checked="checked"{/if} />&nbsp;<label for="priv_{$priv.priv_code}">{$priv.priv_title} ({$priv.priv_code})</label></div>
+	{/foreach}
+{/foreach}
+</fieldset>
+<br />
+<div style="text-align:center;">
+	<input type="submit" value="{$STR_SAVE}" />
+	<input type="button" value="{$STR_CANCEL}" onClick="window.close()" />
+</div>
+</form>

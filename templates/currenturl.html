@@ -1,0 +1,11 @@
+<div class="way">
+	<?php foreach ($this->pids as $k=>$item): ?>
+		<?php if ($item['type'] == 'home' && count($this->pids) == 1) continue; ?>
+        <?php if ($k==count($this->pids)-1): ?>
+            <span><?=$item['name'];?></span>
+        <?php else: ?>
+            <a href="/<?=$this->dirs_lang;?><?=$item['href'];?>"><?=$item['name'];?></a>&nbsp;/&nbsp;
+        <?php endif; ?>
+	<?php endforeach; ?>
+</div>
+

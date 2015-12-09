@@ -1,0 +1,328 @@
+
+<script type="text/javascript">
+<!--
+var thisname = '{$thisname}';
+var id = '{$id}';
+{literal}
+function AddSubmit() {
+	window.showModalDialog("dialog.php?page="+thisname+"&do=editparam&id="+id, "EditParam", "dialogWidth: 400px; dialogHeight: 120px;status: no;");
+}
+function ApplySubmit() {
+	document.forms.editform.elements.apply.value = 1;
+	document.forms.editform.submit();
+}
+function PrintSubmit() {
+	window.open("page.php?page=" + thisname + "&do=showprintform&id="+id, "printbillform", "width=600, height=600, resizable=1").focus(); ;
+}
+-->
+</script>
+<style>
+table.maintable{
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	background-color: #D2D2D2;
+}
+table.maintable th{
+	font-size: 11px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+	background-image: url(/images/forborder5.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+	border-bottom: 3px solid #6E6E6E;
+	padding: 0px;
+	height: 18px;
+}
+table.maintable td{
+	font-size: 70%;
+	font-weight: normal;
+	border-left: 1px solid #9C9C9C;
+	border-top: 1px solid #9C9C9C;
+	text-align: left;
+	padding: 1px 3px 1px 3px;
+}
+table.maintable td.lastcolumn{
+	border-right: 1px solid #9C9C9C;
+}
+table.maintable td.lastrow{
+	border-bottom: 1px solid #9C9C9C;
+}
+table.maintable td.lastrowcolumn{
+	border-bottom: 1px solid #9C9C9C;
+	border-right: 1px solid #9C9C9C;
+}
+h2 {
+	font-size: 110%;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 0px;
+}
+.no_list_hover {
+	background-color: #FFFFFF;
+}
+.block4{
+	color: #FFFFFF;
+	font-weight: bold;
+	background-color: #BCBCBC;
+	padding: 4px 5px 4px 5px;
+	white-space: nowrap;
+	text-align: center;
+}
+div.tableheader{
+	background-image: url(/images/forborder4.gif);
+	background-repeat: no-repeat;
+	background-position: left;
+	padding: 0px 5px 0px 5px;
+}
+</style>
+{/literal}
+
+<form target="tmp{$thisname}{$id}" action="page.php" method="post" name="editform" id="editform">
+<input type="hidden" name="apply" value="0" />
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+<input type="hidden" name="fld[id]" value="{$id}" />
+
+{config_load file="ru.conf"}
+<h2>Информация о счете № {$bill.id}:</h2><br>
+<table class="maintable" cellspacing="0" cellpadding="0" width="536">
+	<tr class="no_list_hover"><td width="50%">Дата выставления</th><td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.date_issue|default:"&nbsp;"}</td></tr>
+	<tr class="no_list_hover"><td width="50%">Дата последнего поступления</th><td width="50%" class="lastcolumn" style="color:#527A95;">{if $bill.date_pay ne '00.00.0000 00:00:00'}{$bill.date_pay}{else}не оплачен{/if}</td></tr>
+	<tr class="no_list_hover"><td width="50%">Тип</th><td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.type_ru}</td></tr>
+	<tr class="no_list_hover"><td width="50%">Статус</th><td width="50%" class="lastcolumn" style="color:#527A95;">{if $bill.status!="paid" || $root}<select name="fld[status]">{html_options options=$status selected=$bill.status}</select>{else}{$status[$bill.status]}{/if}</td></tr>
+	<tr class="no_list_hover"><td width="50%">Поступило</th><td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.received}<INPUT TYPE="HIDDEN"  name="fld[received]" value="{$bill.received}"></td></tr>
+	{if $bill.type == 'bonus'}
+	<tr class="no_list_hover"><td width="50%" class="lastrow">Сумма бонуса:</th><td width="50%" class="lastrowcolumn" style="color:#527A95;">{$bill.total}</td></tr>
+	{else}
+	<tr class="no_list_hover"><td width="50%" class="lastrow">Заказ</th><td width="50%" class="lastrowcolumn" style="color:#527A95;">{if $bill.order_id} № {$bill.order_id|default:"&nbsp;"}{else}<font style="color:red;font: bold;">удален</font>{/if}</td></tr>
+	{/if}
+</table><br>
+{if $product_list}
+<h2>Информация о заказе:</h2><br>
+<table class="maintable" cellspacing="0" cellpadding="0" width="536">
+<tr class="no_list_hover">
+	<th class="block4" style="background-image: none; border: 0px;" colspan="2" width="70">Арт. сайта</th>
+	<th style="background-image: none; width: 2px; border: 0px;"></th>
+	<th>&nbsp;Арт. произв.&nbsp;</th>
+	<th><div class="tableheader">Наименование</div></th>
+	<th><div class="tableheader">цена</div></th>
+	<th><div class="tableheader">Ваша цена</div></th>
+	<th><div class="tableheader">кол.</div></th>
+	<th style="background-image: none;"><div class="tableheader">Сумма, руб</div></th>
+	<th style="padding: 0px; width: 5px; background-image: none;"><img src="../images/space.gif" width="5"></th>
+</tr>
+<tr><td colspan="10" height="1" style="padding: 0px; border: 0px;"><img src="../images/white_space.gif" height="1" width="100%"></td></tr>
+<tr><td colspan="10" height="4"></td></tr>
+{foreach from=$product_list item=item key=key}
+	<tr class="no_list_hover">
+	{if $key eq count($product_list)-1 }
+		{assign var="class1" value=" class=\"lastrow\""}
+		{assign var="class2" value=" class=\"lastrowcolumn\""}
+	{else}
+		{assign var="class3" value=" class=\"lastcolumn\""}
+	{/if}
+		<td style="padding: 0px; background-color: #D2D2D2;"></td>
+		<td{$class1}>{$item.art|default:"&nbsp;"}</td>
+		<td{$class1} colspan="2">{$item.art2|default:"&nbsp;"}</td>
+		<td{$class1}>{$item.name}</td>
+		<td{$class1}>{$item.price*$currency.value|string_format:"%.2f"}</td>
+		<td{$class1}>{if $bill.type eq 'discount'}{$item.customer_price*$currency.value|string_format:"%.2f"}{else}{$item.price*$currency.value|string_format:"%.2f"}{/if}</td>
+		<td{$class1} style="text-align: center;">{$item.quantity}</td>
+		<td{$class2}{$class3} style="text-align: right;">
+			{if $bill.type eq 'discount'}{$item.customer_price*$item.quantity*$currency.value|string_format:"%.2f"}
+			{else}{$item.price*$item.quantity*$currency.value|string_format:"%.2f"}{/if}
+		</td>
+		<td style="padding: 0px; background-color: #D2D2D2;"></td>
+	</tr>
+{/foreach}
+<tr><td colspan="10" height="1"></td></tr>
+<tr class="no_list_hover">
+	<td style="padding: 0px; background-color: #D2D2D2;" rowspan={if $bill.shipping_type eq 'in_order'}"6"{else}"5"{/if}></td>
+	<td class="lastrow" colspan="5" bgcolor="#E7E3E4" width="367" rowspan={if $bill.shipping_type eq 'in_order'}"6"{else}"5"{/if}>&nbsp;</td>
+	<td><b>Итого:</b></td>
+	<td style="text-align: center;"><b>{$count}</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$bill.sum*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+{config_load file="ru.conf" section="cart"}
+{assign var="nds" value=#cart_nds#}
+<tr class="no_list_hover">
+	<td colspan="2"><b>НДС {$nds*100}%:</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$bill.tax*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+{if $bill.shipping_type eq 'in_order'}
+<tr class="no_list_hover">
+	<td colspan="2"><b>Доставка:</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$bill.shipping*$currency.value|string_format:"%.2f"}</b></td>
+</tr>{/if}
+<tr class="no_list_hover">
+	<td colspan="2"><b>К оплате:</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$bill.total*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+<tr class="no_list_hover">
+	<td colspan="2"><b>бонусов:</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$bill.bonus}</b></td>
+</tr>
+<tr class="no_list_hover">
+	<td class="lastrow" colspan="2"><b>бонусная стоимость:</b></td>{assign var="bonus_price" value = $bill.total-$bill.bonus}
+	<td style="text-align: right;" class="lastrowcolumn"><b>{$bonus_price*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+<tr><td colspan="9" height="5"></td></tr>
+</table>
+{/if}
+<br>
+{if !empty($history)}
+<h2>История счета и заказа:</h2><br>
+	<table class="maintable" cellspacing="0" cellpadding="0" width="536px">
+		<tr>
+			<td>
+			<fieldset>
+			<div style="height:80px;overflow-y: scroll;">
+			{foreach from=$history key=key item=item}
+				<b>{$item.date}</b>
+				{$item.text}<br>
+			{/foreach}
+			</div>
+			</fieldset>
+			</td>
+		</tr>
+	</table>
+<br>
+{/if}
+<h2>Информация о клиенте:</h2><br>
+<table class="maintable" cellspacing="0" cellpadding="0" width="536">
+{if $bill.comp_name}
+		<tr class="no_list_hover">
+		<td width="50%">Имя компании плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_name|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">ИНН плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_inn|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">КПП плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_kpp|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">Почтовый индекс плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_zip|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">юридический дрес плательщика :</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_addr|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">почтовый адрес плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_paddr|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">телефон плательщика :</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_phone|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">факс плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_fax|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">email плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_email|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">банк плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_bank|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">БИК банка плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_bik|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">корр. счет банка плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.comp_ks|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%" class="lastrow">рассчетный счет плательщика:</td>
+		<td width="50%" class="lastrowcolumn" style="color:#527A95;">{$bill.comp_rs|default:"&nbsp;"}</td>
+		</tr>
+{else}
+		<tr class="no_list_hover">
+		<td width="50%">ФИО плательщика:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.fiz_lname}&nbsp;{$bill.fiz_name}&nbsp;{$bill.fiz_tname}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">телефон(ы) плательщика физ. лица:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.fiz_phone|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">факс плательщика физ. лица:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.fiz_fax|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%" class="lastrow">email плательщика физ. лица:</td>
+		<td width="50%" class="lastrowcolumn" style="color:#527A95;">{$bill.fiz_email|default:"&nbsp;"}</td>
+		</tr>
+{/if}
+ </table><br>
+<h2>Информация о получателе:</h2><br>
+<table class="maintable" cellspacing="0" cellpadding="0" width="536">
+		<tr class="no_list_hover">
+		<td width="50%">имя компании получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_name|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">официальное имя получателя :</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_fname|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">ИНН получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_inn|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">КПП получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_kpp|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">Почтовый индекс получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_zip|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">Юр. адрес получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_addr|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">Почтовый адрес получателя :</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_paddr|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">телефон получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_phone|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">факс получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_fax|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">email получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_email|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">банк получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_bank|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%">БИК банка получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_bik|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%"> корр. счет банка получателя:</td>
+		<td width="50%" class="lastcolumn" style="color:#527A95;">{$bill.r_comp_ks|default:"&nbsp;"}</td>
+		</tr>
+		<tr class="no_list_hover">
+		<td width="50%" class="lastrow">рассчетный счет получателя:</td>
+		<td width="50%" class="lastrowcolumn" style="color:#527A95;">{$bill.r_comp_rs|default:"&nbsp;"}</td>
+		</tr>
+</table><br>
+<br>
+<iframe id="tmp{$thisname}{$id}" name="tmp{$thisname}{$id}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>
+</form>

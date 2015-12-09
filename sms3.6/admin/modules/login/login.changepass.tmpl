@@ -1,0 +1,18 @@
+<?php if ($this->error) echo '<p class="error">'.$this->error.'</p>'; ?>
+<form id="loginForm" method="post">
+
+    <div class="elemBox">
+        <label id="login"><?=$this->STR_NEW_PWD ?>:</label>
+        <input class="text" type="password" name="fld[new_pwd]" size="16" maxlength="32" value="<?=$this->login ?>">
+    </div>
+
+    <div class="elemBox">
+        <label id="pwd"><?=$this->STR_NEW_PWD_REPEAT ?>:</label>
+        <input class="text" type="password" name="fld[new_pwd_repeat]" size="16" maxlength="32" value="<?=$this->pwd ?>">
+    </div>
+
+    <a class="button noClear" href="javascript:void(0);" onclick="document.getElementById('loginForm').submit(); return false;"><?=$this->STR_SAVE ?></a>
+    <input type="hidden" name="page" value="login">
+    <input type="hidden" name="do" value="changepass">
+    <input type=image value='' style='width: 0; height: 0'>
+</form>

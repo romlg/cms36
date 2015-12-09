@@ -1,0 +1,20 @@
+<?php if(isset($this->slider)): ?>
+<!-- slider -->
+<div class="slider">
+    <div class="sliderContent">
+        <?php foreach ($this->slider as $key=>$value):?>
+        <div class="item">
+            <img src="<?=$value['image'];?>" alt="<?=$value['alt'];?>">
+            <div class="desc">
+                <?=$value['description'];?>
+
+                <?php if(!empty($value['link']) && !empty($value['link_url'])): ?>
+                <a href="<?=$value['link_url'];?>" class="button"><span class="bgL"><span class="bgR"><span class="ar"><?=$value['link'];?></span></span></span></a>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<!-- /slider -->
+<?php endif; ?>

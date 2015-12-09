@@ -1,0 +1,24 @@
+DirectoryIndex index.php
+
+RewriteEngine On
+
+# Statics rules
+RewriteRule \.(css|js|jpg|png|gif|ico|htc|xml|swf|jpe|jpeg|htm|html|3ds)$ - [NC,L]
+RewriteRule ^files\/.*\.php$ index.php [NC,L]
+RewriteRule ^files\/.*$ - [NC,L]
+RewriteRule ^robots.txt.*$ - [NC,L]
+
+# Utilities
+RewriteRule ^gz\.php scripts/gz.php [NC,L]
+RewriteRule ^popup\.php scripts/popup.php [NC,L]
+RewriteRule ^info\.php scripts/info.php [NC,L]
+RewriteRule ^scripts\/gz\.php - [NC,L]
+RewriteRule ^scripts\/popup\.php - [NC,L]
+RewriteRule ^scripts\/info\.php - [NC,L]
+RewriteRule ^index\.php - [NC,L]
+RewriteRule ^admin\/index\.php - [NC,L]
+RewriteRule ^admin\/download\.php - [NC,L]
+
+# main rules
+RewriteRule ^admin\/(.*)$ admin/index.php/$1 [NC,L]
+RewriteRule ^(.*)$ index.php/$1 [NC]

@@ -1,0 +1,20 @@
+{$script}
+
+<script>
+var thisname = '{$thisname}'; // Со слешами
+var thisname2 = '{$thisname2}'; // Без
+var ID = 0;
+
+function editItem(id) {ldelim}
+	if (id == null) id = ID;
+	window.open("ed.php?page=" + thisname + "&frame=single&id=" + id, "edit" + thisname2, "width=650, height=450, resizable=1").focus();
+{rdelim}
+
+var A{$thisname2}0 = new Array(1,0,0);
+var A{$thisname2}1 = new Array(1,1,1);
+var A{$thisname2}2 = new Array(1,0,1);
+window.parent.elemActions(thisname2, 0);
+
+</script>
+{$params}
+<IFRAME id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

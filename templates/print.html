@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <?=$this->meta;?>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <!--[if lte IE 6]><link href="/css/style_ie.css" rel="stylesheet" type="text/css" /><![endif]-->
+    <script language="JavaScript" type="text/javascript" src="/javascripts/main.js"></script>
+    <style type="text/css" media="print">
+    .no_print{display: none}
+    </style>
+</head>
+
+<body class="print"> 
+
+    <a class="button right noClear no_print" style="margin-right:20px; margin-top:10px;" href="#" onClick="window.print(); return false;">Распечатать</a>
+
+    <div style="width:210mm;padding:20px">
+
+        <div style="width:300px; float:right; height:46px; padding-top:5px;">
+            <?=$this->messages['print_address'];?><br>
+            Телефон: <?=$this->messages['print_phone'];?><br>
+            <?=str_replace('http://', '', $this->messages['print_site']);?><br>
+        </div>
+        <img src="/images/logo_orange.png" />
+        <br /><br />
+
+        <h1><?=$this->title['title']; ?></h1>
+
+        <?=$this->content['elem_text']['text']; ?>
+        <?=$this->publications; ?>
+        <?=$this->gallery; ?>
+        <?=$this->other; ?>
+        <?=$this->gen_form; ?>
+        <?=$this->files; ?>
+
+        <div class="clear"></div>
+    </div>
+
+    <a class="button right noClear no_print" style="margin-right:20px; margin-top:10px;" href="#" onClick="window.print(); return false;">Распечатать</a>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<script type="text/javascript" for="editform" event="onkeydown">
+	if (event.keyCode == 27) window.close();
+</script>
+
+<!-- recycle -->
+<div style="height:290px; overflow-y:auto">
+{$table}
+</div>
+<br />
+<div align="center">
+<input class="btn" type="button" value="{$STR_RESTORE}" onclick="document.forms[formname].submit();window.close()" />
+<input class="btn" type="button" value="{$STR_DELETE}" onclick="deleteItems('{$thisname}')" />
+<input class="btn" type="button" value="{$STR_CLOSE}" onclick="window.close()" />
+</div>
+
+<script type="text/javascript">
+{literal}
+function mySubmit() {
+	document.forms[formname].elements['do'].value = 'edit';
+	return true;
+}
+{/literal}
+
+document.forms[formname].target = 'tmp{$thisname}';
+document.forms[formname].action = 'page.php';
+document.forms[formname].actions.value = 'EditVisible1';
+
+{literal}
+function deleteItems(thisname, formname, hide) {
+	if (this.ajax_formname != undefined){
+		formname = this.ajax_formname;
+	} else {
+		formname = formname || 'editform';
+	}
+	hide = hide != null ? hide : 1;
+	if (hide < 1) method = hide < 0 ? 'EditVisible_1' : 'EditVisible0';
+	else method = 'DeleteItems';
+	if (window.showModalDialog("dialog.php?page="+thisname+"&do=showconfirm", "", "dialogWidth:320px; dialogHeight:180px;")) {
+		document.forms[formname].actions.value = method;
+		document.forms[formname].submit();
+		window.close();
+	}
+}
+{/literal}
+</script>

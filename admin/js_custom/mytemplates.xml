@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+<Templates imagesBasePath="/images/templates/">
+  <Template title="Изображение слева" image="template1.gif">
+    <Description>Изображение слева</Description>
+    <Html>
+      <![CDATA[
+        <table class="StyledTable floatLeft" width="200">
+        <tbody>
+        <tr>
+            <td><img class="" alt="" src="/images/pic_ban_tab.jpg" /></td>
+        </tr>
+        <tr>
+        <td>
+            <div align="center">Надпись под изображением</div>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+      ]]>
+    </Html>
+  </Template>
+  <Template title="Изображение справа" image="template2.gif">
+    <Description>Изображение справа</Description>
+    <Html>
+      <![CDATA[
+        <table class="StyledTable floatRight" width="200">
+        <tbody>
+        <tr>
+            <td><img class="" alt="" src="/images/pic_ban_tab.jpg" /></td>
+        </tr>
+        <tr>
+        <td>
+            <div align="center">Надпись под изображением</div>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+      ]]>
+    </Html>
+  </Template>
+</Templates>

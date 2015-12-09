@@ -1,0 +1,66 @@
+<?php
+
+timer_start('init');
+
+// Подключение дополнительных папок с шаблонами (если заданы в настройках сайта)
+$tpl = & Registry::get('TRusoft_View');
+if (!empty($site_domains[$domain]['templates'])) {
+    $tpl->addScriptPath($site_domains[$domain]['templates']);
+}
+
+require (core('core.lib'));
+
+// подключаем TConfigUtils
+require (common_class('config'));
+$config_obj = & Registry::get('TConfig');
+$config_obj->populateTypes();
+$config_obj->populateFunctionModules();
+
+// подключаем TModuleLoader
+require (common_class('module_loader'));
+//$module_loader = & Registry::get('TModuleLoader');
+//$module_loader->autoFindModules();
+//$module_loader->populateEnabledModules($GLOBALS['modules']);
+
+
+/*подключаем TMain*/
+require_once(ENGINE_VERSION.'/site/modules/main/main.class.php');
+/*подключаем TMenu*/
+require_once(ENGINE_VERSION.'/site/modules/menu/menu.class.php');
+//& Registry::get('TMain');
+/* подключается статистика */
+require (core('stat.lib'));
+
+//стартуем буферизацию вывода
+$page_cache = & Registry::get('TPageCache');
+if (!$page_cache->cache()){
+
+	require (core('lang.class'));
+	$lang_obj = & Registry::get('TLang');
+
+	// Если у текущего домена определен список языков, берем его. Иначе - из общего списка
+	if (isset($site_domains[$domain]['langs'])) {
+        $site_languages = $site_domains[$domain]['langs'];
+	}
+    $lang_obj->populateLanguages($site_languages);
+
+	// подключаем TDirectoryUtils
+	log_info("временно отключен класс TDirectoryUtils");
+	/*
+	require (core('directory.class'));
+	$dir_utils = & Registry::get('TDirectoryUtils');
+	$dir_utils->populateDirectories($directories);
+	*/
+
+	// подключается класс движка
+	require (core('engine.class'));
+	timer_end('init');
+	timer_start('Engine');
+	$engine = new TEngine();
+	// запуск движка
+	$engine->run();
+	timer_end('Engine');
+}
+
+stat_log();
+?>

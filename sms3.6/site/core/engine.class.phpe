@@ -1,0 +1,245 @@
+<?php
+
+/**
+ * $Id: engine.class.php,v 1.1 2009-02-18 12:19:06 konovalova Exp $
+ */
+
+class TEngine {
+
+	var $dirs;
+
+	function TEngine() {
+	}
+
+	function run(){
+		$this->engine();
+		headers();
+	}
+
+	// Основная обработка движка
+	function engine() {
+
+		$lang_obj = & Registry::get('TLang');
+		$page_obj = & Registry::get('TPage');
+		$tree_obj = & Registry::get('TTreeUtils');
+
+		$this->root_path = $this->root_path();
+
+		// dirs
+		$dirs = $this->get_dirs();
+		if ($dirs == '404') {
+			return;
+		}
+
+		// vars
+		$this->module = isset($_REQUEST['module']) ? $_REQUEST['module'] : false;
+		$this->method = isset($_REQUEST['method']) ? $_REQUEST['method'] : false;
+
+		$dirs = $this->get_relative_dirs($dirs);
+		$dirs = $this->get_dirs_parts($dirs);
+		$dirs = $lang_obj->setupLanguage($dirs);
+
+		$this->dirs = $dirs;
+
+		// setup from lang
+		$tree_obj->setRootId($lang_obj->getLangRootId());
+		$node_id = empty($this->dirs) ? $lang_obj->getLangRootId() : $this->dirs;
+
+		// execute
+		if ($this->module) {
+			$page_obj->execModuleMethod($this->module, $this->method, $this->dirs);
+		}
+
+		// Если нужно чтобы объект вызывался всегда, когда начало URL совпадает с заданным, в site.cfg
+		// определяется массив $object_urls и сопоставить в них url объекту
+
+		if (isset($GLOBALS['object_urls'])){
+			foreach ($GLOBALS['object_urls'] as $url=>$obj){
+				if((strpos(implode('/',$this->dirs), $url)===0 && (!isset($obj['global']) || !$obj['global'])) || (array_search($url, $this->dirs)!==false && isset($obj['global']) && $obj['global'])){
+					if(isset($obj['virtual']) && $obj['virtual']){
+						//pr("execModuleMethod(".$obj['module'].", ".$obj['method'].", ".explode('/',$url).");");
+						$page_obj->execModuleMethod($obj['module'], $obj['method'], explode('/',$url));
+						if (isset($obj['complete']) && $obj['complete']) return;
+
+						array_shift($this->dirs);
+						array_shift($node_id);
+						$GLOBALS['virtual_urls'][] = $url;
+					}
+					elseif ($tree_obj->nodeExists(explode('/',$url))) {
+						$this->dirs = explode('/',$url);
+						$page_obj->initPage(explode('/',$url));
+						return;
+					}
+				}
+			}
+		}
+
+		if ($tree_obj->nodeExists($node_id)) {
+			$page_obj->initPage($this->dirs);
+			return;
+		}
+
+		// error 404
+		//$this->error_404('can\'t find path "'.implode('/', $this->dirs).'"');
+		$this->dirs = array('404');
+		$page_obj->initPage($this->dirs);
+
+	}
+
+	function error_404($err) {
+		$GLOBALS['document_status'] = 404;
+		log_error('404 error: "'.$err.'"');
+	}
+
+	function get_dirs() {
+//pr($_SERVER);
+
+		$uri = $_SERVER['REQUEST_URI'];
+		//если мы в корне
+		if ($_SERVER['REQUEST_URI'] == '/' || $_SERVER['REQUEST_URI'] == '/index.php') return $this->root_path;
+
+        if (strpos($uri, '?') !== false) {
+            $uri = substr($uri, 0, strpos($uri, '?'));
+        }
+
+		$purl = parse_url($uri);
+
+		$url = urldecode($purl['path']);
+		if (!$this->checkDirExists($url)) {
+		    $url = iconv('windows-1251', 'utf-8', urldecode($purl['path']));
+		    if (!$this->checkDirExists($url)) {
+		        $url = iconv('utf-8', 'windows-1251', urldecode($purl['path']));
+		        if ($url == '/') {
+        			$GLOBALS['document_status'] = 404;
+        			return '/404/';
+		        }
+		    }
+		}
+		$url = str_replace("/", "***", $url);
+		$url = rawurlencode($url);
+		$url = str_replace("%2A%2A%2A", "/", $url);
+		$purl['path'] = $url;
+
+/*		// установка GET и REQUEST для 404 статуса
+		if (!empty($purl['query'])) {
+			parse_str($purl['query'], $_GET);
+			parse_str($purl['query'], $_REQUEST);
+		}
+*/
+		if (empty($purl['path'])) {
+			return '';
+		}
+
+		$file_parts = pathinfo($purl['path']);
+		$imgs = array('jpg', 'png', 'jpeg', 'gif');
+		if (!empty($file_parts['extension']) && in_array($file_parts['extension'], $imgs)) {
+			$GLOBALS['document_status'] = 404;
+			return '404';
+		}
+
+		return $purl['path'];
+	}
+
+	/**
+	 * Определение существования урла
+	 *
+	 * @param string $dirs
+	 * @return bool
+	 */
+	function checkDirExists($dirs) {
+		$lang_obj = & Registry::get('TLang');
+		$page_obj = & Registry::get('TPage');
+		$tree_obj = & Registry::get('TTreeUtils');
+
+		$dirs = $this->get_relative_dirs($dirs);
+	    $dirs = $this->get_dirs_parts($dirs);
+	    $dirs = $lang_obj->setupLanguage($dirs);
+
+	    $this->dirs = $dirs;
+
+	    // setup from lang
+	    $tree_obj->setRootId($lang_obj->getLangRootId());
+	    $node_id = empty($this->dirs) ? $lang_obj->getLangRootId() : $this->dirs;
+
+	    if (isset($GLOBALS['object_urls'])){
+	        foreach ($GLOBALS['object_urls'] as $url=>$obj){
+	            if((strpos(implode('/',$this->dirs), $url)===0 && (!isset($obj['global']) || !$obj['global'])) || (array_search($url, $this->dirs)!==false && isset($obj['global']) && $obj['global'])){
+	                if(isset($obj['virtual']) && $obj['virtual']){
+	                    array_shift($this->dirs);
+	                    array_shift($node_id);
+	                }
+	            }
+	        }
+	    }
+
+	    return $tree_obj->nodeExists($node_id);
+	}
+
+	function get_dirs_old() {
+
+		if (!(isset($_SERVER['REDIRECT_STATUS']) && $_SERVER['REDIRECT_STATUS'] == 404) && !isset($_POST['dirs'])) {
+			return $this->root_path;
+		}
+
+		$uri = $_SERVER['REQUEST_URI'];
+		if (isset($_POST['dirs'])) {
+			$uri = $_POST['dirs'];
+		}
+		$purl = parse_url($uri);
+
+		// установка GET и REQUEST для 404 статуса
+		if (!empty($purl['query'])) {
+			parse_str($purl['query'], $_GET);
+			parse_str($purl['query'], $_REQUEST);
+		}
+
+		if (empty($purl['path'])) {
+			return '';
+		}
+
+		$file_parts = pathinfo($purl['path']);
+		$imgs = array('jpg', 'png', 'jpeg', 'gif');
+		if (!empty($file_parts['extension']) && in_array($file_parts['extension'], $imgs) && $_SERVER['REDIRECT_STATUS'] == 404) {
+			$GLOBALS['document_status'] = 404;
+			return '404';
+		}
+
+		return $purl['path'];
+	}
+
+	function get_relative_dirs($dirs) {
+		if (substr($dirs, 0, strlen($this->root_path)) == $this->root_path) {
+			$dirs = substr($dirs, strlen($this->root_path));
+		}
+		return $dirs;
+	}
+
+	function get_dirs_parts($dirs) {
+		$dirs_parts = array();
+		$dirs = explode('/', $dirs);
+		foreach($dirs as $dir) {
+			if (empty($dir)) {
+				continue;
+			}
+			$dirs_parts[] = $dir;
+		}
+
+		return $dirs_parts;
+	}
+
+	// Подготавливает переменную root_path
+	function root_path() {
+		$path = dirname($_SERVER['SCRIPT_NAME']);
+		if (substr($path, -1, 1) == '\\') {
+			$path = substr($path, 0, -1);
+		}
+		if (substr($path, -1, 1) != '/') {
+			$path .= '/';
+		}
+		return $path;
+	}
+
+}
+// end of class TEngine
+
+?>

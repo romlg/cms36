@@ -1,0 +1,36 @@
+<?php if ($this->view == 'cnt'): ?>
+<a class="button" href="?page=<?=$this->module_name?>&do=showmoreresults&id=<?=$this->survey['id']?>&qid=<?=$this->qid?>&view=percnt"><?=$this->STR_RESULT_PERCNT?></a>
+<?php else: ?>
+<a class="button" href="?page=<?=$this->module_name?>&do=showmoreresults&id=<?=$this->survey['id']?>&qid=<?=$this->qid?>&view=cnt"><?=$this->STR_RESULT_CNT?></a>
+<?php endif; ?>
+<div class="clear"></div>
+
+<h2><?=$this->STR_R_ON_QUEST?> "<?=$this->question['text']?>"</h2>
+
+<table border="0" width="80%">
+    <?php foreach ($this->rows as $row): ?>
+        <tr>
+            <td colspan="2" valign="bottom" style="font-weight: bold;"><?=$this->STR_R_ANSWERED?> "<?=$row['text']?>", <?=$this->STR_R_FROM?>:</td>
+        </tr>
+        <?php foreach ($row['questions'] as $quest_id => $quest): ?>
+            <tr>
+                <td colspan="2" style="font-style: italic;"><?=$quest['text']?></td>
+            </tr>
+            <?php foreach ($quest['vars'] as $variant): ?>
+                <tr>
+                    <td style="vertical-align: middle; padding-left: 20px;"><?=$variant['text']?></td>
+                    <td width="60%">
+                        <div style="background-color: #FF8C04; width: <?=$variant['percent']?>%; white-space: nowrap; font-weight: bold; padding: 2px;">
+                            <?php if ($this->view == 'percnt'): ?>
+                                <?=$variant['percent']?>%
+                            <?php else: ?>
+                                <?=$variant['cnt']?>
+                            <?php endif; ?>
+                        </div>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+</table>
+<a class="button" href="/admin/?page=<?=$this->module_name?>&do=showresults&id=<?=$this->survey['id']?>"><?=$this->STR_BACK?></a>

@@ -1,0 +1,34 @@
+{$script}
+<script for=product event=onkeydown>
+	if (event.keyCode==27) window.close();
+</script>
+
+<script>
+{literal}
+window.onload=function(){
+	document.body.style.backgroundColor="#BCBCBC";
+}
+
+{/literal}
+function Create(){ldelim}
+	window.open("ced.php?page=bills&do=editcreatebill2&id={$order_id}&payment_type={$type}&type="+document.getElementById('fld[type]').value, 'xa{$order_id}', "width=570, height=500, resizable=1, status=1").focus();
+{rdelim}
+
+</script>
+
+<form target="tmp{$thisname}{$id}" action="page.php" method="post" name="editform" id="editform">
+<input type="hidden" name="page" value='{$thisname}'>
+<input type="hidden" name="do" value='editcreatebill2'>
+<input type="hidden" name="id" id="id" value="{$order_id}" />
+<fieldset>
+<table width=100% border=0 align=center>
+	<tr><td>{$STR_TYPE}:</td><td><select id="fld[type]" name="fld[type]">{html_options options=$types}</select></td></tr>
+</table>
+</fieldset>
+
+<br>
+<div align="center">
+<input type="button" value='{$STR_SAVE}' onClick="Create();">
+<input type="button" value='{$STR_CANCEL}' onClick="window.close()">
+</div></form>
+

@@ -1,0 +1,17 @@
+.wrap {
+	height:100%;
+}
+
+.png {
+	position:relative;
+	zoom:1;
+	behavior:url(css/PIE.htc);
+	-pie-png-fix:true;
+}
+
+/* max-width and max-height */
+
+/*img {
+	width:expression(this.width > 138 ? 138: true);
+	height:expression(this.height > 114 ? 114: true);
+}*/

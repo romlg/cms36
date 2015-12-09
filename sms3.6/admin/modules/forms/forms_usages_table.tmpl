@@ -1,0 +1,33 @@
+<?php if(!empty($this->object["table_results"])): ?>
+    <?php foreach($this->object["table_results"] as $res): ?>
+        <?php if(!empty($res["items"])): ?>
+            <h2><?=$res['title']?></h2>
+            <table class="ajax_table_main" cellspacing="1" cellpadding="0" style="margin-bottom: 15px; width: 100%">
+            <tbody>
+                <tr>
+                    <th>Название</th>
+                    <?php if($res['has_admin_hrefs']): ?>
+                        <th>Расположение в админке</th>
+                    <?php endif; ?>
+                    <?php if($res['has_site_hrefs']): ?>
+                        <th>Расположение на сайте</th>
+                    <?php endif; ?>
+                </tr>
+                <?php foreach($res['items'] as $item): ?>
+                    <tr>
+                        <td><?=$item['name']?></td>
+                        <?php if($res['has_admin_hrefs']): ?>
+                            <td><?php if($item['admin_href']): ?><a href="<?=$item['admin_href']?>" target="_blank"><?=$item['admin_href']?></a><?php endif; ?></td>
+                        <?php endif; ?>
+                        <?php if($res['has_site_hrefs']): ?>
+                            <td><?php if($item['site_href']): ?><a href="<?=$item['site_href']?>" target="_blank"><?=$item['site_href']?></a><?php endif; ?></td>
+                        <?php endif; ?>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+            </table>
+        <?php endif; ?>
+    <?php endforeach; ?>
+<?php else: ?>
+    <h3>Форма нигде не используется!</h3>
+<?php endif; ?>

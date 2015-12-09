@@ -1,0 +1,10 @@
+CREATE TABLE `currencies` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `iso` smallint(5) unsigned NOT NULL default '0',
+  `name` varchar(5) NOT NULL default '',
+  `display` char(3) NOT NULL default '',
+  `value` double(3,2) NOT NULL default '1.00',
+  `description` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `display` (`display`,`value`)
+) TYPE=InnoDB;

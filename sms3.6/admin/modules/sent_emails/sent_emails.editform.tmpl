@@ -1,0 +1,42 @@
+<style>
+	.text_field{ldelim}
+		overflow-y: auto; 
+		height: 100%;
+		width: 100%;
+		border: 1px solid #000000; 
+		background-color: #FFFFFF; 
+		padding: 5px; 
+		white-space: {$pre};
+	{rdelim}
+	.to_field{ldelim}
+		overflow-y: auto; 
+		height: 30px;
+	{rdelim}
+</style>
+
+<table width=100% border=0 align=center height=100%>
+<tr>
+	<td width="20%" nowrap><b>{$STR_FROM}:</b></td>
+	<td width="80%">{$from}</td>
+</tr><tr>
+	<td valign="top"><b>{$STR_TO}:</b></td>
+	<td valign="top"><div class="to_field">{$to}</div></td>
+</tr><tr>
+	<td valign="top"><b>{$STR_SUBJECT}:</b></td>
+	<td>{$subject}</td>
+</tr><tr>
+	<td><b>{$STR_DATE}:</b></td>
+	<td>{$date}</td>
+</tr><tr>
+	<td colspan="2"><b>{$STR_TEXT}:</b></td>
+</tr>
+<tr>
+	<td height="100%" valign="top" colspan="2">
+		<{$text_tag} class="text_field">{$body}</{$text_tag}>
+	</td>
+</tr>
+<tr>
+	<td colspan=2 align="center"><br>
+		<button onClick="window.close();">{$STR_CLOSE}</button>
+	</td>
+</tr></table>

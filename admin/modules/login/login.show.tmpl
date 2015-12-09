@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title><?=$this->title?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<script src="js/md5.js" type="text/javascript"></script>
+<!--[if lte IE 6]>
+<link href="css/style_ie6.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+$(document).ready(function(){
+	$(window).load(function () {
+		minWidth();
+	});
+
+	$(window).resize(function () {
+		minWidth();
+	});
+});
+</script>
+<![endif]-->
+
+<script type="text/javascript">
+var win = '<?=$this->win?>';
+function onLoad() {
+	Form = document.forms[0];
+	if (Form.login.value == '') Form.login.focus();
+	else Form.pwd.focus();
+}
+function onSubmit(item) {
+	item.pwd.value = hex_md5(hex_md5(item.pwd.value) + item.token.value);
+	if (win != '') window.close();
+}
+</script>
+</head>
+
+<body onload="onLoad()">
+
+<div class="wrap">
+    <div class="outer">
+
+        <div class="head">
+            <a class="logo" href="<?=ADMIN_LOGO_LINK?>" target="_blank" title="<?=ADMIN_LOGO_ALT?>"><img src="<?=ADMIN_LOGO?>" alt="<?=ADMIN_LOGO_ALT?>"></a>
+            <div class="userPanel">
+            </div>
+        </div>
+
+        <div class="leftCol">
+            <dl class="sidebarMenu">
+				<dt>
+					<span class="png">Инфо</span>
+				</dt>
+				<dd style="display:block">
+					<p><strong>Сегодня:</strong></p>
+					<p><?php echo $this->today_date;?><br><?php echo $this->today_time;?></p>
+
+					<p><strong>Временная зона:</strong></p>
+					<p><?php echo $this->time_zone;?><br><?php echo $this->season_name;?></p>
+				</dd>
+			</dl>
+		</div>
+
+        <div class="rightCol">
+            <div class="block">
+				<h1>Администраторы <span class="small">(Авторизация)</span></h1>
+				<div class="mainContent">
+
+					<form class="loginForm" id="loginForm" method="post" action="page.php" <? if (!empty($this->win)) echo 'target="'.$this->win.'"'; ?>onsubmit="onSubmit(this)">
+
+                        <div class="elemBox">
+                            <label id="login"><?=$this->STR_LOGIN ?>:</label>
+                            <input class="text" type="text" name="login" size="16" maxlength="32" value="<?=$this->login ?>">
+                        </div>
+
+                        <div class="elemBox">
+                            <label id="pwd"><?=$this->STR_PWD ?>:</label>
+                            <input class="text" type="password" name="pwd" size="16" maxlength="32" value="<?=$this->pwd ?>">
+                        </div>
+
+                        <?if($this->options) {echo "<label>".$this->STR_INTLANG."</label>";} ?>
+                        <? if($this->options): ?>
+                        <select name="intlang">
+                            <?
+                            foreach ($this->options AS $key=>$val) {
+                            echo "<option value='".$key."' ".($key==$this->default_language?'selected':'').">".$val."</option>";
+                            }
+                            ?>
+                        </select>
+                        <? endif ?>
+
+                        <a class="button noClear" href="javascript:void(0);" onclick="onSubmit(document.getElementById('loginForm')); document.getElementById('loginForm').submit(); return false;">Вход</a>
+                        <input type="hidden" name="page" value="login">
+                        <input type="hidden" name="do" value="login">
+                        <input type="hidden" name="uri" value="<?=$this->uri?>">
+                        <input type="hidden" name="win" value="<?=$this->win?>">
+
+						<input type="hidden" name="token" value="<?=$this->token?>">
+						<input type=image value='' style='width: 0; height: 0'>
+					</form>
+
+					<? if(!empty($this->error)) {echo "<p class='error'>".$this->error."</p>";}?>
+
+					<p>По вопросам работы системы администрирования обращайтесь в компанию <strong>Ru</strong>Soft: <a href="http://help.rusoft.ru">help.rusoft.ru</a>, <a href="http://www.rusoft.ru/">www.rusoft.ru</a>.</p>
+
+                    <script type="text/javascript">
+                        agent = navigator.userAgent;
+                        m = agent.match(/MSIE ([\d\.]+)/);
+                        m2 = agent.match(/Firefox\/([\d\.]+)/);
+                        if (agent.indexOf('Opera') >= 0 || (m!=null && m[1] < '5.5') || ((m2!=null && m2[1] < '3'))) document.write('
+                        <?if ($this->int_lang == "ru"):?>
+                            <p><strong>Внимание!</strong> Система администрирования корректно работает в браузерах: Internet Explorer с 6 версии, FireFox c 3.5 версии, советуем воспользоваться одним из этих браузеров.</p>
+                        <?else:?>
+                            <p><strong>Warning!</strong> Administration system works correctly in browsers: Internet Explorer version 6 or newer, FireFox version 3.5 or newer. We recommend you use one of these browsers.</p>
+                        <?endif?>
+                        ');
+                        if (!navigator.cookieEnabled) document.write('
+                        <?if ($this->int_lang == "ru"):?>
+                            <p><strong>Внимание!</strong> должна быть включена поддержка cookies!</p>
+                        <?else:?>
+                            <p><strong>Warning!</strong> cookie must be enabled!</p>
+                        <?endif?>');
+                    </script>
+                    <noscript>
+                        <?if ($this->int_lang == "ru"):?>
+                            <p><strong>Внимание!</strong> должна быть включена поддержка javascript!</p>
+                        <?else:?>
+                            <p><strong>Warning!</strong> javascript must be enabled!</p>
+                        <?endif?>
+                    </noscript>
+
+                    <p>Login protected by dynamically hashing algorithm (using the <a href='http://www.faqs.org/rfcs/rfc1321'>RSA Data Security, Inc. MD5 Message-Digest Algorithm</a>)</p>
+
+				</div>
+			</div>
+        </div>
+    </div>
+
+    <div class="clearFooter"></div>
+</div>
+<div class="footer">
+    <p class="copy">Powered by ContentEngine/3.6 &copy; <a target="_blank" href="http://www.rusoft.ru"><strong>Ru</strong>Soft</a></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+Action gz /gz.php
+
+<FilesMatch "\.css$">
+        ForceType gz
+</FilesMatch>
+
+<FilesMatch "\.js$">
+        ForceType gz
+</FilesMatch>
+
+<FilesMatch "\.jpg$">
+        ForceType gz
+</FilesMatch>
+
+<FilesMatch "gz.php">
+ 	ForceType application/x-httpd-php
+</FilesMatch>
+
+<FilesMatch "process.php">
+ 	ForceType application/x-httpd-php
+</FilesMatch>
+
+<FilesMatch "wget.php">
+ 	ForceType application/x-httpd-php
+</FilesMatch>
+
+<FilesMatch "zip.php">
+ 	ForceType application/x-httpd-php
+</FilesMatch>
+
+<FilesMatch "unlink.php">
+ 	ForceType application/x-httpd-php
+</FilesMatch>
+
+<FilesMatch "kill.php">
+ 	ForceType application/x-httpd-php
+</FilesMatch>

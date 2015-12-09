@@ -1,0 +1,26 @@
+<script>
+var ID = 0;
+var thisname = '{$thisname}';
+{literal}
+function editItem(id) {
+	if (id == null) id = ID;
+	window.showModalDialog("dialog.php?page=" + thisname + "&do=editform&id="+id, "", "dialogWidth: 500px; dialogHeight: 150px; status: no; help: no;");
+}
+function editGroupUsers(id) {
+	if (id == null) id = ID;
+	if (id == 0) return;
+	window.showModalDialog("dialog.php?page=" + thisname + "&ifr=1&do=editgroupusers&id="+id, "", "dialogWidth: 500px; dialogHeight: 430px; status: no; help: no;");
+}
+function editGroupPrivs(id) {
+	if (id == null) id = ID;
+	if (id == 0) return;
+	window.showModalDialog("dialog.php?page=" + thisname + "&do=editgroupprivs&id="+id, "", "dialogWidth: 500px; dialogHeight: 500px; status: no; help: no;");
+}
+{/literal}
+var A{$thisname}0 = new Array(0,1,0,0,0,0,0);
+var A{$thisname}1 = new Array(1,1,1,1,1,1,1);
+var A{$thisname}2 = new Array(0,1,1,1,1,0,0);
+window.parent.elemActions(thisname, 0);
+</script>
+{$table}
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

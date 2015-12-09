@@ -1,0 +1,22 @@
+{$script}
+<script for=product event=onkeydown>
+	if (event.keyCode==27) window.close();
+</script>
+
+<form target="tmp{$thisname}{$id}" action="page.php" method="post" name="editform" id="editform" onsubmit='window.close();'>
+<input type="hidden" name="page" value='{$thisname}'>
+<input type="hidden" name="do" value='editp'>
+<input type="hidden" name="id" value="{$id}" />
+<fieldset>
+<legend>{$STR_TITLE_ONE}</legend>
+<table width=100% border=0 align=center>
+<tr><td>{$STR_ADDING}:</td><td><input type="text" size=30 name="fld[received]" value="0.00"></td></tr>
+
+</table>
+</fieldset>
+
+<br>
+<div align="center">
+<input type="submit" value='{$STR_SAVE}'>
+<input type="button" value='{$STR_CANCEL}' onClick="window.close()">
+</div></form>

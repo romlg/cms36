@@ -1,0 +1,27 @@
+<?php if ($this->menu): ?>
+<ul class="sedebarMenu">
+	<?php foreach ($this->menu as $key=>$row): ?>
+		<?php if ($this->current['id'] == $row['id']): ?>
+			<li class="active"><span><?=$row['name'];?></span>
+		<?php elseif ($row['id'] == $this->pids[2]['id']): ?>
+			<li class="active<?php if ($row['menu']) echo ' drop_li'; ?>"><a href="/<?=$row['href'];?>"><?=$row['name'];?></a>
+		<?php else: ?>
+			<li><a href="/<?=$row['href'];?>"><?=$row['name'];?></a>
+		<?php endif; ?>
+		<?php if ($row['menu']): ?>
+        <ul>
+			<?php foreach ($row['menu'] as $subkey=>$subrow): ?>
+                <?php if ($this->current['id'] == $subrow['id']): ?>
+          			<li class="active"><span><?=$subrow['name'];?></span>
+          		<?php elseif ($subrow['id'] == $this->pids[3]['id']): ?>
+          			<li class="active<?php if ($subrow['menu']) echo ' drop_li'; ?>"><a href="/<?=$subrow['href'];?>"><?=$subrow['name'];?></a>
+          		<?php else: ?>
+          			<li><a href="/<?=$subrow['href'];?>"><?=$subrow['name'];?></a>
+          		<?php endif; ?>
+			<?php endforeach; ?>
+        </ul>
+		<?php endif; ?>
+		</li>
+	<?php endforeach; ?>
+</ul>
+<?php endif; ?>

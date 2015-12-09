@@ -1,0 +1,38 @@
+<script src="third/tooltip/tooltip.js" type="text/javascript"></script>
+<script src="js/tree.js" type="text/javascript"></script>
+<script type="text/javascript">
+var selected = {$sid};
+{literal}
+function selectID(id){
+	//document.forms.node_id.id.value=id;
+	//document.forms.node_id.submit();
+	window.returnValue = selected;
+	window.close();
+}
+function doSelect(id){
+	selected = id;
+}
+{/literal}
+</script>
+<script for="document" event="onkeydown" type="text/javascript">
+	if (event.keyCode == 27) window.close();
+</script>
+<script for="document" event="onclick" type="text/javascript">
+	itemsDeact();
+</script>
+
+<iframe id="tree_toc" name="tree_toc" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>
+
+<table align="center" width="100%">
+<tr>
+	<td><div class="mbox" style="border: 1px solid gray; height: 300px; width: 100%; overflow-y: auto; background-color: white">
+		{$tree}
+	</div></td>
+</tr>
+</table>
+<br />
+<div align="center">
+	<input type="button" class="btn" onClick="if (!selected) {literal}{{/literal}alert('{$STR_NOT_SELECTED}'); return false;{literal}}{/literal} selectID(selected);" value="{$STR_SUBMIT}" />
+	<input type="button" onClick="window.close()" value="{$STR_CANCEL}" />
+</div>
+

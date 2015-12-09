@@ -1,0 +1,177 @@
+CREATE TABLE IF NOT EXISTS `surveys` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `root_id` int(10) unsigned default NULL,
+  `author` varchar(255) NOT NULL,
+  `name` varchar(512) NOT NULL,
+  `description` text NOT NULL,
+  `comments` text NOT NULL,
+  `date_from` date NOT NULL default '0000-00-00',
+  `date_till` date NOT NULL default '0000-00-00',
+  `show_results` varchar(20) NOT NULL,
+  `show_comments` tinyint(1) unsigned NOT NULL default '0',
+  `realtime_results` tinyint(1) unsigned NOT NULL default '0',
+  `closed` tinyint(1) unsigned NOT NULL default '0',
+  `show_popup` tinyint(1) unsigned NOT NULL default '0',
+  `answ_cnt` int(10) unsigned NOT NULL default '10',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 COMMENT='Опросы' AUTO_INCREMENT=29 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `surveys_free_answ`
+--
+
+CREATE TABLE IF NOT EXISTS `surveys_free_answ` (
+  `id_variant` int(10) unsigned NOT NULL default '0',
+  `id_user` int(10) unsigned NOT NULL default '0',
+  `text` text NOT NULL,
+  PRIMARY KEY  (`id_variant`,`id_user`),
+  KEY `id_variant` (`id_variant`),
+  KEY `id_user` (`id_user`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Ответы в свободной форме';
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `surveys_log`
+--
+
+CREATE TABLE IF NOT EXISTS `surveys_log` (
+  `id_survey` int(10) unsigned NOT NULL default '0',
+  `id_quest` int(10) unsigned NOT NULL default '0',
+  `id_variant` int(10) unsigned default NULL,
+  `id_user` int(10) unsigned NOT NULL default '0',
+  `text` text NOT NULL,
+  KEY `id_survey` (`id_survey`),
+  KEY `id_quest` (`id_quest`),
+  KEY `id_variant` (`id_variant`),
+  KEY `id_user` (`id_user`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `surveys_quests`
+--
+
+CREATE TABLE IF NOT EXISTS `surveys_quests` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `id_survey` int(10) unsigned default NULL COMMENT 'surveys.id',
+  `text` mediumtext NOT NULL,
+  `type` enum('multi','single','text','textarea') NOT NULL default 'multi',
+  `priority` int(10) unsigned NOT NULL default '0',
+  `req` int(1) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`id`),
+  KEY `id_survey` (`id_survey`)
+) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 COMMENT='Вопросы опроса' AUTO_INCREMENT=173 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `surveys_quest_variants`
+--
+
+CREATE TABLE IF NOT EXISTS `surveys_quest_variants` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `id_survey` int(10) unsigned NOT NULL default '0',
+  `id_quest` int(10) unsigned NOT NULL default '0',
+  `text` varchar(255) NOT NULL default '',
+  `free_form` tinyint(4) NOT NULL default '0',
+  `priority` tinyint(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `id_survey` (`id_survey`,`id_quest`),
+  KEY `id_quest` (`id_quest`)
+) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 COMMENT='Варианты ответов' AUTO_INCREMENT=625 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `surveys_users`
+--
+
+CREATE TABLE IF NOT EXISTS `surveys_users` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `id_survey` int(10) unsigned NOT NULL default '0',
+  `ip` varchar(255) NOT NULL default '',
+  `city` varchar(255) NOT NULL default '',
+  `region` varchar(255) NOT NULL default '',
+  `district` varchar(255) NOT NULL default '',
+  `country` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `id_survey` (`id_survey`)
+) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=3239 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `surveys_variants`
+--
+
+CREATE TABLE IF NOT EXISTS `surveys_variants` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `id_group` int(10) unsigned NOT NULL default '0',
+  `text` varchar(255) NOT NULL default '',
+  `free_form` tinyint(4) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `id_group` (`id_group`)
+) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 COMMENT='??? ???????? ???????' AUTO_INCREMENT=23 ;
+
+--
+-- Ограничения внешнего ключа сохраненных таблиц
+--
+
+--
+-- Ограничения внешнего ключа таблицы `surveys_free_answ`
+--
+ALTER TABLE `surveys_free_answ`
+  ADD CONSTRAINT `surveys_free_answ_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `surveys_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `surveys_free_answ_ibfk_1` FOREIGN KEY (`id_variant`) REFERENCES `surveys_quest_variants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `surveys_log`
+--
+ALTER TABLE `surveys_log`
+  ADD CONSTRAINT `surveys_log_ibfk_4` FOREIGN KEY (`id_user`) REFERENCES `surveys_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `surveys_log_ibfk_1` FOREIGN KEY (`id_survey`) REFERENCES `surveys` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `surveys_log_ibfk_2` FOREIGN KEY (`id_quest`) REFERENCES `surveys_quests` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `surveys_log_ibfk_3` FOREIGN KEY (`id_variant`) REFERENCES `surveys_quest_variants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `surveys_quests`
+--
+ALTER TABLE `surveys_quests`
+  ADD CONSTRAINT `surveys_quests_ibfk_1` FOREIGN KEY (`id_survey`) REFERENCES `surveys` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `surveys_quest_variants`
+--
+ALTER TABLE `surveys_quest_variants`
+  ADD CONSTRAINT `surveys_quest_variants_ibfk_1` FOREIGN KEY (`id_survey`) REFERENCES `surveys` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `surveys_quest_variants_ibfk_2` FOREIGN KEY (`id_quest`) REFERENCES `surveys_quests` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `surveys_users`
+--
+ALTER TABLE `surveys_users`
+  ADD CONSTRAINT `surveys_users_ibfk_1` FOREIGN KEY (`id_survey`) REFERENCES `surveys` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+INSERT INTO `strings` (`id`, `name`, `lang`, `value`, `def`, `updated`, `created`, `module`, `root_id`, `description`) VALUES
+(NULL, 'accepted', 'ru', 'Ваш голос принят. Спасибо за участие.', 'Ваш голос принят. Спасибо за участие.', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'answer', 'ru', 'Ответить', 'Ответить', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'arch', 'ru', 'Архив опросов', 'Архив опросов', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'back', 'ru', '&laquo;&laquo; Назад к опросам', '&laquo;&laquo; Назад к опросам', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'closed', 'ru', 'опрос закрыт', 'опрос закрыт', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'list', 'ru', 'Еще опросы', 'Еще опросы', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'popup_bottom_text', 'ru', '<H2>Спасибо за участие!</H2>', '<H2>Спасибо за участие!</H2>', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'open', 'ru', 'дата начала', 'дата начала', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'popup_title', 'ru', 'Официальное голосование', 'Официальное голосование', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'totalvote', 'ru', 'Всего проголосовало', 'Всего проголосовало', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'start', 'ru', 'начат', 'начат', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'finish', 'ru', 'закончен', 'закончен', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'msg_not_all_answers', 'ru', 'Необходимо выбрать ответы на все вопросы', 'Необходимо выбрать ответы на все вопросы', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'msg_alredy_answered', 'ru', 'Вы уже проголосовали ранее.', 'Вы уже проголосовали ранее.', '2012-08-22 16:48:47', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'r_answered', 'ru', 'ответили', 'answered', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'r_on_quest', 'ru', 'На вопрос', 'On question', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, ''),
+(NULL, 'r_from', 'ru', 'из них', 'from them', '2007-01-25 16:24:23', '0000-00-00 00:00:00', 'survey', 100, '');

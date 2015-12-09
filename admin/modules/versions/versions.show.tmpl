@@ -1,0 +1,48 @@
+{literal}<style>
+body {background-color: #E5E5E5}
+tr.over {background-color: #D1FFD1; cursor: hand}
+tr.out {background-color: white; cursor: hand}
+</style>
+
+<script>
+function onOver(Row) {
+	Row.className = 'over';
+}
+function onOut(Row) {
+	Row.className = 'out';
+}
+function onClick(Row) {
+	document.forms.editform.uptime.value = Row.getAttribute('uptime');
+	document.forms.editform.hash.value = Row.getAttribute('hash');
+	document.forms.editform.submit();
+	//window.close();
+}
+</script>{/literal}
+
+<form method="post" name="editform" action="page.php" target="toc">
+<div style="height: 200px; overflow-y: auto">
+<table cellpadding="2" cellspacing="2" bgcolor="white" width="100%">
+<tr><td bgcolor="#0F89DA" style="border: 1px solid #1C5180; color: white" colspan="3"><b>{$str_title}</b></td></tr>
+<tr>
+<td bgcolor="#E5E5E5" style="border: 1px solid #C7C7C7" class="mbox"><b>{$str_uptime}</b></td>
+<td bgcolor="#E5E5E5" style="border: 1px solid #C7C7C7" class="mbox" align="center"><b>{$str_lang}</b></td>
+<td bgcolor="#E5E5E5" style="border: 1px solid #C7C7C7" class="mbox" align="right"><b>{$str_datasize}</b></td></td>
+</tr>
+{foreach from=$rows item=row}
+<tr class="out" onmouseover="onOver(this)" onmouseout="onOut(this)" onclick="onClick(this)" uptime="{$row.uptime}" hash="{$row.hash}" pid="{$row.pid}"><td>{$row._uptime}</td><td align="center">{$row.lang}</td></tr>
+{/foreach}
+<tr><td colspan="3" style="padding: 5px">{$empty}</td></tr>
+</table>
+</div>
+<input type=hidden name='page' value='versions'>
+<input type=hidden name='do' value='gettext'>
+<input type=hidden name='uptime' value='{$uptime}'>
+<input type=hidden name='hash' value=''>
+<input type=hidden name='pid' value='{$pid}'>
+<input type=hidden name='ptable' value='{$ptable}'>
+<input type=hidden name='instance' value='{$instance}'>
+<input type=hidden name='pfields' value='{$pfields}'>
+<br>
+<div align=right style='margin-right: 1em'><input type=button value='{$close}' onclick='window.close()'></div>
+</form>
+<iframe id="toc" name="toc" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

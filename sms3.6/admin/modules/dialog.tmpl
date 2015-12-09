@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title><?php echo $this->title;?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/ajax_table.css">
+	<!--[if lte IE 6]>
+    <link href="css/style_ie6.css" rel="stylesheet" type="text/css">
+    <![endif]-->
+	<script type="text/javascript" src="js/jquery-1.5.2.min.js"></script>
+	<script language="javascript">
+		function resizeDialog() {
+			var w, h, dW, dH;
+			w = document.body.offsetWidth;
+			h = document.body.offsetHeight;
+			window.dialogWidth = (w - 0 + 35) + 'px';
+			window.dialogHeight = (h - 0 + 85) + 'px';
+		}
+	</script>
+</head>
+<body class="dialog" onload="resizeDialog()">
+	<div class="wrap">
+		<?php echo $this->content;?>
+    </div>
+</body>
+</html>

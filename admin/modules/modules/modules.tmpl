@@ -1,0 +1,28 @@
+{$script}
+<script>
+{literal}
+function mySubmit(item) {
+	item.subm.disabled = true;
+	return true;
+}
+
+var ID = 0;
+
+function editItem(id) {
+	if (id == null) id = ID;
+	window.showModalDialog("dialog.php?page={/literal}{$thisname}{literal}&do=editform&id="+id, "", "dialogWidth:450px; dialogHeight:390px; status:no; help:no;")
+}
+
+function makeConf() {
+	document.forms[formname].actions.value="EditConf";
+	document.forms[formname].submit();
+}
+{/literal}
+
+var A{$thisname}0 = new Array(0,1,0,1);
+var A{$thisname}1 = new Array(1,1,1,1);
+var A{$thisname}2 = new Array(0,1,1,1);
+window.parent.elemActions('{$thisname}', 0);
+</script>
+{$table}
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

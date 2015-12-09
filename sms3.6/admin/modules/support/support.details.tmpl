@@ -1,0 +1,36 @@
+<script>
+var ID = 0;
+function editItem(id) {ldelim}
+	if (id == null) id = ID;
+	window.showModalDialog("dialog.php?page={$thisname}&do=editdetailform&support_id={$id}&id="+id, "", "dialogWidth: 800px; dialogHeight: 600px");
+{rdelim}
+function showReport() {ldelim}
+	window.showModalDialog("dialog.php?page={$thisname}&do=showreportconfirm&id={$id}", "", "dialogWidth: 400px; dialogHeight: 200px");
+{rdelim}
+function editSummary() {ldelim}
+	window.showModalDialog("dialog.php?page={$thisname}&do=editform&id={$id}&target={$thisname}details", "", "dialogWidth: 500px; dialogHeight: 500px");
+{rdelim}
+function Progress() {ldelim}
+	window.frames['tmp{$thisname}details'].location = 'page.php?page={$thisname}&do=editstatus&id={$id}&to=progress';
+{rdelim}
+function Closed() {ldelim}
+	window.frames['tmp{$thisname}details'].location = 'page.php?page={$thisname}&do=editstatus&id={$id}&to=closed';
+{rdelim}
+var A{$thisname}0 = new Array(1,0,0,{$need_report},{$progress},{$closed});
+var A{$thisname}1 = new Array(1,1,1,{$need_report},{$progress},{$closed});
+var A{$thisname}2 = new Array(1,0,1,{$need_report},{$progress},{$closed});
+window.parent.elemActions('{$thisname}', 0);
+
+function deleteDetails(thisname, formname) {ldelim}
+	formname = formname || 'editform';
+	if (window.showModalDialog("dialog.php?page="+thisname+"&do=showconfirm", "", "dialogWidth:320px; dialogHeight:180px;")) {ldelim}
+		document.forms[formname].actions.value = 'deletedetails';
+		document.forms[formname].submit();
+	{rdelim}
+{rdelim}
+</script>
+
+<h4>{$summary}</h4>
+
+{$table}
+<IFRAME id=tmp{$thisname}details name=tmp{$thisname}details src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

@@ -1,0 +1,26 @@
+<script>
+	var ajax_id = '<?php echo $this->ajax_id;?>';
+	var ajax_id_md5 = '<?php echo $this->ajax_id_md5;?>';
+	var formname = 'ajax_form_<?php echo $this->ajax_id_md5;?>';
+	var request = '<?php echo $this->request;?>';
+	var ed_id = '<?php echo $this->id;?>';
+
+
+</script>
+<link rel=stylesheet href="css/ajax_table.css">
+<script src="js/prototype.js" type="text/javascript" ></script>
+<script src="js/ajax_table.js" type="text/javascript" ></script>
+
+<div id="ajax_table_group_<?php echo $this->ajax_id_md5;?>"></div>
+
+<form id="ajax_form_<?php echo $this->ajax_id_md5;?>" class="ajax_form" name="ajax_form_<?php echo $this->ajax_id_md5;?>" method="post" target="" action="">
+	<div id="ajax_table_<?php echo $this->ajax_id_md5;?>">
+
+	</div>
+
+<input type="hidden" name="actions" value="" />
+</form>
+
+<script>
+showTable();
+</script>

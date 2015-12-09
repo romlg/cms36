@@ -1,0 +1,18 @@
+<script>
+var ID = 0;
+function editItem(id) {ldelim}
+	if (id == null) id = ID;
+	window.showModalDialog("dialog.php?page={$thisname}&do=editform&id="+id+"&client_id={$client_id}", "", "dialogWidth: 370px; dialogHeight: 270px");
+{rdelim}
+function showDetails(id) {ldelim}
+	if (id == null) id = ID;
+	window.open("ced.php?page={$thisname}&do=showdetails&id="+id, "details{$thisname}", "width=800, height=600, resizable=1, status=1").focus();
+{rdelim}
+
+var A{$thisname}0 = new Array(0,0,1,0);
+var A{$thisname}1 = new Array(1,1,1,1);
+var A{$thisname}2 = new Array(0,0,1,1);
+window.parent.elemActions('{$thisname}', 0);
+</script>
+{$table}
+<IFRAME id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

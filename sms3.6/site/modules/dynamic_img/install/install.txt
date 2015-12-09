@@ -1,0 +1,56 @@
+Модуль смены изображений
+взят из проекта Rusnano http://rmi.rusoft.ru/
+
+-- Подключение в common.cfg.php --
+'blocks' => array(
+    'slider' => array(
+        'class' => 'TDynamic_img',
+        'method' => 'dynamic_img',
+        'tmpls' => array('dynamic_img'),
+    ),
+    ...
+)
+
+-- Подключение в admin.cfg.php --
+'modules' => array(
+	'dynamic_img' => array('Смена изображений', 'Dynamic image'),
+	...
+)
+
+-- Подключение jquery плагина в шаблоне --
+<link href="/css/jquery.mobilyslider.css" rel="stylesheet" type="text/css">
+<script language="JavaScript" type="text/javascript" src="/javascripts/jquery.mobilyslider.js"></script>
+<script type="text/javascript">
+	$(function () {
+		$('.slider').mobilyslider({
+				content: '.sliderContent',
+				children: 'div',
+				transition: 'fade',
+				animationSpeed: 500,
+				pauseOnHover: true,
+				autoplay: true,
+				bullets: true,
+				arrows: false
+			});
+	});
+</script>
+
+-- вывод блока в шаблоне --
+<?=$this->slider; ?>
+
+--
+-- Структура таблицы `dynamic_img`
+--
+CREATE TABLE IF NOT EXISTS `dynamic_img` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL,
+  `priority` tinyint(4) NOT NULL,
+  `image` varchar(255) NOT NULL,
+  `alt` varchar(255) NOT NULL,
+  `link` varchar(255) NOT NULL,
+  `link_url` varchar(255) NOT NULL,
+  `visible` int(1) unsigned NOT NULL,
+  `description` text NOT NULL,
+  `root_ids` varchar(255) NOT NULL COMMENT 'На каких сайтах показывать изображение',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 COMMENT='Сменяющиеся картинки в шапке';

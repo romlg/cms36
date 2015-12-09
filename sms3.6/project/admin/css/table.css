@@ -1,0 +1,35 @@
+/* TTable.Show() */
+table.framed {
+	background-color: buttonface;
+	border-top: 1px solid buttonhighlight;
+	border-left: 1px solid buttonhighlight;
+	border-bottom: 1px solid buttonshadow;
+	border-right: 1px solid buttonshadow;
+	color: windowtext;
+}
+tr.thead {font-weight: bold; font-size: 87.5%}
+td.thead {border-bottom: 1px solid buttonshadow; background-color: #F89000; color: white}
+.twhite {background-color: window; color: windowtext; font-size: 70%}
+.black {color: windowtext; font-weight: normal}
+.todd {background-color: infobackground; color: windowtext; font-size: 70%}
+td.tfoot {border-top: 1px solid buttonhighlight; background-color: #FF9E17; color: windowtext; font: messagebox}
+td.main {padding: 0px 8px 8px 8px; background-color: #edefe1}
+
+a.tctrlhead:link, a.tctrlhead:visited, a.tctrlhead:active {text-decoration: underline; color: windowtext}
+a.tctrlhead:hover {text-decoration: underline; color: windowtext}
+a.thead:link, a.thead:visited, a.thead:active {text-decoration: none; color: white}
+a.thead:hover {text-decoration: underline; color: white}
+a.tcontrol:link, a.tcontrol:visited, a.tcontrol:active {text-decoration: underline; color: windowtext}
+a.tcontrol:hover {text-decoration: underline; color: windowtext}
+a.tedit:link, a.tedit:visited, a.tedit:active {text-decoration: underline; color: windowtext}
+a.tedit:hover {text-decoration: underline; color: windowtext}
+a.t:link, a.t:visited, a.t:active {text-decoration: underline; color: windowtext}
+a.t:hover {text-decoration: underline; color: windowtext}
+
+select {font-size: 100%}
+fieldset {padding: 4px}
+.note {color: buttonshadow}
+
+tr.selected {background-color: #ffcf9c; cursor: default}
+tr.over {background-color: #D1FFD1; cursor: default}
+tr.out {background-color: white; cursor: default}

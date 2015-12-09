@@ -1,0 +1,17 @@
+<script for=editform event=onkeydown>
+	if (event.keyCode==27) window.close();
+</script>
+<form target=tmp{$thisname} name=editform action='page.php' onsubmit='window.close()'>
+<input type=hidden name='page' value='{$thisname}'>
+<input type=hidden name='do' value='showreport'>
+<input type=hidden name='id' value='{$id}'>
+
+<br>
+<div align=center>
+{$STR_C_REPORT}
+<br>
+<br>
+<input type=submit class=btn value='   {$STR_YES}   '>
+<input type=button value='   {$STR_NO}   ' onclick='window.close()'>
+</div>
+</form>

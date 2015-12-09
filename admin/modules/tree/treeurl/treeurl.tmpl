@@ -1,0 +1,44 @@
+<script type="text/javascript">
+function select(id, name, dir) {
+	if (opener) {
+		opener.document.getElementById('<?php echo $this->fld_target_id;?>').value = id;
+		opener.document.getElementById('<?php echo $this->fld_target_name;?>').value = name;
+		self.close();
+	} else alert('No opener window!');
+}
+
+function selecturl(id, name, dir) {
+    $('#<?php echo $this->fld;?>', window.parent.document).val(dir);
+    window.parent.$.fancybox.close();
+}
+
+function SelectFCKED(id, name, dir) {
+	dir = '<?php echo $this->lang;?>'+dir;
+	if (opener) {
+		opener.document.forms.linkForm.elements['textURL'].value = dir;
+		self.close();
+	} else alert('No opener window!');
+}
+
+function SelectNewFCKED(id, name, dir) {
+    dir = '<?php echo $this->lang;?>'+dir;
+    if (opener) {
+        opener.document.getElementById('txtUrl').value = dir;
+        self.close();
+    } else alert('No opener window!');
+}
+
+// FCK: Dialog - link.html
+// выбор страницы текущего сайта
+function SelectLocation(id, name, dir) {
+    dir = '<?php echo $this->lang;?>'+dir;
+    if (opener) {
+        opener.document.getElementById('txtUrl').value = dir;
+        opener.document.getElementById('cmbLinkProtocol').value = '';
+        self.close();
+    } else alert('No opener window!');
+}
+</script>
+
+<h3>–азделы сайта</h3>
+<?php echo $this->treeurl;?>

@@ -1,0 +1,91 @@
+/* 123 */
+.basicItem {
+	font-weight: bold;
+	text-decoration: underline; 
+	color: #39B41C;
+}
+body {
+	padding: 0 2px 0 2px;
+	color: black;
+	display: block;
+	background-color: #E5E5E5;
+}
+body.up {
+	padding: 2px 2px 0 2px;
+	color: black;
+	display: block;
+	background-color: #E5E5E5;
+}
+div.rating{
+	position: absolute;
+	top: 37px;
+	left: 215px;
+	color: #000000;
+	font-weight: bold;
+	font-family: Tahoma, Arial;
+	font-size: 12;	
+}
+table.main{
+	background-color: #2F4874;
+}
+table.center{
+	padding: 5px 5px 5px 5px;
+}
+table.centersms{
+	padding: 1px 5px 1px 5px;
+}
+td.begyn{
+	border: 1px solid #C7C7C7;
+	background-image: "images/stat/begynbg.gif";
+}
+td.main{
+	background-color: #CFD8EA;
+}
+td.header{
+	font-weight: bold;
+	font-size: 16;
+	text-align: right;
+	font-family: Tahoma, Arial;
+	color: #2F4874;
+	padding-right: 5%;
+}
+td.text{
+	color: #2F4874;
+	font-weight: bold;
+	font-family: Tahoma, Arial;
+	font-size: 12;
+	width: 1%;
+	white-space: nowrap;
+}
+td.send_header{
+	background-color: #0F89DA;
+	font-weight: bold;
+	font-size: 12;
+	font-family: Tahoma, Arial;
+	color: #FFFFFF;
+}
+
+select.text{
+	background: #FFFFFF; 
+	color: #2F4874;
+	font-family: Tahoma, Arial;
+	font-size: 12;	
+	font-weight: bold;
+}
+
+input.text{
+	background: #FFFFFF;
+	color: #000000;
+	font-family: Tahoma, Arial;
+	font-size: 12;
+	border: 1px solid #2F4874;
+}
+.textarea{
+	height: 100%;
+	width: 100%;
+	background: #FFFFFF;
+	color: #000000;
+	font-family: Tahoma, Arial;
+	font-size: 12;
+	border: 1px solid #2F4874;
+}

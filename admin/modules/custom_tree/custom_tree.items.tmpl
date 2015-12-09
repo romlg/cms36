@@ -1,0 +1,11 @@
+<?php echo $this->ul_open; ?>
+<?php foreach ($this->items AS $item):?>
+    <li>
+        <?php echo $item['plus'];?>
+        <a href='javascript:void(0);' class='name<?php echo $item['class'];?>' <?php if ($item['dbclk_href']) {echo "ondblclick='doRedirect(".$item['dbclk_href'].")'";} ?>  onclick='setclick("<?php echo $item['href'];?>","<?php echo $item['dbclk_href'];?>"); return false;' style='background-image: url(<?php echo $item['icon'];?>);'><?php echo $item['name'];?> <?php echo (!empty($item['note'])?'<span>('.$item['note'].')</span> ':'');?></a>
+        <?php echo $item['buttons'];?>
+
+        <?php if(isset($item['subtree'])) echo $item['subtree'];?>
+    </li>
+<?php endforeach;?>
+<?php echo $this->ul_close; ?>

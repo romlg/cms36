@@ -1,0 +1,344 @@
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2004 Frederico Caldeira Knabben
+ *
+ * Licensed under the terms of the GNU Lesser General Public License
+ * (http://www.opensource.org/licenses/lgpl-license.php)
+ *
+ * For further information go to http://www.fredck.com/FCKeditor/
+ * or contact fckeditor@fredck.com.
+ *
+ * fck_link.html: Link dialog box.
+ *
+ * Authors:
+ *   Frederico Caldeira Knabben (fckeditor@fredck.com)
+-->
+<html>
+	<head>
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<link rel="stylesheet" type="text/css" href="../css/fck_dialog.css">
+		<script language="javascript" src="../js/dhtmled.js"></script>
+		<script language="javascript">
+		<!--
+		/// Open FileManager Dialog
+		function showFiles(name, formname) {
+			file = document.forms[formname].elements[name].value;
+			file = file.substring(0, file.lastIndexOf('/'));
+			FmWin = window.open("../../../ced.php?page=fm2&dir="+file+"&field="+name+"&formname="+formname, "linkUrl", "width=700, height=500, resizable=1, status=1");
+			if (FmWin) FmWin.focus();
+		}
+
+		// Get browsing configuration
+		var bCanBrowse			= dialogArguments.config.LinkBrowser ;
+		var sBrowseURL			= dialogArguments.config.LinkBrowserURL ;
+		var iBrowseWindowWidth	= dialogArguments.config.LinkBrowserWindowWidth ;
+		var iBrowseWindowHeight	= dialogArguments.config.LinkBrowserWindowHeight ;
+
+		// Get upload configuration
+		var bCanUpload					= dialogArguments.config.LinkUpload && dialogArguments.BrowserInfo.IsIE55OrMore ;
+		var sUploadURL					= dialogArguments.config.LinkUploadURL ;
+		var iUploadWindowWidth			= dialogArguments.config.LinkUploadWindowWidth ;
+		var iUploadWindowHeight			= dialogArguments.config.LinkUploadWindowHeight ;
+		var sUploadAllowedExtensions	= dialogArguments.config.LinkUploadAllowedExtensions ;
+		var sUploadDeniedExtensions		= dialogArguments.config.LinkUploadDeniedExtensions ;
+
+		// Get target configuration
+		var bCanTarget		= dialogArguments.config.LinkShowTargets ;
+		var sTargets		= dialogArguments.config.LinkTargets ;
+		var sDefaultTarget	= dialogArguments.config.LinkDefaultTarget ;
+
+		// Gets the document DOM
+		var oDOM = dialogArguments.objContent.DOM ;
+
+		document.write("<title>" + dialogArguments.lang["DlgLnkWindowTitle"] + "</title>") ;
+
+		function setDefaults()
+		{
+			// First of all, translate the dialog box texts
+			dialogArguments.AvailableLangs.TranslatePage(document) ;
+
+			var oLink = getSelectionLink() ;
+
+			if (oLink != null)
+			{
+				document.forms.linkForm.textURL.value = oLink.getAttribute("href",2) ;
+				//		txtURL.value    = oLink.href ;
+				txtTitle.value  = oLink.title ;
+				selTarget.value = oLink.target ;
+			}
+		}
+
+		function getSelectionLink()
+		{
+			var oParent ;
+			var oRange ;
+
+			if (oDOM.selection.type == "Control")
+			{
+				oRange = oDOM.selection.createRange() ;
+				for ( i = 0 ; i < oRange.length ; i++ )
+				{
+					if (oRange(i).parentNode)
+					{
+						oParent = oRange(i).parentNode ;
+						break ;
+					}
+				}
+			}
+			else
+			{
+				oRange  = oDOM.selection.createRange() ;
+				oParent = oRange.parentElement() ;
+			}
+
+			while (oParent && oParent.nodeName != "A")
+			{
+				oParent = oParent.parentNode ;
+			}
+
+			if (oParent && oParent.nodeName == "A")
+			{
+				oDOM.selection.empty() ;
+				oRange = oDOM.selection.createRange() ;
+				oRange.moveToElementText( oParent ) ;
+				oRange.select() ;
+
+				return oParent ;
+			}
+			else
+			return null ;
+		}
+
+		function ok()
+		{
+			var sUrl = document.forms.linkForm.textURL.value ;
+			var sTarget = ( bCanTarget && sTargets.length > 0 ) ? selTarget.value : sDefaultTarget ;
+
+			if (sUrl == "")
+			dialogArguments.decCommand( DECMD_UNLINK ) ;
+			else
+			{
+				dialogArguments.decCommand( DECMD_HYPERLINK, OLECMDEXECOPT_DONTPROMPTUSER, "javascript:void(0);/*fckeditortemplink*/" ) ;
+				for (i = 0 ; i < oDOM.links.length ; i++)
+				{
+					if ( oDOM.links[i].href == "javascript:void(0);/*fckeditortemplink*/" )
+					{
+						oDOM.links[i].href = sUrl ;
+
+						if ( txtTitle.value == "" )
+						oDOM.links[i].removeAttribute("title",0) ;
+						else
+						oDOM.links[i].title  = txtTitle.value ;
+
+						if ( sTarget == null || sTarget == "" )
+						oDOM.links[i].removeAttribute("target",0) ;
+						else
+						oDOM.links[i].target = sTarget ;
+					}
+				}
+			}
+
+			cancel() ;
+		}
+
+		// Fired when the user press the CANCEL button.
+		function cancel()
+		{
+			window.returnValue = null ;
+			window.close() ;
+		}
+
+		// Fired when the user click in the "Sent it to the Server" button.
+		function uploadFile()
+		{
+			var sFile = frmUpload.FCKeditor_File.value ;
+
+			if (sFile == "")
+			{
+				alert("Please select a file to upload.") ;
+				return ;
+			}
+
+			var sExt = sFile.match( /\.[^\.]*$/ ) ;
+			sExt = sExt ? sExt[0].toLowerCase() : "." ;
+
+			if ( sUploadAllowedExtensions != "" && sUploadAllowedExtensions != "*" )
+			{
+				if ( sUploadAllowedExtensions.indexOf( sExt ) < 0 )
+				{
+					alert( dialogArguments.lang["DlgLnkMsgWrongExtA"] ) ;
+					return ;
+				}
+			}
+
+			if ( sUploadDeniedExtensions != "" )
+			{
+				if ( sUploadDeniedExtensions.indexOf( sExt ) >= 0 )
+				{
+					alert( dialogArguments.lang["DlgLnkMsgWrongExtD"] ) ;
+					return ;
+				}
+			}
+
+			var oWindow = openNewWindow("", "UploadWindow", iUploadWindowWidth, iUploadWindowHeight) ;
+			frmUpload.submit() ;
+			oWindow.setImage = setImage ;
+		}
+
+		function browserServer()
+		{
+			var oWindow = openNewWindow(sBrowseURL, "BrowseWindow", iBrowseWindowWidth, iBrowseWindowHeight) ;
+			oWindow.setImage = setImage ;
+		}
+
+		function openNewWindow(sURL, sName, iWidth, iHeight, bResizable, bScrollbars)
+		{
+			var iTop  = (screen.height - iHeight) / 2 ;
+			var iLeft = (screen.width  - iWidth) / 2 ;
+
+			var sOptions = "toolbar=no" ;
+			sOptions += ",width=" + iWidth ;
+			sOptions += ",height=" + iHeight ;
+			sOptions += ",resizable="  + (bResizable  ? "yes" : "no") ;
+			sOptions += ",scrollbars=" + (bScrollbars ? "yes" : "no") ;
+			sOptions += ",left=" + iLeft ;
+			sOptions += ",top=" + iTop ;
+
+			var oWindow = window.open(sURL, sName, sOptions)
+			oWindow.focus();
+
+			return oWindow ;
+		}
+
+		function setImage(sImageURL)
+		{
+			txtURL.value = sImageURL ;
+		}
+
+		document.onkeydown = function ()
+		{
+			switch ( event.keyCode )
+			{
+				case 13 : ok() ;		break ;	// ENTER
+				case 27 : cancel() ;	break ;	// ESC
+			}
+		}
+
+	function getFromGet(sParamName){
+		var Params = location.search.substring(1).split("&"); // отсекаем «?» и вносим переменные и их значения в массив
+		var variable = "";
+		for (var i = 0; i < Params.length; i++){ // пробегаем весь массив
+			if (Params[i].split("=")[0] == sParamName){ // если это искомая переменная — бинго!
+				if (Params[i].split("=").length > 1) variable = Params[i].split("=")[1]; // если значение параметра задано, то возвращаем его
+				return variable;
+			}
+		}
+		return "";
+	}
+
+		function showTree(name, formname, frame) {
+			formname = formname || 'linkForm';
+			name = name || 'textURL';
+			frame = frame || 'texturl';
+
+			var showhome = "";
+			if (getFromGet('showhome') != ""){
+				showhome = "&showhome=true";
+			}
+
+			var url = showModalDialog("../../../dialog.php?page=tree/treeurl&&fieldname="+name+"&formname="+formname+showhome,frame,"dialogWidth:360px;dialogHeight:300px")
+
+			if (url != null) {
+				document.forms.linkForm.textURL.value = url;
+			}
+		}
+		//-->
+		</script>
+	</head>
+	<body bottommargin="5" leftmargin="5" topmargin="5" rightmargin="5" onload="setDefaults()"><form name=linkForm>
+		<table cellspacing="1" cellpadding="1" border="0" width="100%" class="dlg" height="100%">
+			<tr>
+				<td>
+					<table cellspacing="0" cellpadding="0" width="100%" border="0">
+						<tr>
+							<td valign="top"><span fckLang="DlgLnkURL">URL</span><BR>
+								<input style="WIDTH: 100%" type="text" id="txtURL" name="textURL">
+								<table cellspacing="0" cellpadding="0" width="100%" border="0" id="tableUpload">
+									<tr>
+										<td align=center>
+											<input type="button" fckLang="DlgLnkBtnSiteLink" value="Site Link" onclick="showTree('linkForm', 'textURL');">
+											<input type="button" fckLang="DlgLnkBtnFileLink" value="Select File" onclick="showFiles('textURL', 'linkForm');">
+										</td>
+										</form>
+									</tr>
+								</table>
+							</td>
+							<td width="10">&nbsp;&nbsp;&nbsp;</td>
+							<td valign="top" width="100">
+								<input style="WIDTH: 100%" onclick="ok();" type="button" fckLang="DlgBtnOK" value="Ok">
+								<br>
+								<input type="button" style="WIDTH: 100%" fckLang="DlgBtnCancel" value="Cancel" onclick="cancel();">
+							</td>
+						</tr>
+					</table>
+					<hr width="100%" color="#000000" size="2">
+					<table cellSpacing="0" cellPadding="0" width="100%" border="0">
+						<tr>
+							<td id="tdTarget" style="DISPLAY: none"><span fckLang="DlgLnkTarget">Target</span><BR>
+								<select id="selTarget">
+									<option value="" fckLang="DlgLnkTargetNotSet" selected>&lt;Not set&gt;</option>
+								</select>
+							</td>
+							<td width="100%"><span fckLang="DlgLnkTitle">Title</span><br>
+								<input id="txtTitle" style="WIDTH: 100%" type="text">
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<script language="javascript">
+
+		if ( bCanTarget && sTargets.length > 0 )
+		{
+			tdTarget.style.display = "block" ;
+
+			// Load the configured targets
+			var asTargets = sTargets.split( ';' ) ;
+
+			for ( var i = 0 ; i < asTargets.length ; i++ )
+			{
+				var oOption = document.createElement("OPTION") ;
+
+				selTarget.options.add(oOption) ;
+
+				var sText ;
+
+				switch ( asTargets[i] )
+				{
+					case "_blank" :
+					sText = dialogArguments.lang[ "DlgLnkTargetBlank" ] ;
+					break ;
+					case "_parent" :
+					sText = dialogArguments.lang[ "DlgLnkTargetParent" ] ;
+					break ;
+					case "_self" :
+					sText = dialogArguments.lang[ "DlgLnkTargetSelf" ] ;
+					break ;
+					case "_top" :
+					sText = dialogArguments.lang[ "DlgLnkTargetTop" ] ;
+					break ;
+					default :
+					sText = asTargets[i] ;
+					break ;
+				}
+
+				oOption.innerText = sText ;
+				oOption.value     = asTargets[i] ;
+			}
+
+			selTarget.value = sDefaultTarget ;
+		}
+</script>
+	</form></body>
+</html>

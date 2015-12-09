@@ -1,0 +1,21 @@
+<script for=product event=onkeydown>
+	if (event.keyCode==27) window.close();
+</script>
+<form method=post target=tmp{$thisname}editparams name=product action='page.php'>
+<input type=hidden name=page value='{$thisname}'>
+<input type=hidden name=do value='editparam'>
+<input type=hidden name=id value='{$id}'>
+<input type=hidden name=fld[product_type_id] value='{$product_type_id}'>
+<fieldset>
+<legend>{$STR_PARAM_TITLE_ONE}</legend>
+<table width=100% border=0 align=center>
+<tr><td>{$STR_PARAM_NAME}:</td><td><input tabindex=1 type=text size=30 name=fld[name] value="{$name}"></td></tr>
+</table>
+</fieldset>
+<br>
+<div align=center>
+<input type=submit value='{$STR_SAVE}'>
+<input type=button value='{$STR_CANCEL}' onClick="window.close()">
+</div></form>
+
+<IFRAME id=tmp{$thisname}editparams name=tmp{$thisname}editparams src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

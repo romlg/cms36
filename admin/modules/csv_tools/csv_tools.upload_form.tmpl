@@ -1,0 +1,26 @@
+<html>
+	<head>
+		<title>Загрузка</title>
+	</head>
+<body bgcolor="#E5E5E5">
+<script for=product event=onkeydown>
+	if (event.keyCode==27) window.close();
+</script>
+
+<form method=post enctype="multipart/form-data"  name=product action='page.php'>
+<input type=hidden name=page value='{$thisname}'>
+<input type=hidden name=do value='upload'>
+<fieldset>
+<legend>{$STR_UPLOAD_TITLE} "{$table}"</legend>
+<table width=100% border=0 align=center>
+<tr><td>{$STR_UPLOAD}:</td><td><input tabindex=1 type=file name=file></td></tr>
+</table>
+</fieldset>
+<br>
+<div align=center>
+<input type=hidden name=id value='{$id}'>
+<input type=submit value='{$STR_SUBMIT}'>
+<input type=button value='{$STR_CANCEL}' onClick="window.close()">
+</div></form>
+</body>
+</html>

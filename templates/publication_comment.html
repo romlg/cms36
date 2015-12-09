@@ -1,0 +1,23 @@
+<div class="commentsInner" style="margin: 0 0 10px <?=$this->level*15?>px">
+
+    <div class="floatRight"><?=$this->date?></div>
+    <?php if ($this->comment_user): ?>
+    <div class="floatLeft" style="font-weight: bold;"><?=$this->comment_user->get('name');?></div>
+    <?php else: ?>
+    <div class="floatLeft" style="font-weight: bold;"><?=$this->name;?></div>
+    <?php endif;?>
+    <div class="clear"></div>
+
+    <p><?=$this->text;?></p>
+
+    <?php if (!$this->messages['publications_comment_only_users'] || $this->user): ?>
+        <!-- Возможность ответить на комментарий -->
+        <a class="button btn_add_comment" style="float: right;" href="#comment_form"  id="tree<?=$this->id?>">Ответить</a>
+        <div class="clear"></div>
+    <?php endif ;?>
+</div>
+
+<!-- Вложенные уровни -->
+<?php if ($this->menu): ?>
+    <?=$this->menu?>
+<?php endif; ?>

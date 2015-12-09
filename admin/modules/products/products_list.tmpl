@@ -1,0 +1,55 @@
+{$script}
+<script>
+var PID = '{$id}';
+var ID = 0;
+var esId = '{$esId}';
+//var thisname = '{$thisname}';
+var tab = '{$tab}';
+var list;
+var prods;
+
+{literal}
+function editItem(id) {
+	if (id == null) id = ID;
+	window.open("ced.php?page=ped&id="+id, "", "width=800, height=650, resizable=1").focus();
+}
+
+var opener;
+
+function SelectProducts() {
+	prods = document.forms[formname];
+	list  = document.forms.addform;
+	list.elements['tab'].value = prods.elements['tab'].value;
+	list.elements['id'].value = prods.elements['id'].value;
+	list.elements['esId'].value = prods.elements['esId'].value;
+	for (i=0; i<prods.elements.length; i++) {
+		if (prods.elements[i].name && prods.elements[i].type=='checkbox' && prods.elements[i].checked) {
+			NewHidden = document.createElement('<input type="hidden" name="ids[]" value="'+prods.elements[i].value+'">');
+			list.insertBefore(NewHidden);
+		}
+	}
+
+	document.forms.addform.submit();
+	return false;
+}
+
+
+
+{/literal}
+</script>
+
+{$table}
+<form method="post" name="addform" id="addform" target="tmpproduts_list" action="ed.php">
+	<input type="hidden" name="tab"   value="{$tab}">
+	<input type="hidden" name="id"    value="{$id}">
+	<input type="hidden" name="esId"  value="{$esId}">
+	<input type="hidden" name="page"  value="tree">
+	<input type="hidden" name="do"    value="AddProducts">
+	<input type="hidden" name="frame" value="tmp" />
+	<input type="hidden" name="newTab" value="" />
+	<input type="hidden" name="act2" value="" />
+	<input type="hidden" name="move" value="" />
+	<input type="hidden" name="actions" value="" />
+</form>
+
+<IFRAME id=tmpproduts_list name=tmpproduts_list src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

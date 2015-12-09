@@ -1,0 +1,279 @@
+<style type="text/css">
+    table.element_form_table {
+        margin: 0;
+    }
+    table.element_form_table input {
+        width: 170px;
+    }
+    table.element_form_table select {
+        width: 80px;
+    }
+    table.element_form_table input.small, table.element_form_table select.small {
+        width: 50px;
+    }
+    table.element_form_table input.middle {
+        width: 110px;
+    }
+</style>
+<script type="text/javascript">
+    var id = '<?=$this->object["id"];?>';
+
+    function setcode(text, ptext){
+        var toret = '';
+        if (text) {
+            switch (ptext) {
+                case true:
+                    toret = 'text_popup_html';
+                    break;
+                case false:
+                    toret = 'text_html';
+                    break;
+                default:
+                    toret = 'text_html';
+                    break;
+            }
+        } else {
+            switch (ptext) {
+                case true:
+                    toret = 'text_popup_normal';
+                    break;
+                case false:
+                    toret = 'text_normal';
+                    break;
+                default:
+                    toret = 'text_normal';
+                    break;
+            }
+        }
+        return toret;
+    }
+
+    $(document).ready(function () {
+        if (id) {
+            OpenForEdit();
+        } else {
+            AddElement(0);
+        }
+
+        $('.code_shower').change(function(){
+            var text_obj = $('#code_text');
+            text_obj.text(text_obj.attr(setcode($(this).is(':checked'), $('.popup_code_shower').is(':checked'))));
+        });
+        $('.popup_code_shower').change(function(){
+            var text_obj = $('#code_text');
+            text_obj.text(text_obj.attr(setcode( $('.code_shower').is(':checked'),    $(this).is(':checked'))));
+        });
+        $('.code_shower_text').click(function(){
+            $(this).focus().select();
+        });
+        $('.code_shower_href').click(function(){
+            $(this).hide();
+            $(this).next('div').show();
+        });
+    });
+
+    function AddElement(td) {
+        var table = createTable();
+        if (td == 0) {
+
+        } else {
+            td.parents('table').after(table);
+        }
+        return table;
+    }
+
+    function DelElement(table) {
+        if ($("table.element_form_table").length < 2) {
+            alert('Нельзя удалить единственную строку.');
+        }
+        else {
+            table.remove();
+        }
+        return true;
+    }
+
+    function createTable() {
+
+        var table = $("<table class='element_form_table'>");
+
+        if ($("table.element_form_table").length == 0) {
+            var tr0 = $("<tr>");
+            tr0.append("<td align='center'>Название</td>");
+            tr0.append("<td align='center'>Тип поля</td>");
+            tr0.append("<td align='center'>Placeholder</td>");
+            tr0.append("<td align='center'>Поле в таблице</td>");
+            tr0.append("<td align='center'>Проверка</td>");
+            tr0.append("<td align='center'>*</td>");
+            tr0.append("<td align='center'>+</td>");
+            tr0.append("<td align='center'></td>");
+            table.append(tr0);
+        }
+
+        var tr1 = $("<tr>");
+        var tr2 = $("<tr>");
+
+        var td1 = $("<td>");
+        var td2 = $("<td>");
+        var td3 = $("<td>");
+        var td4 = $("<td>");
+        var td5 = $("<td>");
+        var td6 = $("<td>");
+        var td7 = $("<td>");
+        var td8 = $("<td>");
+        var td9 = $("<td colspan='7'>");
+
+        td1.append($('<input type="text" size="30" name="fld[genform][text][]">'));
+
+        var select = $("<select name='fld[genform][select][]'>");
+        select.change(function () {
+            ChangeVisible(table);
+        });
+        <?php foreach ($this->types as $key => $item): ?>
+        select.append($("<option value='<?=$key?>'><?=$item?></option>"));
+        <?php endforeach; ?>
+        td2.append(select);
+
+        td3.append($('<input type="text" size="30" name="fld[genform][placeholder][]" class="middle">'));
+        td4.append($('<input type="text" size="12" name="fld[genform][db_field][]" class="middle">'));
+
+        var select2 = $("<select name='fld[genform][check][]'>");
+        <?php foreach ($this->check as $key => $item) : ?>
+        select2.append($("<option value='<?=$key?>'><?=$item?></option>"));
+        <?php endforeach; ?>
+        td5.append(select2);
+
+        var select3 = $("<select name='fld[genform][req][]' class='small'>");
+        <?php foreach ($this->req as $key => $item) : ?>
+        select3.append($("<option value='<?=$key?>'><?=$item?></option>"));
+        <?php endforeach; ?>
+        td6.append(select3);
+
+        var select4 = $("<select name='fld[genform][show][]' class='small'>");
+        <?php foreach ($this->show as $key => $item) : ?>
+        select4.append($("<option value='<?=$key?>'><?=$item?></option>"));
+        <?php endforeach; ?>
+        td7.append(select4);
+
+        var buttonadd = $('<a href="javascript:void(0);" class="button" style="clear: none; margin-right: 5px;">+</a>');
+        buttonadd.click(function () {
+            AddElement($(this).parent('td'));
+        });
+        td8.append(buttonadd);
+        var buttondel = $('<a href="javascript:void(0);" class="button" style="clear: none;">-</a>');
+        buttondel.click(function () {
+            DelElement($(this).parents('table'));
+        });
+        td8.append(buttondel);
+
+        var div = $('<div style="display:none">');
+        div.append($('<textarea cols="36" rows="3" name="fld[genform][textarea][]">'));
+        div.append($('<div style="clear: both; font-size: 10px;">значения в поле заключаются в одинарные кавычки и разделяются запятой, например: \'1\',\'2\',\'3\'</div>'));
+        td9.append(div);
+
+        tr1.append(td1);
+        tr1.append(td2);
+        tr1.append(td3);
+        tr1.append(td4);
+        tr1.append(td5);
+        tr1.append(td6);
+        tr1.append(td7);
+        tr1.append(td8);
+        tr2.append(td9);
+
+        table.append(tr1);
+        table.append(tr2);
+
+        $("#elements").append(table);
+
+        return table;
+    }
+
+    function ChangeVisible(table) {
+        var select = table.find("[name=fld\\[genform\\]\\[select\\]\\[\\]]");
+        if (select.val() == 'radio' || select.val() == 'select' || select.val() == 'checkbox') {
+            table.find('div').show();
+        } else {
+            table.find('div').hide();
+        }
+        return true;
+    }
+
+    function OpenForEdit() {
+        <?php foreach ($this->object['elems'] as $key => $v) : ?>
+        var table<?=$key?> = AddElement(0);
+        table<?=$key?>.find("[name=fld\\[genform\\]\\[text\\]\\[\\]]").val('<?=$v["text"]?>');
+        table<?=$key?>.find("[name=fld\\[genform\\]\\[select\\]\\[\\]]").val('<?=$v["type"]?>');
+        table<?=$key?>.find("[name=fld\\[genform\\]\\[placeholder\\]\\[\\]]").val('<?=$v["placeholder"]?>');
+        table<?=$key?>.find("[name=fld\\[genform\\]\\[db_field\\]\\[\\]]").val('<?=$v["db_field"]?>');
+        table<?=$key?>.find("[name=fld\\[genform\\]\\[check\\]\\[\\]]").val('<?=$v["check"]?>');
+        table<?=$key?>.find("[name=fld\\[genform\\]\\[req\\]\\[\\]]").val('<?=$v["req"]?>');
+        table<?=$key?>.find("[name=fld\\[genform\\]\\[show\\]\\[\\]]").val('<?=$v["show"]?>');
+        table<?=$key?>.find("textarea").text("<?=mysql_real_escape_string($v['value']);?>");
+        ChangeVisible(table<?=$key?>);
+        <?php endforeach; ?>
+    }
+
+</script>
+
+<input type="hidden" name="fld[genform][id]" value="<?=$this->object['id'];?>"/>
+
+<table cellpadding="0" cellspacing="0" bgcolor="#E5E5E5" align="center" width="100%">
+    <tr>
+        <td align="left"><?=$this->STR_NAME_SITE?>:</td>
+        <td><input type="text" name="fld[genform][name_site]" value="<?=$this->object['name_site'];?>" size="50"></td>
+    </tr>
+    <tr>
+        <td align="left"><?=$this->STR_NAME?>:</td>
+        <td><input type="text" name="fld[genform][name]" value="<?=$this->object['name'];?>" size="50"></td>
+    </tr>
+    <tr>
+        <td align="left"><?=$this->STR_DB_TABLE?>:</td>
+        <td><input type="text" name="fld[genform][db_table]" value="<?=$this->object['db_table'];?>" size="50"></td>
+    </tr>
+    <tr>
+        <td align="left"><?=$this->STR_EMAIL?>:</td>
+        <td><textarea name="fld[genform][email]"><?=$this->object['email'];?></textarea></td>
+    </tr>
+    <tr>
+        <td align="left"><?=$this->STR_LANG?>:</td>
+        <td><select name="fld[genform][lang]">
+                <option value="ru" <?php if($this->object['lang']=='ru') echo "selected"; ?>>Русский</option>
+                <option value="en" <?php if($this->object['lang']=='en') echo "selected"; ?>>Английский</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top"><?=$this->STR_VISIBLE?>:</td>
+        <td><input type="checkbox" name="fld[genform][visible]" value="1" <?php if ($this->object['visible']) echo "checked";?> /></td>
+    </tr>
+    <?php if (isset($this->object['submit_title'])): ?>
+    <tr>
+        <td valign="top"><?=$this->STR_SUBMIT_TITLE?>:</td>
+        <td><input type="text" name="fld[genform][submit_title]" value="<?=$this->object['submit_title'];?>" size="50"></td>
+    </tr>
+    <?php endif; ?>
+    <?php if (isset($this->object['hash'])): ?>
+    <tr>
+        <td valign="top"><?=$this->STR_CODE?>:</td>
+        <td colspan="2">
+            <a href='javascript:void(0)' class='code_shower_href'><?=$this->STR_GET_CODE?></a>
+            <div style='display:none'>
+                <textarea id='code_text' class='code_shower_text' text_normal="<?=$this->code_normal;?>" text_html="<?=$this->code_html;?>" text_popup_normal="<?=$this->code_normal2;?>" text_popup_html="<?=$this->code_html2;?>" ><?=$this->code_normal;?></textarea>
+                <br style="clear: both;" />
+                <label for='code_shower' style="width: auto;margin: 3px 5px 0 0;"><?=$this->STR_GET_HTML_CODE?></label>
+                <input type='checkbox' id='code_shower' class='code_shower' value='1' /><br/>
+                <label for='popup_code_shower' style="width: auto;margin: 3px 5px 0 0;">Всплывающая</label>
+                <input type='checkbox' id='popup_code_shower' class='popup_code_shower' value='1' />
+            </div>
+        </td>
+    </tr>
+    <?php endif; ?>
+</table>
+
+<input type="hidden" name="fld[genform][hash]" value="<?=$this->object['hash'];?>" />
+
+<fieldset>
+    <span id="elements"></span>
+</fieldset>
+<p>* - обязательное поле или нет</p>
+<p>+ - публиковать на странице или нет</p>

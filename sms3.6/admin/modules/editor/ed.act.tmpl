@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>{$title}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<script language="javascript">
+{literal}
+function closeTab(act, newTab) {
+	if (!window.frames['cnt']) {
+		alert('Фрейм cnt не найден!');
+		return;
+	}
+
+	fname = window.frames['cnt'].formname || 'editform';
+	ourform = window.frames['cnt'].document.forms[fname];
+	if (!ourform || !ourform.elements['act2']) {
+		//alert('Форма не найдена, мы не знаем что делать');
+		return;
+	}
+
+	ourform.elements['act2'].value = act;
+	ourform.elements['newTab'].value = newTab;
+
+	window.frames['cnt'].document.forms[fname].submit();
+}
+
+function disable_loading() {
+        document.getElementById('cnt').style.display = "block";
+        document.getElementById('loading').style.display = "none";
+}
+
+function enable_loading() {
+        document.getElementById('cnt').style.display = "none";
+        document.getElementById('loading').style.display = "block";
+}
+
+function showHelp(module) {
+    if (isIE) {
+        showhelp = window.showModelessDialog('ced.php?page=help&do=showhelp&module=' + module, '', 'dialogHeight: 500px; dialogWidth: 350px; dialogLeft: ' + (window.screen.width - 350) + 'px; edge: sunken; center: no; help: no; resizable: yes; status: no; scroll: no;');
+    } else {
+        showhelp = window.open('ced.php?page=help&do=showhelp&module=' + module, '', 'height=500, width=400, left=' + (window.screen.width - 400) + ', resizable=yes, status=no, scrollbars=no');
+    }
+	return false;
+}
+{/literal}
+
+</script>
+</head>
+
+<body bgcolor="#CFD8EA" topmargin="0" rightmargin="0" leftmargin="0">
+
+<script src="js/elem.js"></script>
+<script src="js/lang.js"></script>
+
+<table cellpadding="0" cellspacing="0" width="100%" height="100%">
+<tr>
+
+	{if !empty($basic)}
+	<td valign="bottom">&nbsp;&nbsp;</td>
+	<td valign="top" align="center">
+		<table cellpadding="0" cellspacing="0" class="xpbox" width="200">
+		<tr>
+			<td>
+				<table cellpadding="0" cellspacing="0" width="100%" background="images/xpbox/green_bg.gif">
+				<tr class="ghead">
+					<td><img src="images/icons/{$basic.basic_icon}" width="39" height="34" alt="" /></td>
+					<td width="100%" class="ghead" style="padding-top: 7px">&nbsp;<b>{$basic.basic_caption}</b></td>
+					<td></td>
+					<td><img src="images/xpbox/green_right.gif" width="3" height="34" alt="" /></td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table cellpadding="5" cellspacing="2" class="white" width="100%">
+				<tr>
+					<td class="white">
+						<div class="mbox">
+							<div class="elemItem"><a href="#" onclick="closeTab('newTab', 'tab_');return false" onactivate="elemActivate(this)" ondeactivate="elemDeactivate()" class="open"><b>{$basic.STR_BASIC}</b></a></div>
+							{$basic.tree}
+						</div>
+					</td>
+				</tr>
+				{foreach from=$basic.rows item=row}
+					<tr><td class="white"><div class="mbox">{$row.value}</div></td></tr>
+				{/foreach}
+				</table>
+			</td>
+		</tr>
+		</table>
+	</td>
+	<td valign="bottom" style="border-right: 1px solid #2F4874">&nbsp;&nbsp;</td>
+	{/if}
+
+	<td valign="top" width="100%" bgcolor="#D9D9D9" style="padding: 5px 5px 0px 5px; border-left: 1px solid white; border-top: 1px solid white">
+
+		<table cellpadding="0" cellspacing="0" width="100%" height="100%">
+		<tr>
+			<td valign="top">
+
+				<table cellpadding="0" cellspacing="2" bgcolor="white" width="100%">
+				<tr>
+					<td bgcolor="#0F89DA" style="border: 1px solid #1C5180; color: white" background="images/xpbox/blue_bg.gif">
+						<table cellpadding="0" cellspacing="0" width="100%">
+						<tr>
+							<td style="color: white"><img align="absmiddle" src="images/xpbox/blue_bg.gif" width="4" height="23" border="0" /><b>{$title}</b></td>
+							<td align="right">
+								{$window_icons}
+							</td>
+						</tr>
+						</table>
+					</td>
+				</tr>
+				<tr><td bgcolor="#E5E5E5" style="border: 1px solid #C7C7C7" unselectable="on">{$actions_top}</td></tr>
+				</table>
+
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="100%" height="100%">
+				<iframe id="cnt" name="cnt" width="100%" height="100%" src="ed.php?{$query}&frame=cnt" border="0" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+				<iframe id="loading" name="loading" style="display:block;position:absolute;width:100%;height:100%;display:block" src="third/loading/loading.html" border="0" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+   			</td>
+		</tr>
+		<tr style="position:relative;">
+			<td valign="top">
+				<table cellpadding="0" cellspacing="2" bgcolor="white" width="100%">
+				<!--tr><td bgcolor="#E5E5E5" style="border: 1px solid #C7C7C7" unselectable="on">{$actions}</td></tr-->
+				<tr><td bgcolor="#0F89DA" style="border: 1px solid #1C5180" background="images/xpbox/blue_bg.gif"><img align="absmiddle" src="images/xpbox/blue_bg.gif" width="4" height="23" border="0" /></td></tr>
+				</table>
+			</td>
+		</tr>
+		</table>
+
+	</td>
+</tr>
+<tr height="25" style="position:relative;">
+	<td colspan="4" bgcolor="#E5E5E5" style="border:1px solid #C7C7C7;padding-right:5px;" unselectable="on">
+		{$actions_bot}
+	</td>
+</tr>
+</table>
+
+<iframe id="tmpobjects" name="tmpobjects" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>
+</body>
+</html>

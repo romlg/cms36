@@ -1,0 +1,329 @@
+<script>
+var thisname = '{$thisname}';
+var A{$thisname}0 = new Array(1,1,1,1);
+window.parent.elemActions(thisname, 0);
+if ('{$watermark}' != '') {ldelim}
+	var iswatermark_working = 1;
+{rdelim} else {ldelim}
+	var iswatermark_working = 0;
+{rdelim}
+</script>
+<script src="js/fm.js" type="text/javascript"></script>
+<script src="js/json.js" type="text/javascript"></script>
+<script src="js/prototype.js" type="text/javascript"></script>
+<script>
+{literal}
+window.onload = function(){
+	setSizes();
+	startLoad();
+	loadXML('/admin/page.php?page=fm2&do=editgettree&dir={/literal}{$dir}{literal}', 'tree');
+	startLoadFiles();
+	loadXML('/admin/page.php?page=fm2&do=editgetDirFiles&dir={/literal}{$dir}{literal}', 'files');
+}
+{/literal}
+</script>
+
+<table width="100%" height="100%">
+	<tr valign="top">
+		<td>
+			<table>
+			<tr>
+				<td align="left" width="90px">Текущий путь:</td>
+				<td align="left">
+					<div style="position:absolute;FILTER: alpha(opacity=50);opacity:0.5">
+					<table id="div_cur_id" width="250" height="100%">
+					<tr><td align="center">&nbsp;</td></tr>																
+					</table>
+					</div>
+					<input id="current_dir" style="width:250px; background: #E0DDDD" value="/">
+				</td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+	<tr valign="top">
+		<td width="100%" height="100%">
+			<table width="100%" height="100%">
+				<tr valign="top">
+					<td width="200">
+						<div id="tree" style="width:200px;border:1px solid #000000;padding:4px;background-color:#ffffff;">
+							<table width="100%" height="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td align="left">
+									текущий каталог:<br>
+									<select name="sdir" id="sdir" style="font-family: Tahoma; font-size: 90%; font: icon;" onchange="value = this.item(this.selectedIndex).value;name = this.item(this.selectedIndex).innerHTML;getTree(name+'&sdir='+value+'&rewrite=1');document.getElementById('div_cur_id').focus();">
+									{html_options options=$dirs selected=$dir_id}
+									</select>
+									<hr></hr>
+									<div id="basetree">
+									</div>
+									</td>
+								</tr>
+								<tr>
+									<td align="left">
+									<div id="load" style="top:40px;left:10px;position:absolute;FILTER: alpha(opacity=50);opacity:0.5;visibility:hidden;">
+									<table bgcolor="#E0DDDD" width="207" height="100%">
+									<tr>
+										<td align="center" height="100%"><b>идет загрузка...</b></td>
+									</tr>							
+									</table>
+									</div>
+									<div id="treeelements" style="FILTER: alpha(opacity=100);opacity:1;height:0;width:200px;overflow:auto;">
+									</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</td>
+					<td width="100%">
+						<table width="100%" height="100%">
+						<tr>
+							<td height="100">
+							<div id="info">
+								<table width="100%" height="100%">
+									<tr>
+										<td width="70px" bgcolor="#000000">
+											<table width="100%" height="100%" bgcolor="#ffffff">
+												<tr><td align="center"><div id="info_img"></div></td></tr>
+											</table>
+										</td>
+										<td valign="top">
+											<div id="info_all">
+											</div>
+										</td>
+										<td valign="top" align="right">
+											<table cellpadding="1" cellspacing="1" style="background-color:#000000;">
+											<tr valign="top">
+												<td style="text-align:center;font-weight:bold;background-color:#ffffff;" nowrap>разрешения</td>
+												<td style="text-align:center;font-weight:bold;background-color:#ffffff;">r</td>
+												<td style="text-align:center;font-weight:bold;background-color:#ffffff;">w</td>
+												<td style="text-align:center;font-weight:bold;background-color:#ffffff;">x</td>
+											</tr>
+											<tr valign="top">
+												<td style="text-align:center;background-color:#ffffff;" nowrap>пользователя</td>
+												<td style="background-color:#ffffff;"><input id="ur" type="checkbox" onclick="changePerm('ur',this.checked)"></td>
+												<td style="background-color:#ffffff;"><input id="uw"  type="checkbox" onclick="changePerm('uw',this.checked)"></td>
+												<td style="background-color:#ffffff;"><input id="ux"  type="checkbox" onclick="changePerm('ux',this.checked)"></td>
+											</tr>
+											<tr valign="top">
+												<td style="text-align:center;background-color:#ffffff;" nowrap>группы</td>
+												<td style="background-color:#ffffff;"><input id="gr" type="checkbox" onclick="changePerm('gr',this.checked)"></td>
+												<td style="background-color:#ffffff;"><input id="gw" type="checkbox" onclick="changePerm('gw',this.checked)"></td>
+												<td style="background-color:#ffffff;"><input id="gx" type="checkbox" onclick="changePerm('gx',this.checked)"></td>
+											</tr>
+											<tr valign="top">
+												<td style="text-align:center;background-color:#ffffff;" nowrap>все остальные</td>
+												<td style="background-color:#ffffff;"><input id="or" type="checkbox" onclick="changePerm('or',this.checked)"></td>
+												<td style="background-color:#ffffff;"><input id="ow" type="checkbox" onclick="changePerm('ow',this.checked)"></td>
+												<td style="background-color:#ffffff;"><input id="ox" type="checkbox" onclick="changePerm('ox',this.checked)"></td>
+											</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</div>
+							</td>
+						</tr>
+						<tr valign="top">
+							<td>
+							<div id="loadfile" style="position:absolute;FILTER: alpha(opacity=50);opacity:0.5;height:100px;width:100px;visibility:hidden;">
+							<table bgcolor="#E0DDDD" width="100%" height="100%">
+							<tr>
+								<td align="center"><b>идет загрузка...</b></td>
+							</tr>									
+							</table>
+							</div>
+							<form target="tmp{$thisname}" action="page.php" method="post" name="editform3" id="editform3" enctype="multipart/form-data">
+	<input type="hidden" name="down_dir" id ="down_dir3" value="">
+	<input type="hidden" name="page" value="{$thisname}">
+	<input type="hidden" name="field" value="{$field}">
+	<input type="hidden" name="formname" value="{$formname}">
+	<input type="hidden" name="do" id="do" value="Delete">
+	<input type="hidden" name="watermark" id="watermark" value="">
+							<div id="file_list" style="FILTER: alpha(opacity=100);opacity:1;height:100%;width:100%;overflow-y:auto;">
+								<table cellpadding="0" cellspacing="0" style="border: 1px solid #000000">
+									<tr valign="top">
+										<td width="20px" style="text-align:center;font-weight:bold;background-color:#ffffff;border-bottom: 1px solid #000000;">&nbsp;</td>
+										<td width="20px" style="text-align:center;font-weight:bold;background-color:#ffffff;border-bottom: 1px solid #000000;">&nbsp;</td>
+										<td style="text-align:center;font-weight:bold;background-color:#ffffff;border-bottom: 1px solid #000000;" width="100%">имя файла</td>
+										<td style="text-align:center;font-weight:bold;background-color:#ffffff;border-bottom: 1px solid #000000;" nowrap>размер</td>
+									</tr>
+								</table>
+							</div>
+							</form>
+							</td>
+						</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<div id="img_prewiev" style="FILTER: alpha(opacity=0);opacity:0;position:absolute;visibility:hidden;" onmouseout="closePrewiev();" onclick="closePrewiev();">
+<table align="center" style="border: 1px solid #000000;background-color:#ffffff;">
+	<tr>
+		<td style="padding:5px;"><img id="img_prew"></td>
+	</tr>
+</table>
+</div>
+<div id="mainload" style="width:100px;height:100px;FILTER: alpha(opacity=60);opacity:0.6;position:absolute;visibility:hidden;top:0px;left:0px;">
+<table width="100%" height="100%" style="background-color:#E0DDDD;">
+<tr><td>&nbsp;</td></tr>
+</table>
+</div>
+<div id="downloadForm" style="width:100px;height:100px;FILTER: alpha(opacity=0);opacity:0;position:absolute;visibility:hidden;top:0px;left:0px;">
+<form target="tmp{$thisname}" action="page.php" method="post" name="editform" id="editform" enctype="multipart/form-data" onsubmit="document.getElementById('down_dir4').value = document.getElementById('info_all').DIR;">
+	<input type="hidden" name="down_dir" id ="down_dir4" value="">
+	<input type="hidden" name="page" value="{$thisname}">
+	<input type="hidden" name="do" value="editdownload">
+<table height="100%" width="100%">
+	<tr>
+		<td valign="middle" align="center">
+		<table id="down_table" style="background-color:#ffffff;border: 1px solid #000000;">
+			<tr>
+				<td>
+					<table cellpadding="0" cellspacing="2" bgcolor="white" width="100%">
+					<tr>
+					<td bgcolor="#0F89DA" style="border: 1px solid #1C5180" background="images/xpbox/blue_bg.gif">
+					<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+					<td style="color: white"><img align="absmiddle" src="images/xpbox/blue_bg.gif" width="4" height="23" border="0"><b>Форма для загрузки файлов</b></td>
+					<td align="right"><img src="images/icons/icon.cross.gif" onmouseover="this.style.cursor='hand';" onclick="hideDownloadFrom();stopMainLoad();"></td>
+					</tr>
+					</table>
+					</td>
+					</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" align="center"><input name="file" type="file" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" name="input_file" onchange="verifyImage(this.value);"></td>
+			</tr>
+			<tr>
+				<td width="100%" align="center"><input type="submit" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" value="загрузить"></td>
+			</tr>					
+		</table>
+		</td>
+	</tr>
+</table>
+</form>
+</div>
+<div id="changenameForm" style="width:100px;height:100px;FILTER: alpha(opacity=0);opacity:0;position:absolute;visibility:hidden;top:0px;left:0px;">
+<form target="tmp{$thisname}" action="page.php" method="post" name="editform" id="editform" enctype="multipart/form-data" onsubmit="document.getElementById('down_dir5').value = document.getElementById('info_all').DIR;if (document.getElementById('info_all').FILE) {ldelim} document.getElementById('down_file').value = document.getElementById('info_all').FILE;{rdelim} else {ldelim}document.getElementById('down_file').value = '';{rdelim}">
+	<input type="hidden" name="change_dir" id ="down_dir5" value="">
+	<input type="hidden" name="change_file" id ="down_file" value="">
+	<input type="hidden" name="page" value="{$thisname}">
+	<input type="hidden" name="do" value="editchange_name">
+<table height="100%" width="100%">
+	<tr>
+		<td valign="middle" align="center">
+		<table id="down_table" style="background-color:#ffffff;border: 1px solid #000000;">
+			<tr>
+				<td>
+					<table cellpadding="0" cellspacing="2" bgcolor="white" width="100%">
+					<tr>
+					<td bgcolor="#0F89DA" style="border: 1px solid #1C5180" background="images/xpbox/blue_bg.gif">
+					<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+					<td style="color: white"><img align="absmiddle" src="images/xpbox/blue_bg.gif" width="4" height="23" border="0"><b>Переименовать</b></td>
+					<td align="right"><img src="images/icons/icon.cross.gif" onmouseover="this.style.cursor='hand';" onclick="hideChangenameForm();stopMainLoad();"></td>
+					</tr>
+					</table>
+					</td>
+					</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" align="center"><input type="text" style="font-family: Tahoma;border: 1px solid #9C9C9C;width:200px;font-size: 90%;padding: 0px 5px 0px 4px;" name="file_name" id="file_name"></td>
+			</tr>
+			<tr>
+				<td width="100%" align="center"><input type="submit" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" value="сохранить"></td>
+			</tr>					
+		</table>
+		</td>
+	</tr>
+</table>
+</form>
+</div>
+<div id="watermarkForm" style="width:100px;height:100px;FILTER: alpha(opacity=0);opacity:0;position:absolute;visibility:hidden;top:0px;left:0px;">
+<form target="tmp{$thisname}" action="page.php" method="post" name="watermarkFormf" id="watermarkFormf" enctype="multipart/form-data" onsubmit="return overloadWaterMark();">
+<table height="100%" width="100%">
+	<tr>
+		<td valign="middle" align="center">
+		<table id="down_table" style="background-color:#ffffff;border: 1px solid #000000;">
+			<tr>
+				<td>
+					<table cellpadding="0" cellspacing="2" bgcolor="white" width="100%">
+					<tr>
+					<td bgcolor="#0F89DA" style="border: 1px solid #1C5180" background="images/xpbox/blue_bg.gif">
+					<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+					<td style="color: white"><img align="absmiddle" src="images/xpbox/blue_bg.gif" width="4" height="23" border="0"><b>Наложить водяной знак</b></td>
+					<td align="right"><img src="images/icons/icon.cross.gif" onmouseover="this.style.cursor='hand';" onclick="hideWatermarkForm();stopMainLoad();"></td>
+					</tr>
+					</table>
+					</td>
+					</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" align="center">Файл с водяным знаком: <br>
+				<input type="text" style="font-family: Tahoma;border: 1px solid #9C9C9C;width:200px;font-size: 90%;padding: 0px 5px 0px 4px;" name="file_name" id="file_name" value="{$watermark}">
+				&nbsp;<button onClick="showFiles2('', 'file_name', this.form.name);">&nbsp;...&nbsp;</button>
+				&nbsp;
+			
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" align="center"><input type="submit" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" value="применить"></td>
+			</tr>					
+		</table>
+		</td>
+	</tr>
+</table>
+</form>
+</div>
+<div id="createForm" style="width:100px;height:100px;FILTER: alpha(opacity=0);opacity:0;position:absolute;visibility:hidden;top:0px;left:0px;">
+<form target="tmp{$thisname}" action="page.php" method="post" name="editform2" id="editform2" enctype="multipart/form-data" onsubmit="document.getElementById('down_dir2').value = document.getElementById('info_all').DIR;">
+	<input type="hidden" name="down_dir" id ="down_dir2" value="">
+	<input type="hidden" name="page" value="{$thisname}">
+	<input type="hidden" name="do" value="editcreateDir">
+<table height="100%" width="100%">
+	<tr>
+		<td valign="middle" align="center">
+		<table id="down_table" style="background-color:#ffffff;border: 1px solid #000000;">
+			<tr>
+				<td>
+					<table cellpadding="0" cellspacing="2" bgcolor="white" width="100%">
+					<tr>
+					<td bgcolor="#0F89DA" style="border: 1px solid #1C5180" background="images/xpbox/blue_bg.gif">
+					<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+					<td style="color: white"><img align="absmiddle" src="images/xpbox/blue_bg.gif" width="4" height="23" border="0"><b>Форма создания директории</b></td>
+					<td align="right"><img src="images/icons/icon.cross.gif" onmouseover="this.style.cursor='hand';" onclick="hideCreateFrom();stopMainLoad();"></td>
+					</tr>
+					</table>
+					</td>
+					</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" align="center"><input name="dir" type="text" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" onchange="verifyText(this);"></td>
+			</tr>
+			<tr>
+				<td width="100%" align="center"><input type="submit" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" value="создать"></td>
+			</tr>					
+		</table>
+		</td>
+	</tr>
+</table>
+</form>
+</div>
+
+
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

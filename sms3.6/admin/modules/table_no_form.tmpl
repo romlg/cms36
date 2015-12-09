@@ -1,0 +1,51 @@
+<?php if(!empty($this->tmpl['script'])):?>
+<script type="text/javascript" language="javascript">
+<?php echo $this->tmpl['script']; ?>
+</script>
+<?php endif; ?>
+
+<script type="text/javascript" src="js/table.js" ></script>
+<script type="text/javascript">
+function <?php echo $this->tab_name; ?> (){
+    <?php echo $this->tab_name; ?>.superclass.constructor.apply(this);
+};
+extend(<?php echo $this->tab_name; ?>, table_js);
+<?php echo $this->tab_name; ?> = new <?php echo $this->tab_name; ?>();
+
+<?php echo $this->tab_name; ?>.roll = <?php echo $this->roll;?>;
+<?php echo $this->tab_name; ?>.thisname = '<?php echo $this->thisname;?>'; // Со слешами
+<?php echo $this->tab_name; ?>.thisname2 = <?php echo $this->tab_name; ?>.thisname.replace('/', ''); // Без слешей
+<?php echo $this->tab_name; ?>.src_frame = <?php echo ($this->src_frame)?$this->src_frame:"'about:blank'";?>;
+<?php echo $this->tab_name; ?>.tabframename = '<?php echo $this->tabframename;?>';
+<?php echo $this->tab_name; ?>.id_table_list_name = '<?php echo $this->id_table_list_name;?>';
+</script>
+
+<?php if($this->list_buttons):?>
+<div class="topBtn">
+    <?php foreach ($this->list_buttons AS $k=>$v):?>
+    <?php if($this->list_buttons[$k]['visible']):?>
+        <a class="button noClear" href="javascript:void(0);" onclick="<?php echo $this->list_buttons[$k]['onclick']."('', this);"; /*'".$this->list_buttons[$k]['div_id']."'*/ ?>" ><?php echo $this->list_buttons[$k]['name'];?></a>
+	<?php endif;?>
+    <?php endforeach;?>
+</div>
+<?php endif;?>
+
+<table class="ajax_table_main" id="<?php echo $this->id_table_list_name;?>" cellspacing="1">
+<tr class="ajax_table_header_row">
+<?php foreach ($this->header AS $head):?>
+<th class="ajax_table_header_cell" <?php echo $head['nowrap'];?>><?php echo $head['title'];?></th>
+<?php endforeach;?>
+</tr>
+<?php foreach ($this->rows AS $row):?>
+<tr class="ajax_table_row" onclick="<?php echo $this->tab_name; ?>.clickCheck(this)" id="<?php echo $row['tabname']."_".$this->id_table_list_name."_".$row['id'];?>">
+    <?php foreach ($row['cells'] AS $cell):?>
+	<td class="ajax_table_cell" style="text-align: <?=$cell['align'] ? $cell['align'] : 'left';?>; vertical-align: <?=$cell['valign'] ? $cell['valign'] : 'middle';?>" <?php echo $cell['nowrap'];?>><?php echo $cell['value'];?></td>
+	<?php endforeach;?>
+</tr>
+<?php endforeach;?>
+</table>
+<?php if(isset($this->empty)):?><br /><div class="note"><?php echo $this->empty['value'];?></div><br /><?php endif;?>
+
+<div class="testbox" style="padding-top:10px; font-size: 0;">
+<iframe id="<?php echo $this->tabframename;?>" name="<?php echo $this->tabframename;?>" src="about:blank" width="0" height="0" border="0" style="visibility:hidden;"></iframe>
+</div>

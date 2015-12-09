@@ -1,0 +1,19 @@
+<script for={$thisname} event=onkeydown>
+	if (event.keyCode==27) window.close();
+</script>
+
+<form method=post target=tmp{$thisname}details{$kb_id} name={$thisname} onsubmit='window.close();' action='page.php'>
+<input type=hidden name=page value='{$thisname}'>
+<input type=hidden name=do value='editdetail'>
+<input type=hidden name=id value='{$id}'>
+<input type=hidden name=fld[kb_id] value='{$kb_id}'>
+
+<table width=100% height=100%>
+<tr><td height=100%>{$text}</td></tr>
+<tr><td>{$STR_FILE}: <input type=text name=fld[file] value='{$file}'> <input type=button onClick='window.open("ced.php?page=fm2&dir={$thisname}&field=fld[file]&formname={$thisname}", "_blank", "width=700, height=520, resizable=1, status=1").focus()' value=' ... '></td></tr>
+<tr><td align=center>
+<input type=submit class=btn value='{$STR_SAVE}'>
+<input type=button onClick="window.close()" value='{$STR_CANCEL}'>
+</td></tr>
+
+</form>

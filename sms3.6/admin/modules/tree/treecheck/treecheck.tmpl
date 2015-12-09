@@ -1,0 +1,96 @@
+<script type="text/javascript">
+var target_ids = '<?=$this->target_ids?>';
+$(document).ready(function(){
+    target_ids = target_ids.split(',');
+    for (var i=0; i < target_ids.length; i++) {
+        if (target_ids[i]) {
+            $("#treecheck").append('<input type="hidden" name="item[' + target_ids[i] + ']" value="1">');
+        }
+    }
+});
+function checkbox_click(id) {
+    var form = $("#treecheck");
+    var elem = $('[name=item2\\[' + id + '\\]]');
+    if (elem.attr('checked')) {
+        form.append('<input type="hidden" name="item[' + id + ']" value="1">');
+    } else {
+        $('[name=item\\[' + id + '\\]]').remove();
+    }
+}
+jQuery.expr[':'].regex = function(elem, index, match) {
+    var matchParams = match[3].split(','),
+        validLabels = /^(data|css):/,
+        attr = {
+            method: matchParams[0].match(validLabels) ?
+                        matchParams[0].split(':')[0] : 'attr',
+            property: matchParams.shift().replace(validLabels,'')
+        },
+        regexFlags = 'ig',
+        regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g,''), regexFlags);
+    return regex.test(jQuery(elem)[attr.method](attr.property));
+}
+function changeBranch(link) {
+    var ids = [];
+    $("#treecheck").find(":regex(name, ^item*)").each(function(){
+        var name = $(this).attr('name');
+        if (name.search("item\\[") != -1) {
+            var id = parseInt(name.substr(5, name.length-6));
+            ids.push(id);
+        }
+    });
+    location.href = $(link).attr('href') + '&target_ids=' + ids.join(",");
+    return false;
+}
+</script>
+
+<style type="text/css">
+    .buttons {
+        height: 20px;
+        width: 100%;
+        background-color: white;
+    }
+    .buttonsTop {
+        position: fixed;
+        top: 0;
+        z-index: 10;
+    }
+    .buttonsBottom {
+        position: fixed;
+        bottom: 0;
+        z-index: 10;
+        padding-top: 10px;
+    }
+    h3 {
+        margin-top: 35px;
+    }
+    #treecheck {
+        overflow-y: scroll;
+        height: 400px;
+    }
+    body {
+        overflow-y: hidden;
+    }
+</style>
+
+<div class="buttons buttonsTop">
+    <a class="button noClear" href="javascript:void(0);" onclick="document.getElementById('treecheck').submit(); return false;" style="margin-right: 10px;">&nbsp;<?php echo $this->STR_SUBMIT; ?>&nbsp;</a>
+    <a class="button noClear" href="javascript:void(0);" onClick="window.top.parent.$.fancybox.close();">&nbsp;<?php echo $this->STR_CANCEL; ?>&nbsp;</a>
+</div>
+
+<h3>Разделы сайта</h3>
+<form name="treecheck" id="treecheck" method="post" action="">
+
+    <ul class="tree">
+        <?php echo $this->tree;?>
+    </ul>
+
+    <input type="hidden" name="page" value="<?php echo $this->name; ?>">
+    <input type="hidden" name="do" value="select">
+    <input type="hidden" name="fieldname" value="<?php echo $this->fieldname; ?>">
+    <input type="hidden" name="target_ids" value="<?php echo $this->target_ids; ?>">
+</form>
+
+<div class="buttons buttonsBottom">
+    <a class="button noClear" href="javascript:void(0);" onclick="document.getElementById('treecheck').submit(); return false;" style="margin-right: 10px;">&nbsp;<?php echo $this->STR_SUBMIT; ?>&nbsp;</a>
+    <a class="button noClear" href="javascript:void(0);" onClick="window.top.parent.$.fancybox.close();">&nbsp;<?php echo $this->STR_CANCEL; ?>&nbsp;</a>
+</div>

@@ -1,0 +1,24 @@
+<script>
+var ID = 0;
+var thisname = '{$thisname}';
+{literal}
+function editItem(id) {
+	if (id == null) id = ID;
+	window.open("ed.php?page=" + thisname + "&id=" + id, "edit" + thisname, "width=820, height=520, resizable=1").focus();
+}
+{/literal}
+function EditPriority(move) {ldelim}
+	if (!ID) {ldelim}
+		alert('Select item first');
+		return;
+	{rdelim}
+	window.open('page.php?page=' + thisname + '&do=EditPriority&id=' + ID + '&move=' + move, 'tmp' + thisname);
+{rdelim}
+
+var A{$thisname}0 = new Array(0,1,0,0,0);
+var A{$thisname}1 = new Array(1,1,1,1,1);
+var A{$thisname}2 = new Array(0,1,1,1,1);
+window.parent.elemActions('{$thisname}', ID==0?0:1);
+</script>
+{$table}
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

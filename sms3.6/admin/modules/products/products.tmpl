@@ -1,0 +1,45 @@
+<script>
+var ID = 0;
+var thisname = '{$thisname}';
+{literal}
+function editItem(id) {
+	if (id == null) id = ID;
+	window.open("ed.php?page=" + thisname + "&id=" + id, "edit" + thisname, "width=750, height=600, resizable=1").focus();
+}
+
+function copyItem(){
+	document.getElementById('tmp{/literal}{$thisname}{literal}').src = "page.php?page=" + thisname + "&do=EditCopy&id=" + ID;
+}
+
+function modified(mod) {
+//alert('A'+thisname+'0[0] = A'+thisname+'1[0] = A'+thisname+'2[0] = mod;');
+	eval('A'+thisname+'0[0] = A'+thisname+'1[0] = A'+thisname+'2[0] = mod;');
+//	window.top.elemActions(thisname+'mod', mod);
+	window.parent.elemActions(thisname+'mod', mod);
+	document.forms[formname].actions.value='editchanges';
+}
+{/literal}
+var A{$thisname}0 = new Array(0,0,1,0,0);
+var A{$thisname}1 = new Array(0,1,0,1,1);
+var A{$thisname}2 = new Array(0,0,0,1,0);
+var A{$thisname}mod1 = new Array(1, null);
+var A{$thisname}mod0 = new Array(0, null);
+window.parent.elemActions(thisname, 0);
+
+
+
+</script>
+
+{$table}
+
+<script>
+{literal}
+
+try{
+	document.forms.filterform.find.style.width="300px";
+} catch(e){} finally{}
+
+{/literal}
+</script>
+
+<iframe id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></iframe>

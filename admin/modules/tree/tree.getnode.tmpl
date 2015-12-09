@@ -1,0 +1,16 @@
+<script type="text/javascript">
+var img = window.parent.document.getElementById('img_<?php echo $this->id;?>');
+var div = window.parent.document.getElementById('div_<?php echo $this->id;?>');
+var load = window.parent.document.getElementById('load_<?php echo $this->id;?>');
+var items = '<?php echo$this->items;?>';
+if (img) {
+	img.src = img.src.replace(/closed/g, 'opened');
+}
+if (div) {
+	div.setAttribute('loaded', 1);
+}
+if (load) {
+	load.innerHTML = items;
+	load.className = '';
+}
+</script>

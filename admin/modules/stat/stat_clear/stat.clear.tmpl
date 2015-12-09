@@ -1,0 +1,48 @@
+<table width=400 align=center>
+<tr>
+<td>
+  <fieldset>
+   <legend>
+	{$STR_CLEAR}
+   </legend>
+   <table width=100% cellspacing=10>
+   <form method=POST>
+   <input type=hidden name=action value=add>
+	<tr>
+	 <td>
+	   {$STR_PERIOD}
+	 </td>
+	 <td>
+	   {html_options values=$options.values output=$options.names selected=$options.selected name=period}
+	 </td>
+	 <td>
+	   <input type=submit name=submit value={$STR_SUBMIT}>
+	 </td>
+	</tr>
+	<tr>
+	<td colspan="3">
+	{if $message}
+	<hr size=1>
+	<p align=center>{$message}</p>
+	{/if}
+	<hr size=1>
+	<table width="100%">
+	{if $data.after.rows}
+	<tr><td></td><td align=right>{$STR_BEFORE}</td><td align=right>{$STR_AFTER}</td></tr>
+	{/if}
+	{foreach from=$data.before.rows item=row key=key}
+	<tr>
+		<td nowrap="nowrap">{$row.key}</td>
+		<td align="right" nowrap="nowrap"><b>{$row.val}</b></td>
+		<td align="right" nowrap="nowrap"><b>{$data.after.rows.$key.val}</b></td>
+	</tr>
+	{/foreach}
+	</table>	</td>
+	</tr>
+   </table>
+  </fieldset>
+  </td>
+ </tr>
+</table>
+
+

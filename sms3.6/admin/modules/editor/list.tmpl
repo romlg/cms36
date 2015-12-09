@@ -1,0 +1,74 @@
+<script type="text/javascript">
+    var PID = <?php echo $this->id;?>;
+    var ID = 0;
+    var thisname = '<?php echo $this->thisname;?>'; // Со слешами
+    var thisname2 = '<?php echo $this->thisname2;?>'; // Без слешей
+    var tab = '<?php echo $this->tab;?>';
+
+    function editElem(id) {
+        if (id == null) id = ID;
+        window.showModalDialog('ed.php?frame=dialog&page=' + thisname + '&tab=' + tab + '&id=' + PID + '&elem_id=' + id + '&do=elemform&esId=' + esId, '', 'dialogWidth:500px; dialogHeight:250px;');
+    }
+
+    function deleteElems(thisname, formname, hide) {
+
+        if (this.ajax_formname != undefined) {
+            formname = this.ajax_formname;
+        } else {
+            formname = formname || 'editform';
+        }
+
+        hide = (hide != null) ? hide : 1;
+        var method = 'DeleteElems';
+        if (window.showModalDialog('ed.php?frame=dialog&page=' + thisname + '&do=showconfirm&tab=', '', 'dialogWidth:320px; dialogHeight:180px;')) {
+            //document.forms[formname].actions.value = method;
+            document.forms[formname].elements['do'].value = method;
+            document.forms[formname].submit();
+            //alert('delete ' + ID);
+        }
+    }
+    function swapElems(move, formname) {
+        if (this.ajax_formname != undefined) {
+            formname = this.ajax_formname;
+        } else {
+            formname = formname || 'editform';
+        }
+        var method = 'SwapElems';
+        document.forms[formname].elements['move'].value = move;
+        document.forms[formname].elements['do'].value = method;
+        document.forms[formname].submit();
+        //alert('swap ' + move);
+    }
+</script>
+
+<?php echo $this->table; ?>
+
+<?php if ($this->elem_type == 'link') : ?>
+<div id="newElems<?=$this->tab;?>" class="tags"></div>
+<div class="elemBox">
+    <label class="float">Добавить ранее созданный:</label>
+
+    <dl class="js-field-holder js-autosuggest-holder" style="z-index:1000;">
+        <dt>
+            <input autocomplete='off' id='add_ids_<?=$this->tab;?>'
+                   class='text textfield wide js-field-data js-required js-autosuggest-field' name='add_ids_<?=$this->tab;?>' value=''
+                   type='text'>
+
+        </dt>
+        <dd class="js-autosuggest-output hidden" style="width: 270px;"></dd>
+    </dl>
+    <script>
+        $(document).ready(function () {
+            var Autosuggest_<?=$this->tab;?>_add_ids = new autosuggestClass($('#add_ids_<?=$this->tab;?>'), 'tags', false, ',', '/admin/page.php?page=<?=$this->thisname;?>&do=showAutosuggestList&table=<?=$this->autosuggest['table'];?>&field=<?=$this->autosuggest['field'];?>&where={<?=$this->autosuggest['where'];?>}&lang_select=<?=$this->autosuggest['lang_select'];?>', '<?=$this->tab;?>.addElem');
+        });
+    </script>
+
+    <div class="floatLeft" style="margin-left: 20px;">или</div>
+    <a class="button noClear" href="javascript:void(0);" onclick="<?=$this->tab;?>.showSelectDiv('', this);">создать новый</a>
+
+    <?php if ($this->autosuggest['note']) : ?>
+    <div class="autosuggest-note"><?=$this->autosuggest['note']?></div>
+    <?php endif; ?>
+
+</div>
+<?php endif; ?>

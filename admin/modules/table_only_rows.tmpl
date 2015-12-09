@@ -1,0 +1,7 @@
+<?php foreach ($this->rows AS $row):?>
+<tr class="ajax_table_row" onclick="<?php echo $row['tabname']; ?>.clickCheck(this)" style="background-color:#C7C7C7;" id="<?php echo $row['tabname']."_".$this->id_table_list_name."_".$row['id'];?>">
+    <?php foreach ($row['cells'] AS $cell):?>
+	<td class="ajax_table_cell" <?php if($cell['align']) {echo 'align="'.$cell['align'].'" ';}?> valign="<?php echo $cell['valign'];?>" <?php echo $cell['nowrap'];?>><?php echo $cell['value'];?></td>
+	<?php endforeach;?>
+</tr>
+<?php endforeach;?>

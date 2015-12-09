@@ -1,0 +1,19 @@
+<script type="text/javascript">
+    function showHelp(module) {
+        if (isIE) {
+            showhelp = window.showModelessDialog('/admin/dialog.php?page=help&do=showhelp&module=' + module, '', 'dialogHeight: 500px; dialogWidth: 350px; dialogLeft: ' + (window.screen.width - 350) + 'px; edge: sunken; center: no; help: no; resizable: yes; status: no; scroll: yes;');
+        } else {
+            showhelp = window.open('/admin/dialog.php?page=help&do=showhelp&module=' + module, '', 'height=500, width=400, left=' + (window.screen.width - 400) + ', resizable=yes, status=no, scrollbars=yes');
+        }
+        return false;
+    }
+</script>
+
+<div class="block">
+    <h1><span class="titleIcons"><?php echo $this->window_icons;?></span><?php echo $this->title;?></h1>
+    <div class="mainContent">
+        <?php if(!$this->actions){echo"&nbsp;";}else{echo $this->actions;}?>
+        <div id="cnt" class="cnt" name="cnt"><?php echo $this->cnt;?></div>
+        <?php if(!$this->actions_bot){echo"&nbsp;";}else{echo $this->actions_bot;}?>
+    </div>
+</div>

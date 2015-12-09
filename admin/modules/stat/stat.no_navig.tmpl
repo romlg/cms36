@@ -1,0 +1,143 @@
+ <script type="text/javascript">
+{literal}
+function ViewIn(method) {
+	f = document.forms.navigform;
+	f.elements['show'].value = method;
+	f.submit();
+}
+
+function onOver(Row) {
+	Row.className = 'over';
+}
+function onOut(Row) {
+	Row.className = 'out';
+}
+
+function SetPeriod(days) {
+	f = document.forms.navigform;
+	f.period.value = days;
+	if (f.disp_by) {
+		if (days < 7) {
+			f.disp_by.value = 'hour';
+		}
+		else if (days == 'all') {
+			f.disp_by.value = 'month';
+		}
+		else {
+			f.disp_by.value = 'dayofmonth';
+		}
+	}
+	f.submit();
+}
+
+function SetForm(from, to, disp_by) {
+	f = document.forms.navigform;
+	f.from_date.value = from;
+	f.to_date.value = to;
+	f.disp_by.value = disp_by;
+	f.submit();
+}
+
+function roll(name) {
+	div = document.getElementById(name);
+	if (!div) return;
+	if (!div.style.display || div.style.display == 'none') {
+		div.style.display = 'block';
+	}
+	else {
+		div.style.display = 'none';
+	}
+}
+{/literal}
+</script>
+
+<link href="css/table.css" rel="stylesheet" type="text/css" />
+<link href="css/stat.css" rel="stylesheet" type="text/css" />
+
+<form action="cnt.php" name="navigform" id="navigform" target="_self" style="margin: 0px;">
+{if $navig}
+
+{foreach from=$navig.hidden item=hidden}
+<input type="hidden" name="{$hidden.name}" value="{$hidden.value}" />
+{/foreach}
+
+{/if}
+
+{if $table}
+<table cellpadding="2" cellspacing="1" class="framed" width="100%">
+<tr class="thead">
+	{foreach from=$table.header item=head}
+	<td align="{$head.align}" width="{$head.width}" class="thead">{$head.title}</td>
+	{/foreach}
+</tr>
+<tr class="ttotal">
+	{foreach from=$table.total.cells item=cell}
+	<td align="{$cell.align}" class="{$cell.class}" {$cell.nowrap}>{$cell.value}</td>
+	{/foreach}
+</tr>
+{foreach from=$table.rows item=row}
+<tr class="out" onmouseover="onOver(this)" onmouseout="onOut(this)">
+	{foreach from=$row.cells item=cell}
+	<td align="{$cell.align}" valign="{$cell.valign}" class="{$cell.class}" {$cell.nowrap}>{$cell.value}</td>
+	{/foreach}
+</tr>
+{/foreach}
+</table>
+{if $table.empty}
+	<br /><div class="note">{$table.empty.value}</div><br>
+{/if}
+<table cellpadding="2" cellspacing="1" class="framed" width="100%">
+<tr><td class="tfoot">
+{if $table.footer}
+	{*<!--{$total}: {$count}-->*}	
+	<input class="small" type="submit" name="page_first" value="&lt;&lt;" {$table.footer.btn_prev_disabled} onclick="this.form.offset.selectedIndex=0;this.form.submit()" />
+	<input class="small" type="submit" name="page_prev" value=" &lt; " {$table.footer.btn_prev_disabled} onclick="this.form.offset.selectedIndex-=1;this.form.submit()" />
+	{$table.footer.page}:&nbsp;<select class="small" name="offset" align="absmiddle" onchange="this.form.submit()">{$table.footer.pages}</select>
+	{$table.footer.limit}:&nbsp;<select class="small" name="limit" align="absmiddle" onchange="this.form.offset.selectedIndex=0;this.form.submit()">{$table.footer.limits}</select>
+	<input class="small" type="submit" name="page_next" value=" &gt; " {$table.footer.btn_next_disabled} onclick="this.form.offset.selectedIndex+=1;this.form.submit()" />
+	<input class="small" type="submit" name="page_last" value="&gt;&gt;" {$table.footer.btn_next_disabled} onclick="this.form.offset.selectedIndex=this.form.offset.options.length-1;this.form.submit()" />
+{/if}
+</td></tr>
+</table>
+<br />
+{/if}
+</form>
+
+{if $pathes}
+<br />
+<table border="0" cellspacing="0" cellpadding="1">
+{foreach from=$pathes.row item=row}
+<tr>
+	<td class="Tpath" valign="top"><b>[{$row.key}]</b>&nbsp;&nbsp;</td>
+	<td class="TSmall"><b><a href="http://{$row.href}" target="_blank">http://{$row.href}</b></td>
+</tr>
+{/foreach}
+</table>
+{/if}
+
+{if $info}
+<fieldset style="width:400px;">
+	<legend>{$info.STATINFO}</legend>
+	<table width="100%">
+	{foreach from=$info.rows item=row}
+	<tr>
+		<td nowrap="nowrap">{$row.key}</td>
+		<td align="right" nowrap="nowrap"><b>{$row.val}</b></td>
+	</tr>
+	{/foreach}
+	</table>
+</fieldset>
+{/if}
+
+{if $image}
+<div align="center">
+	<img src="{$image.src}" border="0" alt="{$image.alt}" />
+</div>
+{/if}
+
+{if $tip}
+	<div class="tip"><img src="images/icons/icon32.info.gif" width="32" height="32" alt="" align="left" hspace="5" vspace="5" />{$tip.text}</div>
+{/if}
+
+<iframe width="0" height="0" id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" border="0" style="visibility:hidden"></iframe>
+<iframe width="174" height="189" name="gToday:normal:agenda.js:gfPop:plugins_range.js" id="gToday:normal:agenda.js:gfPop:plugins_range.js" src="third/calendar/ipopeng.htm" scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; left:-500px; top:0px;"></iframe>

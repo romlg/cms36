@@ -1,0 +1,208 @@
+<?php if(!empty($this->tmpl['script'])):?>
+<script type="text/javascript" language="javascript">
+<?php echo $this->tmpl['script']; ?>
+</script>
+<?php endif; ?>
+
+<script src="js/table.js" type="text/javascript"></script>
+<script type="text/javascript">
+function table(){
+    table.superclass.constructor.apply(this);
+};
+extend(table, table_js);
+table = new table();
+
+table.roll = <?php echo $this->roll;?>;
+table.thisname = '<?php echo $this->thisname;?>'; // Со слешами
+table.thisname2 = table.thisname.replace('/', ''); // Без слешей
+</script>
+
+<div id="ajax_table_group">
+    <table class="ajax_table_info" cellspacing="1">
+        <?php if(isset($this->info['sql']['text'])):?>
+        <tr class="ajax_table_info_row">
+            <td class='info_time_cell'><?php echo $this->info['sql']['time'];?></td>
+            <td class='info_cell'><?php echo $this->info['sql']['text'];?></td>
+        </tr>
+        <?php endif;?>
+
+        <?php if(isset($this->info['sql_count']['text'])):?>
+        <tr class="ajax_table_info_row">
+            <td class='info_time_cell'><?php echo $this->info['sql_count']['time'];?></td>
+            <td class='info_cell'><?php echo $this->info['sql_count']['text'];?></td>
+        </tr>
+        <?php endif;?>
+
+        <?php if(isset($this->info['error'])):?>
+        <tr class="ajax_table_info_row">
+            <td class='info_error_cell' colspan="2"><?php echo $this->info['error'];?></td>
+        </tr>
+        <?php endif;?>
+    </table>
+</div>
+
+
+
+<?php if(!empty($this->filter)):?>
+
+<?php if($this->filter['show_filter']):?>
+	<script type="text/javascript">
+	$(document).ready(function () {
+        $('#filterform').show();
+	});
+	</script>
+<?php endif;?>
+
+<p class="searchTitle"><a href="javascript:void(0);" onclick="$('#filterform').toggle('show');"><b><?php echo $this->filter['str_filter'];?></b></a></p>
+<form id="filterform" class="filterform" method="get" name="filterform" action="<?php echo $this->action;?>" style="<?php if (!isset($_GET['filter'])) echo "display:none;";?>">
+
+	<?php foreach ($this->filter['rows'] AS $row):?>
+		<div class="elemBox left">
+			<?php echo "<label>".$row['str_name'].":</label> ".$row['value'] ;?>
+        </div>
+    <?php endforeach;?>
+
+    <?php if (!empty($this->filter['search'])):?>
+    	<div class="elemBox left">
+            <label><?php echo $this->filter['search']['str_find'];?>:</label>
+            <input class="text" type="text" size="20" name="find" id="filter_search" class="ajax_table_input_text" value="<?php echo $this->filter['search']['find'];?>">
+        </div>
+    <?php endif;?>
+
+    <a class="button noClear margRight" href="javascript:document.getElementById('filterform').submit();"><?php echo $this->filter['str_ok'];?></a>
+    <a class="button noClear" href="javascript:document.getElementById('filterform').reset();" onclick="window.location='<?php echo $this->filter['location']."&clear=1";?>'"><?php echo $this->filter['str_reset'];?></a>
+
+    <?php if(!empty($this->filter['adv'])):?>
+        <a class="button open" href="javascript:table.groll('adv_filter')"><?php echo $this->filter['adv']['advanced'];?></a>
+        <div id="adv_filter" class="hide">
+        <?php foreach ($this->filter['adv']['rows'] AS $row):?>
+			<label><?php echo $row['str_name'];?>:</label>
+            <?php echo $row['value'];?>
+        <?php endforeach;?>
+        </div>
+    <?php endif;?>
+
+<input type="hidden" name="sort" value="<?php if(isset($this->filter)) {echo $this->filter['sort'];}?>" />
+<input type="hidden" name="offset" value="0" />
+<?php foreach ($this->filter_params AS $filter_param):?>
+<input type="hidden" name="<?php echo $filter_param['name'];?>" value="<?php echo $filter_param['value'];?>" />
+<?php endforeach;?>
+</form>
+<? endif; ?>
+
+
+
+<?php if(!empty($this->group)): ?>
+<form method="post" name="groupform" id="groupform" target="<?php echo $this->target;?>" action="page.php">
+<?php foreach ($this->params AS $param):?>
+    <?php if(in_array($param['name'], array('esId','tab','id'))):?>
+	<input type="hidden" name="ed[<?php echo $param['name'];?>]" value="<?php echo $param['value'];?>" />
+	<?php endif;?>
+<?php endforeach;?>
+<table cellpadding="1" cellspacing="0" bgcolor="#737F8A">
+	<tr>
+		<td class="thead" onclick="table.groll('group');" onmouseout="this.style.cursor = 'default';" onmouseover="this.style.cursor = 'hand';">&nbsp;<?php echo $this->group['str'];?>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>
+		<div id="group" name="group" style="display: none;">
+			<table cellpadding="0" cellspacing="0" bgcolor="#DCDEE1">
+                <?php foreach ($this->group['fields'] AS $key => $v):?>
+				<tr>
+					<td>&nbsp;&nbsp;<?php echo $v['str'];?>:&nbsp;</td>
+					<td>
+					<?php if($v['group_type'] == 'text'): ?>
+						<input id="group[fields][<?php echo $v['as'];?>][value]" name="group[fields][<?php echo $v['as'];?>][value]" type="text">
+					<?php endif;?>
+					<?php if($v['group_type'] == 'checkbox'): ?>
+						<input id="group[fields][<?php echo $v['as'];?>][value]" name="group[fields][<?php echo $v['as'];?>][value]" type="hidden" value="0">
+						<input id="group[fields][<?php echo $v['as'];?>][value]" name="group[fields][<?php echo $v['as'];?>][value]" type="checkbox" value="<?php echo $v['group_values'];?>">
+					<?php endif;?>
+					<?php if($v['group_type'] == 'select'): ?>
+                        <select id="group[fields][<?php echo $v['as'];?>][value]" name="group[fields][<?php echo $v['as'];?>][value]">
+                        <?php foreach ($v['group_values'] AS $k=>$item):?>
+                        <OPTION value="<?php echo $k;?>"><?php echo $item;?></OPTION>
+                        <?php endforeach;?>
+                        </select>
+					<?php endif;?>
+
+                    <input id="group[fields][<?php echo $v['as'];?>][table]" name="group[fields][<?php echo $v['as'];?>][table]" type="hidden" value="<?php echo $v['group_table'];?>">
+                    <input id="group[fields][<?php echo $v['as'];?>][table_id]" name="group[fields][<?php echo $v['as'];?>][table_id]" type="hidden" value="<?php echo $v['group_table_id'];?>">
+
+					</td>
+					<td width="1px"><input name="group[checked][<?php echo $v['as'];?>]" type="checkbox" value="1" <?php echo $v['group_check'];?>></td>
+				</tr>
+				<?php endforeach;?>
+				<tr>
+					<td colspan="3" align="right"><input type="button" onclick="table.gEdit();" value="<?php echo $this->group['group_submit'];?>"></td>
+				</tr>
+			</table>
+		<input type="hidden" name="page" value="<?php echo $this->thisname;?>" />
+		<input type="hidden" name="do" value="EditGroup" />
+		</div>
+		</td>
+	</tr>
+</table>
+</form>
+<?php endif;?>
+
+<form method="get" name="editform" id="editform" target="<?php echo $this->target;?>" action="<?php echo $this->action;?>">
+<table class="ajax_table_main" cellspacing="1">
+<tr class="ajax_table_header_row">
+<?php foreach ($this->header AS $head):?>
+<th class="ajax_table_header_cell" <?php echo $head['nowrap'];?>><?php echo $head['title'];?></th>
+<?php endforeach;?>
+</tr>
+<?php foreach ($this->rows AS $row):?>
+<tr class="ajax_table_row" onclick="table.clickCheck(this)" >
+    <?php foreach ($row['cells'] AS $cell):?>
+	<td class="ajax_table_cell" style="text-align: <?=$cell['align'] ? $cell['align'] : 'left';?>; vertical-align: <?=$cell['valign'] ? $cell['valign'] : 'middle';?>" <?php echo $cell['nowrap'];?>><?php echo $cell['value'];?></td>
+	<?php endforeach;?>
+</tr>
+<?php endforeach;?>
+</table>
+<?php if(isset($this->empty)):?><br /><div class="note"><?php echo $this->empty['value'];?></div><br /><?php endif;?>
+
+
+<?php if(!empty($this->footer)):?>
+
+	<div class="pageNav">
+		<div class="left">
+			<label><?php echo $this->footer['page'];?>:</label>
+
+			<input class="btn" type="submit" value="&laquo; первая" <?php echo $this->footer['btn_prev_disabled'];?> onclick="this.form.offset.selectedIndex=0;this.form.offset.onchange()">
+			<input class="btn" type="submit" value="&laquo; предыдущая" <?php echo $this->footer['btn_prev_disabled'];?> onclick="this.form.offset.selectedIndex-=1;this.form.offset.onchange()">
+
+			<select name="offset" onchange="this.form.target='_self';this.form.submit()">
+				<?php echo $this->footer['pages'];?>
+			</select>
+
+			<input class="btn" type="submit" value="следующая &raquo;" <?php echo $this->footer['btn_next_disabled'];?> onclick="this.form.offset.selectedIndex+=1;this.form.offset.onchange()">
+			<input class="btn" type="submit" value="последняя &raquo;" <?php echo $this->footer['btn_next_disabled'];?> onclick="this.form.offset.selectedIndex=this.form.offset.options.length-1;this.form.offset.onchange()">
+		</div>
+		<div class="right">
+			<p><?php echo $this->footer['total'].": ".$this->footer['count'];?>&nbsp;&nbsp;&nbsp;|</p>
+			<label><?php echo $this->footer['limit'];?>:</label>
+			<select name="limit" onchange="this.form.offset.selectedIndex=0;this.form.target='_self';this.form.submit()">
+				<?php echo $this->footer['limits'];?>
+			</select>
+		</div>
+	</div>
+
+<?php endif;?>
+
+
+<input type="hidden" name="actions" value="" />
+<?php if(!empty($this->submit)):?><input type="submit" value="<?php echo $this->submit['value'];?>" /><?php endif;?>
+<?php if(!empty($this->reset)):?><input type="reset" value="<?php echo $this->reset['value'];?>"><?php endif;?>
+<?php if(!empty($this->close)):?><input type="button" value="<?php echo $this->close['value'];?>" onclick="window.close()" /><?php endif;?>
+<?php foreach ($this->params AS $param):?>
+<?php if(is_array($param['value'])):?>
+<?php foreach ($param['value'] AS $key=>$value): ?>
+<input type="hidden" name="<?php echo $param['name']."[".$key."]";?>" value="<?php echo $value;?>" />
+<?php endforeach;?>
+<?php else:?>
+<input type="hidden" name="<?php echo $param['name'];?>" value="<?php echo $param['value'];?>" />
+<?php endif;?>
+<?php endforeach;?>
+</form>

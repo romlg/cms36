@@ -1,0 +1,9 @@
+<?php if (!empty($this->files_block)) : ?>
+<ul class="doc">
+	<?php foreach ($this->files_block as $key=>$item): ?>
+	<li>
+		<img border="0" src="<?=$item['ico'];?>" width="16" alt="" height="16"><?=$item['name'];?> (<?=$item['size']['size'];?> <?=$item['size']['unit'];?>) <a href="<?=$item['fname'];?>">Скачать</a>
+	</li>
+	<?php endforeach; ?>
+</ul>
+<?php endif; ?>

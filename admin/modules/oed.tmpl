@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>{$title}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<script language="javascript">
+{literal}
+function closeTab(act, newTab, do2) {
+ if (!window.frames['cnt']) {
+	alert('Фрейм не найден!');
+	return;
+ }
+
+ ourform = window.frames['cnt'].document.forms['editform'];
+ if (!ourform) {
+	alert('Форма не найдена, мы не знаем что делать');
+	return;
+ }
+ ourform.elements['act2'].value = act;
+ ourform.elements['newTab'].value = newTab;
+ if (do2) {
+  ourform.elements['do2'].value = do2;
+ }
+
+ window.frames['cnt'].document.forms['editform'].submit();
+}
+
+function setPids(id, pid, type) {
+  if (!window.frames['cnt']) {
+	alert('Фрейм не найден!');
+	return;
+ }
+
+ ourform = window.frames['cnt'].document.forms['editform'];
+ if (!ourform) {
+	alert('Форма не найдена, мы не знаем что делать');
+	return;
+ }
+
+ if (!ourform.elements['n_' + type + '_id']) {
+	newId = window.frames['cnt'].document.createElement('<input type=hidden name=n_' + type + '_id ' + '>');
+	ourform.appendChild(newId);
+ }
+
+ if (!ourform.elements['newPid']) {
+	newPid = window.frames['cnt'].document.createElement('<input type=hidden name=newPid' + '>');
+	ourform.appendChild(newPid);
+ }
+
+ ourform.elements['n_' + type + '_id'].value = id;
+ ourform.elements['newPid'].value = pid;
+}
+{/literal}
+</script>
+</head>
+
+<body bgcolor="#CFD8EA" topmargin="0" rightmargin="0" leftmargin="0">
+
+<script src="js/elem.js"></script>
+<script src="js/lang.js"></script>
+
+<table cellpadding="0" cellspacing="0" width="100%" height="100%">
+<tr>
+
+	{if !empty($basic)}
+	<td valign="bottom">&nbsp;&nbsp;</td>
+	<td valign="top" align="center">
+		<table cellpadding="0" cellspacing="0" class="xpbox" width="200">
+		<tr>
+			<td>
+				<table cellpadding="0" cellspacing="0" width="100%" background="images/xpbox/green_bg.gif">
+				<tr class="ghead">
+					<td><img src="images/icons/{$basic.basic_icon}" width="39" height="34" alt="" /></td>
+					<td width="100%" class="ghead" style="padding-top: 7px">&nbsp;<b>{$basic.basic_caption}</b></td>
+					<td></td>
+					<td><img src="images/xpbox/green_right.gif" width="3" height="34" alt="" /></td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div>
+					<table cellpadding="5" cellspacing="2" class="white" width="100%">
+					<tr>
+						<td class="white"><div class="mbox">
+						<div class="elemItem"><a href="#" onclick="closeTab('newTab', 'objects', 'editform'); return false" onactivate='elemActivate(this)' ondeactivate='elemDeactivate()' class="open"><b>{$basic.STR_BASIC}</b></a></div>
+						{$basic.tree}
+						</div></td>
+					</tr>
+					{foreach from=$basic.rows item=row}
+					<tr><td class="white"><div class="mbox">{$row.value}</div></td></tr>
+					{/foreach}
+					</table>
+				</div>
+			</td>
+		</tr>
+		</table>
+	</td>
+	<td valign="bottom" style="border-right: 1px solid #2F4874">&nbsp;&nbsp;</td>
+	{/if}
+
+	<td valign="top" width="100%" bgcolor="#D9D9D9" style="padding: 5px 5px 0px 5px; border-left: 1px solid white; border-top: 1px solid white">
+
+		<table cellpadding="0" cellspacing="0" width="100%" height="100%">
+		<tr>
+			<td valign="top">
+
+				<table cellpadding="0" cellspacing="2" bgcolor="white" width="100%">
+				<tr><td bgcolor="#0F89DA" style="border: 1px solid #1C5180; color: white" background="images/xpbox/blue_bg.gif">
+					<table cellpadding="0" cellspacing="0" width="100%"><tr><td style="color: white"><img align="absmiddle" src="images/xpbox/blue_bg.gif" width="4" height="23" border="0" /><b>{$title}</b></td>
+					{literal}<td align="right"><a href="#" onclick="if(opener){opener.focus();if(opener.cnt&&opener.cnt.document.forms.restoreform)opener.cnt.document.forms.restoreform.subm.click();}window.close()" hidefocus="hidefocus"><img align="absmiddle" src="images/icons/icon.cross.gif" width="16" height="16" hspace="4" border="0" alt="Close window" /></a></td>{/literal}
+					</tr></table>
+				</td></tr>
+				<tr><td bgcolor="#E5E5E5" style="border: 1px solid #C7C7C7" unselectable="on">{$actions}</td></tr>
+				</table>
+
+			</td>
+		</tr>
+
+		<tr>
+			<td valign="top" width="100%" height="100%">
+
+				<iframe id="loading" name="loading" src="templates/loading.html" width="0" height="0" border="0" style="visibility: hidden; position: absolute; width: 100px; height: 100px"></iframe>
+				<iframe id="cnt" name="cnt" width="100%" height="100%" src="cnt.php?{$src}" border="0" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+
+				<table cellpadding="0" cellspacing="2" bgcolor="white" width="100%">
+				<tr><td bgcolor="#E5E5E5" style="border: 1px solid #C7C7C7" unselectable="on">{$actions}</td></tr>
+				<tr><td bgcolor="#0F89DA" style="border: 1px solid #1C5180" background="images/xpbox/blue_bg.gif"><img align="absmiddle" src="images/xpbox/blue_bg.gif" width="4" height="23" border="0" /></td></tr>
+				</table>
+
+			</td>
+		</tr>
+		</table>
+
+	</td>
+</tr>
+</table>
+
+<iframe id="tmpobjects" name="tmpobjects" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>
+</body>
+</html>

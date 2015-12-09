@@ -1,0 +1,11 @@
+<?php echo $this->ul_open; ?>
+<?php foreach ($this->items AS $item):?>
+    <li>
+        <?php echo $item['plus'];?>
+        <a href='<?php echo $item['java_href'];?>' class='name<?php echo $item['class'];?>' style='background-image: url(<?php echo $item['icon'];?>);'><?php echo $item['name'];?> <?php echo (!empty($item['note'])?'<span>('.$item['note'].')</span> ':'');?></a>
+        <?php echo $item['buttons'];?>
+
+        <?php if(isset($item['subtree'])) echo $item['subtree'];?>
+    </li>
+<?php endforeach;?>
+<?php echo $this->ul_close; ?>

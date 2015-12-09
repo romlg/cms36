@@ -1,0 +1,19 @@
+<table width="100%" cellpadding="0" cellcpacing="0" onbeforeactivate="if (window.frames.cnt) window.frames.cnt.bNoDeAct=1" border="0">
+<tr class="actions">
+	<td style="width:1px;"><img src="images/s.gif" width="1" height="19" alt="" /></td>
+	{strip}
+	{foreach from=$actions item=action}
+	<td width="16" class="mbox" style="white-space:nowrap; display:{if $action.display eq 'block'}table-cell{else}{$action.display}{/if};">
+		<a hidefocus="hidefocus" href="#" onclick="{$action.onclick};return false;" ondrop="{$action.ondrop}" ondragenter="{$action.ondragenter}" ondragleave="{$action.ondragleave}" ondragover="{$action.ondragover}" title="{$action.title}{if $action.hint}: {$action.hint}{/if}">
+			<img align="absmiddle" src="images/icons/{$action.img}" width="16" height="16" border="0" hspace="4" alt="{$action.title}{if $action.hint}: {$action.hint}{/if}" />
+			{if $action.show_title}<b>{$action.title}</b>{/if}
+		</a>
+	</td>
+	<td width="2" style="display:{$action.display}">
+		<img src="images/icons/vsep.gif" width="2" height="19" hspace="4" alt="" />
+	</td>
+	{/foreach}
+	{/strip}
+	<td align="right">{*if !empty($select)}{$select}{else}&nbsp;{/if*}&nbsp;</td>
+</tr>
+</table>

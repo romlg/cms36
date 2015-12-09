@@ -1,0 +1,105 @@
+<?php if ($this->print): ?>
+<html>
+<head>
+	<title>Инструкция по системе администрирования</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body style="padding:0 10px; text-align: left;" onload="window.print();">
+    <div class="header" style="margin:0 0 15px 0; height:70px;">
+        <p style="float:right; text-align:right; color:#ababab; font-style:italic; margin:0;">ООО «Русофт» 124460, г. Москва,<br />г.Зеленоград, корпус 1455, кв. 291<br />Телефон: +7 (495) 22 11 8 77<br />Web: www.rusoft.ru  E-mail: info@rusoft.ru</p>
+        <img src="/admin/images/print_logo.gif" alt="" />
+    </div>
+<?php else : ?>
+<a class="button" href="javascript:void(0);" onclick="window.open('/admin/page.php?page=help_generator&print=1');">Распечатать</a><div class="clear"></div><br />
+<?php endif; ?>
+
+    <?=$this->header;?>
+
+    <!-- Start summary -->
+    <h1>ОГЛАВЛЕНИЕ</h1>
+    <ul>
+        <?php foreach ($this->sections as $key=>$section): ?>
+        <li>
+            <p><b><?=$section['name']?></b></p>
+            <ul>
+                <?php foreach ($section['items'] as $module): ?>
+                <li>
+                    <a href="#<?=$module['name']?>" <?=$module['style']?>><?=$module['title']?></a>
+                    <a href="http://help.rusoft.ru/getmanual.php?engine=3.6&module=<?=$module['name']?>" target="_blank"><img src="/admin/images/tree/ico_see.gif" title="Смотреть в отдельном окне" /></a>
+                    <?php if (!isset($this->help[$module['name']])) continue; ?>
+                    <?php $temp = $this->help[$module['name']]; ?>
+                    <?php if ($temp['methods']): ?>
+        			    <ul>
+                            <?php foreach ($temp['methods'] as $method): ?>
+        			        <li>
+                                <a href="#<?=$method['module'];?>"><?=$method['name'];?></a>
+                                <a href="http://help.rusoft.ru/getmanual.php?engine=3.6&module=<?=$method['module']?>" target="_blank"><img src="/admin/images/tree/ico_see.gif" title="Смотреть в отдельном окне" /></a>
+        			        </li>
+                            <?php endforeach; ?>
+        			    </ul>
+        			<?php endif; ?>
+        			<?php if ($temp['sub']): ?>
+        				<ul>
+        				    <?php foreach ($temp['sub'] as $v): ?>
+                            <?php foreach ($v['methods'] as $method): ?>
+            			        <li>
+                                    <a href="#<?=$method['module'];?>"><?=$method['name'];?></a>
+                                    <a href="http://help.rusoft.ru/getmanual.php?engine=3.6&module=<?=$method['module']?>" target="_blank"><img src="/admin/images/tree/ico_see.gif" title="Смотреть в отдельном окне" /></a>
+            			        </li>
+                            <?php endforeach; ?>
+                            <?php endforeach; ?>
+        				</ul>
+                    <?php endif; ?>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+    <!-- End summary -->
+
+    <!-- Start content -->
+    <?php foreach ($this->sections as $key=>$section): ?>
+        <h1><?=$section['name'];?></h1>
+        <?php foreach ($section['items'] as $module): ?>
+            <a name="<?=$module['name'];?>"></a><h2 <?=$module['style']?>><?=$module['title']?></h2>
+            <?php if (!isset($this->help[$module['name']])) continue; ?>
+            <?php $temp = $this->help[$module['name']]; ?>
+            <?php if ($temp['methods']): ?>
+                <?php foreach ($temp['methods'] as $method): ?>
+   			        <a name="<?=$method['module'];?>"></a>
+   			        <h3><?=$method['name'];?></h3>
+   			        <?php if ($method['module'] == 'strings.list'):?>
+                        <!-- Список строковых констант -->
+                        <?php foreach ($this->strings as $site_module) : ?>
+                            <h4 style="border-bottom:1px solid #000;"><?=$site_module['title'];?></h4>
+                            <?php foreach ($site_module['items'] as $string): ?>
+                                <p><b><?=$string['name'];?></b> - <?php echo $string['description'] ? $string['description'] : $string['def'];?></p>
+                            <?php endforeach; ?>
+                        <?php endforeach; ?>
+   			        <?php else: ?>
+                        <?=$method['text'];?>
+   			        <?php endif; ?>
+   			    <?php endforeach; ?>
+   			<?php endif; ?>
+            <?php if ($temp['sub']): ?>
+                <?php foreach ($temp['sub'] as $v): ?>
+                    <?php foreach ($v['methods'] as $method): ?>
+                        <a name="<?=$method['module'];?>"></a>
+                        <h3><?=$method['name'];?></h3>
+                        <?=$method['text'];?>
+                     <?php endforeach; ?>
+                <?php endforeach; ?>
+             <?php endif; ?>
+    <?php endforeach; ?>
+    <hr />
+<?php endforeach; ?>
+<!-- End summary -->
+
+<?=$this->footer;?>
+
+<?php if ($this->print): ?>
+</body>
+</html>
+<?php endif; ?>

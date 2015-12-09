@@ -1,0 +1,23 @@
+<?php if($this->content_publ_list) : ?>
+    <h2><?=$this->messages['publications_title']?></h2>
+    <ul class="list">
+        <?php foreach($this->content_publ_list as $num => $publ) :
+        /**
+         * @var Publication $publ
+         */
+        ?>
+            <li>
+                <p class="name">
+                    <span class="date"><?=$publ->getDate(); ?></span> <?=$publ->getName(); ?>
+                </p>
+                <p>
+                    <?php $image = $publ->getImage(array('100', '100'), 'adaptiveResize'); if($image) : ?>
+                        <img src="<?=$image?>" alt="<?=$publ->getName(); ?>"/>
+                    <? endif; ?>
+                    <?=$publ->getNotice(); ?></p>
+                <a href="<?=$publ->getPath();?>"><?=$this->messages['more']?></a>
+            </li>
+        <? endforeach; ?>
+    </ul>
+    <?=$this->navig;?>
+<? endif; ?>

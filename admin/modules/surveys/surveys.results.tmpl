@@ -1,0 +1,47 @@
+<?php if ($this->view == 'cnt'): ?>
+<a class="button" href="?page=<?=$this->module_name?>&do=showresults&id=<?=$this->survey['id']?>&view=percnt"><?=$this->STR_RESULT_PERCNT?></a>
+<?php else: ?>
+<a class="button" href="?page=<?=$this->module_name?>&do=showresults&id=<?=$this->survey['id']?>&view=cnt"><?=$this->STR_RESULT_CNT?></a>
+<?php endif; ?>
+<div class="clear"></div>
+
+<h2><?=$this->survey['name']?></h2>
+<p><?=$this->survey['description']?></p>
+
+<table border="0" width="80%">
+    <?php foreach ($this->questions as $quest): ?>
+        <tr>
+            <td colspan="2">
+                <a href="?page=<?=$this->module_name?>&do=showmoreresults&id=<?=$this->survey['id']?>&qid=<?=$quest['id']?>"><?=$quest['text']?></a>
+            </td>
+        </tr>
+        <?php foreach ($quest['variants'] as $var): ?>
+        <tr>
+            <td style="vertical-align: middle;">
+                <?=$var['text']?>
+                <?php if ($var['free_form']): ?>&nbsp;(<?=$this->STR_FREE_FORM?>)<?php endif; ?>
+            </td>
+            <td width="50%">
+                <div style="background-color: #FF8C04; font-weight: bold; white-space: nowrap; width: <?=$var['percent']?>%; padding: 2px;">
+                    <?=(($this->view == 'percnt') ? ''.$var['percent'].'%' : ''.$var['cnt'].'')?>
+                </div>
+            </td>
+        </tr>
+        <?php if (($var['free_form'])): ?>
+        <tr>
+            <td colspan=2>
+                <table style="padding-left:20px">
+                    <?php $i=1; foreach ($var['free_answ'] as $free_var): ?>
+                    <tr>
+                        <td><?=$i++?>.</td>
+                        <td><?=$free_var?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </table>
+            </td>
+        </tr>
+        <?php endif; ?>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+</table>
+<a class="button" href="/admin/?page=<?=$this->module_name?>"><?=$this->STR_BACK?></a>

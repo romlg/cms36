@@ -1,0 +1,51 @@
+/* popup */
+.overlayrusoft {
+	background: url(/images/transparent_bg_white.png) left top repeat;
+	display: none;
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1000;
+}
+
+.popuprusoft {
+	background: #fff;
+	box-shadow: 0 0 10px #ccc;
+	display: none;
+	position: absolute;
+	top: 230px;
+	left: 50%;
+	width: 446px;
+	margin-left: -303px;
+	padding: 50px 80px;
+	text-align: left;
+	z-index: 1010;
+}
+
+	.popuprusoft .close {
+		background: url(/images/ico_close.png) left top no-repeat;
+		position: absolute;
+		top: 15px;
+		right: 15px;
+		display: block;
+		width: 10px;
+		height: 10px;
+		line-height: 0;
+		font-size: 0;
+		cursor: pointer;
+	}
+
+	.popuprusoftTitle {
+		margin: 0 0 30px 0;
+		font-size: 24px;
+	}
+
+	.popuprusoft textarea {
+		width: 414px;
+	}
+
+/* /popup */

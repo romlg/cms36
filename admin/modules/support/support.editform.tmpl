@@ -1,0 +1,41 @@
+<script for=editform event=onkeydown>
+	if (event.keyCode==27) window.close();
+</script>
+
+<script>
+var prod_id=0;
+function selectClient() {ldelim}
+	window.open("ced.php?page={$thisname}&do=showclientselector", "showclientselector", "width=640, height=530, resizable=1, status=1").focus();
+{rdelim}
+
+function selectComponent() {ldelim}
+	{*if (prod_id){ldelim}*}
+	window.open("ced.php?page={$thisname}&do=showcomponentselector&prod_id="+prod_id, "showcomponentselector", "width=640, height=530, resizable=1, status=1").focus();
+{*{rdelim}*}
+{rdelim}
+</script>
+
+<form target=tmp{$target}  name="editform" action="page.php" method="post" onsubmit="window.close()">
+<fieldset><legend>{$STR_NEW_RMA}</legend>
+<input type=hidden name='page' value='{$thisname}'>
+<input type=hidden name='do' value='edit'>
+<input type=hidden name='id' value='{$id}'>
+<table>
+<tr><td>{$STR_STATUS}:</td><td><select name="fld[status]">{$status}</select></td></tr>
+<tr><td>{$STR_CUSTOMER}:</td><td><label for=customer><input DISABLED size=20 type=text name='client' value='{$client}'><input type=hidden name=fld[client_id] value='{$client_id}'> <input id=customer type=button value=' ... ' onclick='selectClient()'></td></tr>
+<tr><td>{$STR_CATEGORY}:</td><td><select name="fld[category_id]">{$categories}</select></td></tr>
+{*<tr><td>{$STR_GROUP}:</td><td>
+<select name="fld[product_type_id]" onChange="prod_id=this.value;document.forms.editform.component.value=''"><option value='NULL' selected>---все---</option>{$product_types}</select>
+</td></tr>
+
+<tr><td>{$STR_PART}:</td><td><input DISABLED size=45 type=text name='component' value='{$parts.name}'><input type=hidden name=fld[product_id] value='{$parts.id}'><input id=components type=button value=' ... ' onclick='selectComponent()'></td></tr>*}
+{*<tr><td>{$STR_PART}:</td><td><select name="fld[product_id]">{$parts}</select></td></tr>*}
+<tr><td>{$STR_SUMMARY}:</td><td><textarea name="fld[summary]" rows=3 style='width: 100%'>{$summary}</textarea></td></tr>
+</table>
+</fieldset>
+<br>
+<div align=center>
+<input type=submit class=btn value='{$STR_SAVE}'>
+<input type=button onClick="window.close()" value='{$STR_CANCEL}'>
+</div>
+</form>

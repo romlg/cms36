@@ -1,0 +1,26 @@
+{$script}
+<script>
+function mySubmit(item) {ldelim}
+	item.subm.disabled = true;
+	return true;
+{rdelim}
+
+function editItem(id) {ldelim}
+	if (id == null) id = ID;
+	window.open("ced.php?page={$thisname}&do=editform&id="+id, "edit{$thisname}", "width=500, height=400, resizable=1, status=1").focus();
+{rdelim}
+
+function upload() {ldelim}
+	//window.showModalDialog("dialog.php?page="+thisname+"&do=show_upload_form", "upload", "dialogWidth:400px; dialogHeight:400px;");
+	window.open("page.php?page="+thisname+"&do=show_upload_form&id="+ID, "", "width=450, height=130, resizable=1, scrollbars=1").focus();
+{rdelim}
+
+var TABLE = '{$thisname}';
+var ID = '0';
+var A{$thisname}0 = new Array(0,0);
+var A{$thisname}1 = new Array(1,1);
+var A{$thisname}2 = new Array(0,0);
+window.parent.elemActions('{$thisname}', 0);
+</script>
+{$table}
+<IFRAME id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

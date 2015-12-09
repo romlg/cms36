@@ -1,0 +1,139 @@
+{$script}
+<script type="text/javascript" src="js/elem.js"></script>
+
+<script type="text/javascript">
+{literal}
+var products;
+var name;
+var ip;
+var add;
+var element_name;
+var row;
+var unique;
+
+function MySubmit() {
+	document.forms.editform.submit();
+}
+
+
+function add(add_value) {
+	form = document.forms['editform'];
+	name = 'table_' + add_value;
+	if(add_value=='ip' || add_value=='events') {
+	  	ip = form.elements[add_value].value;
+  		ip_value = form.elements[add_value+'_value'].value
+
+	  	id = add_value + '_' + ip;
+	  	if(document.getElementById(id)) {
+  			if (add_value=='ip') alert('Описание для этого ип адреса уже сущесвует');
+			else if (add_value=='events') alert('Это событие уже сущесвует');
+  			return false;
+	  	}
+		if(ip=='') return false;
+		if(ip_value=='') return  false;
+		row = document.all[name].insertRow();
+  		row.id = id;
+	  	row.insertCell().innerHTML = '<input type=hidden name="fld[' + add_value + '][' + ip + ']" value="' + ip_value + '">' + ip;
+		row.insertCell().innerHTML = ip_value;
+		row.insertCell().innerHTML = '<a href="#" onclick=\'if (confirm(\"Удалить \"+this.parentNode.parentNode.cells[0].innerText+\"?\")) this.parentNode.parentNode.removeNode(true)\' title=\'Удалить\'>[-]</a>';
+		return true;
+	}
+ 	value = form.elements[add_value].value;
+ 	id = add_value + '_' + value;
+ 	if(document.getElementById(id)) {
+ 		if(add_value=='search_ph') alert('Такая поисковая фраза уже существует!')
+ 		if(add_value=='favorites_ip') alert('Такой ip-адрес уже существует в избранном!')
+ 		if(add_value=='popular') alert('Эта популярная страница уже добавлена в избранное!')
+ 		if(add_value=='events') alert('Это событие уже существует!')
+ 		return false;
+ 	}
+	if(value=='') return false;
+ 	row = document.all[name].insertRow();
+ 	row.id = id;
+ 	row.insertCell().innerHTML = '<input type=hidden name="fld[' + add_value + '][]" value="' + value + '">' + value;
+	row.insertCell().innerHTML = '<a href="#" onclick=\'if (confirm(\"Удалить \"+this.parentNode.parentNode.cells[0].innerText+\"?\")) this.parentNode.parentNode.removeNode(true)\' title=\'Удалить\'>[-]</a>';
+	return true;
+}
+
+function SaveDefault() {
+	f = document.forms.editform;
+	f.elements["default"].value = 1;
+	f.submit();
+}
+
+         
+{/literal}
+
+var TABLE = '{$thisname}';
+var ID = '{$id}';
+</script>
+
+<form action="page.php" method="post" name="editform" id="editform" target="tmp{$thisname}{$id}" onSubmit="MySubmit()">
+<input type="hidden" name="default" value="0" />
+
+<fieldset>
+<legend>{$STR_FILTERS}</legend>
+<table width="100%"><tr>
+	<td valign="top">{$STR_FILTER_IPS}: <br><span class="note">{$STR_FILTER_IPS_NOTE}</span></td>
+	<td valign="top"><input type="text" name="fld[filter_ips]" value="{$filter_ips}" size="30" maxlength="255" /><input type="image" src="images/s.gif" /></td>
+
+</tr></table>
+</fieldset>
+<fieldset>
+<legend>{$STR_SETTINGS}</legend>
+<table width="100%"><tr>
+<td valign="top">{$STR_IP_ALIAS}: <br><span class="note">{$STR_IP_ALIAS_NOTE}</span></td>
+<td valign="top">
+{$ip_alias}
+</td>
+</tr>
+</table>
+</fieldset>
+{if $events_alias}
+<fieldset>
+<legend>{$STR_EVENTS}</legend>
+<table width="100%"><tr>
+<td valign="top">{$STR_EVENT_ALIAS}: <br><span class="note">{$STR_EVENT_ALIAS_NOTE}</span></td>
+<td valign="top">
+{$events_alias}
+</td>
+</tr>
+</table>
+</fieldset>
+{/if}
+{if $reklama_alias}
+<fieldset>
+<legend>{$STR_REKLAMA}</legend>
+{$STR_REKLAMA_ALIAS}: <br><span class="note">{$STR_REKLAMA_ALIAS_NOTE}</span><br /><br />
+{$reklama_alias}
+</fieldset>
+{/if}
+<!--
+<fieldset>
+<legend>{$STR_FAVORITES}</legend>
+<table width="100%"><tr>
+<td valign="top" width=33%>{$STR_STAT_POPULAR}: <br><span class="note">{$STR_STAT_POPULAR_NOTE}</span></td>
+<td valign="top" width=33%>{$STR_STAT_SEARCH_PH}: <br><span class="note">{$STR_STAT_SEARCH_PH_NOTE}</span></td>
+<td valign="top" width=33%>{$STR_STAT_IP}: <br><span class="note">{$STR_STAT_IP_NOTE}</span></td>
+</tr>
+<tr>
+<td valign="top">
+{$popular}
+</td>
+<td valign="top">
+{$search_ph}
+</td>
+<td valign="top">
+{$favorites_ip}
+</td>
+</tr>
+
+</table>
+</fieldset>
+-->
+<input type="hidden" name="page" value="stat/stat_settings" />
+<input type="hidden" name="do" value="edit" />
+
+</form>
+
+<iframe id="tmp{$thisname}{$id}" name="tmp{$thisname}{$id}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

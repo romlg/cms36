@@ -1,0 +1,387 @@
+/*.ajax_table_main{
+	margin: 0;
+	padding: 0;
+	border-collapse: collapse;
+	border-left: 1px solid #D4D0C8;
+	border-top: 1px solid #D4D0C8;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	width: 100%;
+	margin-top: 10px;
+}
+.ajax_table_row{
+	background-color: #ffffff;
+	vertical-align: middle;
+	cursor: pointer;
+}
+.ajax_table_row_selected{
+	cursor: pointer;
+	background-color: #85D48F;
+}
+.ajax_table_row_roll{
+	background-color: #AFF8B8;
+	vertical-align: middle;
+	cursor: pointer;
+}
+.ajax_table_row_newadded{
+	background-color: #C7C7C7;
+	vertical-align: middle;
+	cursor: pointer;
+}
+.ajax_table_cell{
+	border-right: 1px solid #D4D0C8;
+	border-bottom: 1px solid #D4D0C8;
+	padding: 2px 3px;
+}
+.ajax_table_header_row{
+	background-color: #F89000;
+	vertical-align: middle;
+	cursor: pointer;
+}
+.ajax_table_header_cell{
+	border-right: 1px solid #D4D0C8;
+	border-bottom: 1px solid #D4D0C8;
+	padding: 3px 5px;
+	font-weight: bold;
+	color: White;
+}
+.ajax_table_header_cell a{
+	color: White !IMPORTANT;
+}
+.ajax_table_nav_main{
+	width: 100%;
+	text-align: center;
+	border: 1px solid #D4D0C8;
+	margin-top: 4px;
+}
+.ajax_table_nav{
+	padding: 0;
+	border-collapse: collapse;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+}
+.ajax_table_nav_img{
+	width: 19px;
+	border: none;
+	cursor: pointer;
+}
+.ajax_table_nav_img2{
+	width: 30px;
+	border: none;
+	cursor: pointer;
+}
+.ajax_table_nav_imgb{
+	width: 19px;
+	border: none;
+}
+.ajax_table_nav_img2b{
+	width: 30px;
+	border: none;
+}
+.ajax_table_nav_row{
+	background-color: #F89000;
+	vertical-align: middle;
+}
+.ajax_table_nav_cell{
+	color: #ffffff;
+	padding-left: 2px;
+	padding-right: 2px;
+	white-space: normal;
+}
+.ajax_table_info{
+	padding: 0;
+	border-collapse: collapse;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.ajax_table_info_row{
+	vertical-align: middle;
+}
+.ajax_table_info_error_cell{
+	color: #FF0000;
+	white-space: normal;
+}
+.ajax_table_info_cell{
+	color: #AAA9A9;
+	white-space: normal;
+	border-bottom: 1px solid #D4D0C8;
+	padding: 2px;
+}
+.ajax_table_info_time_cell{
+	color: #AAA9A9;
+	width: 50px;
+	white-space: normal;
+	padding: 2px;
+	border-right: 1px solid #D4D0C8;
+	border-bottom: 1px solid #D4D0C8;
+}
+.ajax_table_filter{
+	padding: 0;
+	border-collapse: collapse;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 15px;
+}
+.ajax_table_filter_row{
+	vertical-align: middle;
+}
+.ajax_table_filter_cell{
+	color: #000000;
+	white-space: normal;
+}
+.ajax_form{
+	padding: 0;
+	margin: 0;
+}
+.ajax_table_group{
+	padding: 0;
+	border-collapse: collapse;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	border: 1px solid #D4D0C8;
+	background-color: #F89000;
+	cursor: pointer;
+}
+.ajax_table_group_row{
+	font-weight: bold;
+}
+.ajax_table_group_cell{
+	color: White;
+}
+.ajax_table_group_inner{
+	padding: 0;
+	border-collapse: collapse;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	background-color: #EBE8E1;
+}
+.ajax_table_group_inner_row{
+
+}
+.ajax_table_group_inner_cell{
+
+}
+.ajax_table_group_inner_cell_button{
+	text-align: right;
+}
+.ajax_table_button{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #ffffff;
+	background-color: #52d331;
+	font-weight: bold;
+	border: 1px solid #086C08;
+	cursor: pointer;
+}
+.ajax_table_input_text{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	border: 1px solid #086C08;
+	margin: 0 3px;
+}
+.ajax_table_select{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	margin: 0 3px;
+	color: #196c1a;
+	background-color: White;
+	font-weight: bold;
+}*/
+
+/* table list */
+
+.ajax_table_main, table.list {
+	background:#9e9e9e;
+	border-collapse:separate;
+	border-spacing:1px;
+	clear:both;
+	margin:10px 0 20px 0;
+	width:100%;
+}
+
+.ajax_table_main.searchTabl, table.list.searchTabl  {
+	background:none;
+	margin:0 0 10px 0;
+}
+
+.ajax_table_main.gallerySelected, table.list.gallerySelected  {
+	background:none;
+	margin:-10px 0 10px 0;
+	table-layout:fixed;
+}
+
+.ajax_table_main.gallery, .ajax_table_main.attachFile, .ajax_table_main.form,
+table.list.gallery, table.list.attachFile, table.list.form  {
+	table-layout:fixed;
+}
+
+	.ajax_table_main th, table.list th {
+		background:#ffc671;
+		border:1px solid #fff;
+		overflow:hidden;
+		color:#000;
+		text-align:left;
+		vertical-align:middle;
+		font-weight:bold;
+		padding:2px 10px 3px 10px;
+	}
+
+	.ajax_table_main td, table.list td {
+		background:#fff;
+		overflow:hidden;
+		/*white-space:nowrap;*/
+		vertical-align:middle;
+		text-align:left;
+		color:#000;
+		padding:2px 10px 3px 10px;
+		border:1px solid #fff;
+		zoom:1;
+	}
+
+	.ajax_table_main.searchTabl td, table.list.searchTabl td {
+		border:none;
+		padding:0 6px;
+	}
+
+	.ajax_table_main th.sortTop, table.list th.sortTop {
+		background:#ffc671 url(../images/icons/icon.asc.gif) right 8px no-repeat;
+		padding-right:14px;
+	}
+
+	.ajax_table_main th.sortBottom, table.list th.sortBottom {
+		background:#ffc671 url(../images/icons/icon.desc.gif) right 8px no-repeat;
+		padding-right:14px;
+	}
+
+	tr.odd td  {
+		background:#f4f4f4;
+	}
+
+	.ajax_table_main th.del, .ajax_table_main td.del, .ajax_table_main.gallerySelected td.del,
+	table.list th.del, table.list td.del, table.list.gallerySelected td.del {
+		width:20px;
+		padding:2px 2px 3px 2px;
+		font-weight:bold;
+		text-align:center;
+	}
+
+	.ajax_table_main td.del, table.list td.del {
+		font-weight:normal;
+	}
+
+	.ajax_table_main td.inputFile, table.list td.inputFile {
+		width:46%;
+		padding:2px 6px;
+	}
+
+	.ajax_table_main td.nameFile, table.list td.nameFile {
+		width:46%;
+	}
+
+	.ajax_table_main th.num, .ajax_table_main td.num, table.list th.num, table.list td.num {
+		width:26px;
+		padding:2px 10px;
+	}
+
+	.ajax_table_main th.typeForm, table.list th.typeForm {
+		width:84px;
+		padding:2px 10px;
+	}
+
+	.ajax_table_main td.typeForm, table.list td.typeForm {
+		width:84px;
+		padding:2px;
+	}
+
+	.ajax_table_main td.name, .ajax_table_main td.value, table.list td.name, table.list td.value {
+		padding:2px 6px;
+	}
+
+		.ajax_table_main th a, .ajax_table_main th a:hover, table.list th a, table.list th a:hover {
+			color:#000 !important;
+		}
+
+		.ajax_table_main th.del a, .ajax_table_main th.del a:hover, table.list th.del a, table.list th.del a:hover {
+			color:#000;
+			text-decoration:none;
+		}
+
+		.ajax_table_main td input.text, .ajax_table_main tr.odd td input.text, table.list td input.text, table.list tr.odd td input.text {
+			position:relative;
+			margin:0 -4px;
+			width:100%;
+		}
+
+		.ajax_table_main td .file input.text, .ajax_table_main tr.odd td .file input.text, table.list td .file input.text, table.list tr.odd td .file input.text {
+			position:relative;
+			margin:0 5px 0 0;
+			width:60%;
+		}
+
+		.ajax_table_main td select, .ajax_table_main tr.odd td select, table.list td select, table.list tr.odd td select {
+			position:relative;
+			margin:0;
+			width:100%;
+			//width:120%;
+		}
+
+		.ajax_table_main td input.check, .ajax_table_main input[type="checkbox"], table.list td input.check, table.list input[type="checkbox"] {
+			margin:4px 0 0 0;
+		}
+
+		.ajax_table_main td.num input.text, table.list td.num input.text {
+			background:#d4d0c8;
+			color:#808080;
+		}
+
+		.ajax_table_main .see, table.list .see {
+			background:url(../images/ico_see.gif) center top no-repeat;
+			display:block;
+			text-indent:-10000px;
+			height:12px;
+		}
+
+	/*.ajax_table_main.gallerySelected td {
+		padding:2px 6px;
+	}*/
+
+		.ajax_table_main.gallerySelected .file, table.list.gallerySelected .file {
+			margin:0;
+		}
+
+			.ajax_table_main.gallerySelected .file input.text, table.list.gallerySelected .file input.text {
+				width:60%;
+				margin:0 5px 0 0;
+			}
+
+			.ajax_table_main.gallerySelected .file .button, table.list.gallerySelected .file .button {
+				margin-bottom:4px;
+			}
+
+			#addRow .file .button {
+				margin-bottom:0;
+			}
+
+			#addRow .del span {
+				cursor:pointer;
+			}
+
+	.ajax_table_main th.date, .ajax_table_main td.date, table.list th.date, table.list td.date {
+		width:70px;
+	}
+
+	.ajax_table_main th.size, .ajax_table_main td.size, table.list th.size, table.list td.size {
+		width:70px;
+	}
+
+	.ajax_table_main input.text, .ajax_table_main input[type="text"], .ajax_table_main input[type="password"], .ajax_table_main textarea, .ajax_table_main select,
+	table.list input.text, .table.list input[type="text"], .table.list input[type="password"], .table.list textarea, .table.list select {
+		margin:0;
+	}
+
+/* /table list */
+
+
+
+
+

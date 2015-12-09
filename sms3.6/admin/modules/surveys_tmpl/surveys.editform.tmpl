@@ -1,0 +1,256 @@
+<link href="css/table.css" rel="stylesheet" type="text/css" />
+<link href="css/stat.css" rel="stylesheet" type="text/css" />
+<script>
+var answers = new Array(); // Массив ответов
+var count_show = 0; // Количество нарисованных вопросов
+var count = 0; // Общее количество вопросов
+var max_answer_id = '{$max_answer_id}'; // максимальное id для ответов - используется для генерации следующего значения
+var isIE=(navigator.appVersion.indexOf("MSIE")!=-1 && parseFloat(navigator.appVersion)>=4)?true:false;
+
+var thisname = '{$thisname}';
+var thisname2 = '{$thisname2}';
+var A{$thisname2}0 = new Array(1,0);
+window.parent.elemActions(thisname2, 0);
+
+{foreach from=$answers item=item key=key}
+	answers[{$key}] = new Array();
+	answers[{$key}]['text'] = '{$item.text}';
+	answers[{$key}]['type'] = '{$item.free_form}';
+{/foreach}
+
+{literal}
+
+window.onload = function(){
+
+   	var table = document.createElement('TABLE');
+   	table.id = 'maintable';
+   	table.name = 'maintable';
+   	table.NAME = 'maintable';
+   	table.className = 'framed';
+   	table.width = '95%';
+   	table.align = 'center';
+   	table.style.borderTop = '1px solid buttonshadow';
+   	table.style.borderLeft = '1px solid buttonshadow';
+
+	// Шапка таблицы
+	var tr = document.createElement('TR');
+	tr.className = 'thead';
+    
+	var td0 = document.createElement('TD');
+    td0.vAlign = 'top';
+    td0.className = 'thead';
+    td0.width = '100%';
+	td0.innerHTML = '{/literal}{$STR_ANSWER}{literal}';
+    
+	var td1 = document.createElement('TD');
+    td1.vAlign = 'top';
+    td1.className = 'thead';
+	td1.innerHTML = '{/literal}{$STR_FREE_FORM}{literal}';
+
+	var td2 = document.createElement('TD');
+    td2.vAlign = 'top';
+    td2.className = 'thead';
+
+    var td3 = document.createElement('TD');
+    td3.vAlign = 'top';
+    td3.className = 'thead';
+
+	tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+
+	table.appendChild(tr);
+	if (isIE) document.getElementById('div').innerHTML = table.outerHTML;
+	else document.getElementById('div').appendChild(table);
+
+	// Тело таблицы
+	{/literal}
+	{foreach from=$answers item=answer key=key}
+		AddAnswer('{$answer.id}', '');
+	{/foreach}
+	{literal}
+
+}
+
+function AddRow(answer_id, after){
+
+	var table = document.getElementById("maintable");
+
+	var tr = document.createElement('TR');
+	new_tr_id = 'tr_' + answer_id;
+	tr.id = new_tr_id;
+			
+    var td0 = document.createElement('TD');
+	td0.id = 'td_' + answer_id; 
+
+    var input1 = document.createElement('INPUT');		
+	input1.type = 'text';
+	input1.style.width = '100%';
+	input1.name = 'fld[answer][' + answer_id + ']';
+	input1.NAME = 'fld[answer][' + answer_id + ']';
+
+	td0.appendChild(input1);
+
+    var td1 = document.createElement('TD');
+    td1.align = 'center';
+
+    var checkbox = document.createElement('INPUT');
+    checkbox.type = 'checkbox';
+    checkbox.name = 'fld[free_form][' + answer_id + ']';
+    checkbox.NAME = 'fld[free_form][' + answer_id + ']';
+    checkbox.value = '1';
+	td1.appendChild(checkbox);
+	
+	var td2 = document.createElement('TD');
+	td2.noWrap = true;
+	var button = document.createElement('BUTTON');
+	if (isIE) {
+	    button.onclick = "AddAnswer('', "+answer_id+"); return false;";
+	} else {
+    	button.onclick = function () {
+    	    AddAnswer('', answer_id);
+    	    return false;
+    	}
+	}
+	button.style.visibility = 'hidden';
+	button.title = '{/literal}{$STR_ADD_ANSWER}{literal}';
+	button.id = "button_add_" + answer_id;
+	button.innerHTML = " + ";
+	td2.appendChild(button);
+
+	var button2 = document.createElement('BUTTON');
+	if (isIE) {
+	    button2.onclick = "DelAnswer("+answer_id+"); return false;";
+	} else {
+    	button2.onclick = function () {
+    	    DelAnswer(answer_id);
+    	    return false;
+    	}
+	}
+	button2.style.visibility = 'hidden';
+	button2.title = '{/literal}{$STR_DEL_ANSWER}{literal}';
+	button2.id = "button_del_" + answer_id;
+	button2.innerHTML = " - ";
+	td2.appendChild(button2);
+	
+	if (this.count > 0) {
+		// Рисуем обе кнопки
+		button.style.visibility = 'visible';
+		button2.style.visibility = 'visible';
+	} else {
+		// Рисуем только +
+		button.style.visibility = 'visible';
+	}
+
+	var td3 = document.createElement('TD');
+	td3.innerHTML = "<a href='#' onclick='setDataToClipboard(\"variantid=" + answer_id + "\")' class='open'>{/literal}{$STR_DOCOPY}{literal}</a>";
+
+	tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+	
+	if (after && table.rows[after]!=null) {
+		if (table.rows[after] != null) {
+		    table.rows[after].parentNode.insertBefore(tr, table.rows[after].nextSibling); 
+		}
+    	if (isIE) document.getElementById('div').innerHTML = table.outerHTML;
+    	else document.getElementById('div').appendChild(table);
+	}
+	else {
+		table.appendChild(tr);
+    	if (isIE) document.getElementById('div').innerHTML = table.outerHTML;
+    	else document.getElementById('div').appendChild(table);
+	}
+	
+	// Проставляем значения
+	var form = document.forms.editform;
+	form.elements['fld[answer][' + answer_id + ']'].value = this.answers[answer_id] != null ? this.answers[answer_id]['text'] : '';
+	form.elements['fld[free_form][' + answer_id + ']'].checked = this.answers[answer_id] != null && this.answers[answer_id]['type'] == 1 ? true : false;
+}
+
+function AddAnswer(new_answer_id, after) {
+	// new_answer_id - id вставляемого ответа
+	// after - id ответа, после которго вставляем
+	if (this.answers[new_answer_id] != null) {	
+		// Вставляем существующий ответ
+		if (after) AddRow(new_answer_id, 'tr_' + after + '_hr');
+		else AddRow(new_answer_id, '');
+		this.count++;	
+	}	
+	else {	
+		// Вставляем новый ответ
+		new_answer_id = parseInt(this.max_answer_id) + 1;
+		if (after) AddRow(new_answer_id, 'tr_' + after + '_hr');
+		else AddRow(new_answer_id, '');
+		this.answers[new_answer_id] = new Array();
+		this.answers[new_answer_id]['text'] = "";
+		this.count++;
+		this.max_answer_id++;
+	}
+
+	// Вставляем разделитель
+	var table = document.getElementById("maintable");	
+
+	var tr_hr = document.createElement('TR');
+	tr_hr.id = 'tr_' + new_answer_id + '_hr';
+	var td_hr = document.createElement('TD');
+	td_hr.colSpan = 4;
+	td_hr.innerHTML = "<hr>";
+	tr_hr.appendChild(td_hr);
+	table.rows['tr_' + new_answer_id].parentNode.insertBefore(tr_hr, table.rows['tr_' + new_answer_id].nextSibling); 
+
+	if (isIE) document.getElementById('div').innerHTML = table.outerHTML;
+	else document.getElementById('div').appendChild(table);
+
+	this.count_show++;
+	return false;
+
+}
+
+function DelAnswer(answer_id) {
+	var table = document.getElementById("maintable");
+	var id = 'tr_' + answer_id;
+
+	var _tr = document.getElementById(id);
+	if (_tr) table.deleteRow(_tr.rowIndex);
+
+	var _tr2 = document.getElementById(id + '_hr');
+	if (_tr2) table.deleteRow(_tr2.rowIndex);
+	return false;
+}
+
+function setDataToClipboard(cmd){
+    if (window.clipboardData) {
+        window.clipboardData.setData('Text', cmd);
+    } else if (window.netscape) {
+        netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect ');
+        var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
+        if (!str) return;
+        str.data = cmd;
+        var clip = Components.classes['@mozilla.org/widget/clipboard;1'].createInstance(Components.interfaces.nsIClipboard);
+        if (!clip) return;
+        var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
+        if (!trans) return;
+        trans.addDataFlavor('text/unicode');
+        trans.setTransferData('text/unicode',str,cmd.length*2);
+        var clipid = Components.interfaces.nsIClipboard;
+        clip.setData(trans,null,clipid.kGlobalClipboard);
+    }
+    return false;
+}
+
+{/literal}
+</script>
+
+<form target="tmp{$thisname}{$id}" action="page.php" method="post" name="editform" id="editform">
+<table id="content" class="framed" width="100%" style="border-top: 1px solid buttonshadow; border-left: 1px solid buttonshadow;">
+<tr><td>{$STR_NAME}:</td><td><input type="text" size="60" maxlength="255" name="fld[name]" value="{$name}"></td></tr>
+<tr><td>{$STR_TYPE}:</td><td><select name="fld[type]">{html_options options=$types selected=$type}</select></td></tr>
+<input type="hidden" name="fld[lang]" value="{$lang}">
+<input type="hidden" name="page" value="{$thisname}">
+<input type="hidden" name="do" value="edit">
+<input type="hidden" name="id" value="{$id}">
+</table>
+<h5 align="center">{$STR_ANSWERS}:</h5>
+<div id="div"></div>
+</form>
+
+<iframe width=188 height=166 name="gToday:datetime:/admin/third/calendar/agenda.js:gfPop:plugins_24.js" id="gToday:datetime:/admin/third/calendar/agenda.js:gfPop:plugins_24.js" src="/admin/third/calendar/ipopeng.htm" scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; left:-500px; top:0px;">
+</iframe>
+<IFRAME id=tmp{$thisname}{$id} name=tmp{$thisname}{$id} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

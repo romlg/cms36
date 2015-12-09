@@ -1,0 +1,21 @@
+<?php if($this->pages['pages']): ?>
+<div class="pageNav">
+
+    <?php if ($this->pages['current_page'] > 1): ?>
+    <a class="prev" href="/<?=$this->pages['prev_url'];?>">Назад</a>
+    <?php endif; ?>
+
+    <?php foreach($this->pages['pages'] as $page_offset=>$page ): ?>
+        <?php if( $page == $this->pages['current_page'] ): ?>
+            <span><?=$page;?></span>
+        <?php else: ?>
+            <a href="/<?=$this->pages['page_url'].$page_offset;?>"><?=$page;?></a>
+        <?php endif;?>
+    <?php endforeach;?>
+
+    <?php if ($this->pages['current_page'] < $this->pages['last_page']): ?>
+    <a class="next" href="/<?=$this->pages['next_url'];?>">Вперед</a>
+    <?php endif; ?>
+
+</div>
+<?php endif; ?>

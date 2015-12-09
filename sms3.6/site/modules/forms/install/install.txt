@@ -1,0 +1,133 @@
+Модуль динамических форм
+
+-- Подключение в common.cfg.php --
+'blocks' => array(
+    'forms_handler' => array(
+        'class' => 'TForms',
+        'method' => 'formsQueryHandler',
+        'parse' => false,
+    ),
+    ...
+)
+
+$cfg['elements'] = array(
+    ...
+    'elem_usages' => array('Использования формы', 'Form usages'),
+);
+
+
+-- Подключение в settings.cfg.php --
+-- В forms_searching_tables прописываются таблицы
+-- в которых будет осуществляться поиск формы в елеме "Использования формы"
+-- admin_href, site_href, where, key, dir - необязательные параметры
+-- Ниже пример настройки: --
+$settings = array(
+    ...
+    'forms_searching_tables' => array(
+        'tree' => array(
+            'title' => 'Тексты разделов',
+            'from' => 'elem_text AS et JOIN tree AS t ON et.pid=t.id',
+            'where' => '1',
+            'key' => 'et.pid',
+            'dir' => 't.dir',
+            'name' => 't.name',
+            'search_fields' => array('et.text'),
+            'admin_href' => '/admin/editor.php?page=tree&id={$key}#tab2',
+            'site_href' => '{$dir}',
+        ),
+        'publications' => array(
+            'title' => 'Публикации',
+            'from' => 'publications',
+            'name' => 'name',
+            'search_fields' => array('text','notice'),
+            'admin_href' => '/admin/editor.php?page=publications&id={$key}',
+        ),
+        'infoblocks' => array(
+            'title' => 'Инфоблоки',
+            'from' => 'infoblocks',
+            'name' => 'name',
+            'search_fields' => array('header_text','footer_text'),
+            'admin_href' => '/admin/editor.php?page=infoblocks&id={$key}',
+        ),
+        'strings' => array(
+            'title' => 'Параметры сайта',
+            'from' => 'strings',
+            'name' => 'name',
+            'search_fields' => array('value'),
+            'admin_href' => '/admin/editor.php?page=strings&id={$key}',
+        ),
+    ),
+);
+
+-- Подключение в admin.cfg.php --
+'modules' => array(
+    'forms' => array('Формы', 'Forms'),
+	...
+)
+
+
+--
+-- Структура таблицы `forms`
+--
+CREATE TABLE IF NOT EXISTS `forms` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL default '',
+  `name_site` varchar(255) NOT NULL,
+  `email` text NOT NULL,
+  `from_mail` varchar(100) NOT NULL,
+  `db_table` varchar(255) NOT NULL default '',
+  `visible` tinyint(1) unsigned NOT NULL default '1',
+  `is_popup` tinyint(1) unsigned NOT NULL default '0',
+  `submit_title` varchar(100) NOT NULL COMMENT 'Надпись на кнопке сабмит',
+  `hash` varchar(64) NOT NULL,
+  `lang` char(2) NOT NULL default 'ru',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 COMMENT='таблица форм';
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `forms_elems`
+--
+CREATE TABLE IF NOT EXISTS `forms_elems` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `pid` int(10) unsigned NOT NULL default '0',
+  `key` int(10) default '0',
+  `type` varchar(100) NOT NULL,
+  `db_field` varchar(255) NOT NULL default '',
+  `text` varchar(255) NOT NULL default '',
+  `req` int(1) unsigned NOT NULL default '0',
+  `check` varchar(100) NOT NULL default '',
+  `show` int(1) unsigned NOT NULL default '0',
+  `placeholder` varchar(255) NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `pid` (`pid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 COMMENT='таблица элемов форм';
+
+--
+-- Структура таблицы `forms_values`
+--
+
+CREATE TABLE IF NOT EXISTS `forms_values` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `pid` int(10) unsigned NOT NULL default '0',
+  `value` int(10) NOT NULL default '0',
+  `text` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `pid` (`pid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 COMMENT='таблица значений элемов форм!';
+
+--
+-- Ограничения внешнего ключа таблицы `forms_elems`
+--
+ALTER TABLE `forms_elems`
+  ADD CONSTRAINT `forms_elems_ibfk_1` FOREIGN KEY (`pid`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `forms_values`
+--
+ALTER TABLE `forms_values`
+  ADD CONSTRAINT `forms_values_ibfk_1` FOREIGN KEY (`pid`) REFERENCES `forms_elems` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+INSERT INTO `strings` (`name` ,`value` ,`def` ,`updated` ,`created` ,`module` ,`root_id` ,`description`)
+VALUES ('form_send_email', 'eg@rusoft.ru', '', NOW( ) , '0000-00-00 00:00:00', 'site', '100', 'Email для отправки формы');

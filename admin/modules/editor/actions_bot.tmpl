@@ -1,0 +1,8 @@
+<div id="actions_bot" class="bottomBtn">
+	<?php foreach ($this->actions AS $action):?>
+        <a class="button" hidefocus="hidefocus" href="javascript:void(0);" onclick="<?php echo $action['onclick'];?>;return false;" ondrop="<?php echo $action['ondrop'];?>" ondragenter="<?php echo $action['ondragenter'];?>" ondragleave="<?php echo $action['ondragleave'];?>" ondragover="<?php echo $action['ondragover'];?>" title="<?php echo $action['title'];?> <?php if($action['hint']){echo ": ".$action['hint'];}?>">
+            <!--<img src="images/icons/<?php echo $action['img'];?>" alt="<?php echo $action['title'];?> <?php if ($action['hint']) {echo ": ".$action['hint'];}?>">-->
+            <?php if($action['show_title']){echo $action['title'];}?>
+        </a>
+    <?php endforeach;?>
+</div>

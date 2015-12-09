@@ -1,0 +1,31 @@
+{$script}
+
+<script>
+function mySubmit(item) {ldelim}
+	item.subm.disabled = true;
+	return true;
+{rdelim}
+
+var ID = 0;
+
+function editItem(id) {ldelim}
+	if (id == null) id = ID;
+//	window.showModalDialog("dialog.php?page={$thisname}&do=editparamform&id="+id, "EditParam", "dialogWidth:400px; dialogHeight:250px;")
+	window.open("dialog.php?page=product_types&do=editparamform&id="+id, "EditParam", "Width=400; Height=250")
+{rdelim}
+
+function EditPriority(move) {ldelim}
+	if (!ID) {ldelim}
+		alert('Select item first');
+		return;
+	{rdelim}
+	window.open('page.php?page=' + thisname + '&do=EditPriority&id=' + ID + '&move=' + move, 'tmp' + thisname);
+{rdelim}
+
+var A{$thisname}0 = new Array(0,1,0);
+var A{$thisname}1 = new Array(1,1,1);
+var A{$thisname}2 = new Array(0,1,1);
+window.parent.elemActions('{$thisname}', ID==0?0:1);
+</script>
+{$table}
+<IFRAME id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

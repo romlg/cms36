@@ -1,0 +1,6 @@
+td#login, td#pwd {
+	color: white;
+}
+table#logon {
+	background: url(../images_custom/logon.jpg);
+}

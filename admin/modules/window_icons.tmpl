@@ -1,0 +1,9 @@
+<?php foreach ($this->window_icons AS $key=>$icon): ?>
+    <?php if ($key == 'maximize' || $key=='restore'):?>
+		<!--<script type="text/javascript">
+         if (window.top.name <?php if($key=='maximize'){echo"!=";}else{echo"==";} ?> 'maximized') document.write('<a href="<?php echo $icon['link']; ?>" onclick="<?php echo $icon['onclick']; ?>" target="<?php echo $icon['target']; ?>"><img src="<?php echo $icon['icon']; ?>" alt="<?php echo $icon['display']; ?>"></a>');
+		</script>-->
+	<?php else: ?>
+		<a class="helpIcon" href="<?php echo $icon['link']; ?>" onclick="<?php echo $icon['onclick']; ?>" target="<?php echo $icon['target']; ?>"><?php echo $icon['display']; ?></a>
+	<?php endif; ?>
+<?php endforeach;?>

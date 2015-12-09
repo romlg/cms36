@@ -1,0 +1,97 @@
+{$script}
+<script>
+var thisname = '{$thisname}';
+var TABLE = '{$thisname}';
+var ID = '{$id}';
+
+var A{$thisname}0 = new Array({if $root}1{else}0{/if},0,0,0,0,0,0,0,0);
+var A{$thisname}1 = new Array({if $root}1{else}0{/if},0,0,0,0,0,0,0,0);
+var A{$thisname}2 = new Array({if $root}1{else}0{/if},0,0,0,0,0,0,0,0);
+
+function ClearItems(){ldelim}
+	window.frames['tmplog_change'].location = '/admin/cnt.php?page=log_change&do=clear';
+{rdelim}
+
+function cut_text(obj) {ldelim}
+	if (obj.innerHTML == "Далее") {ldelim}
+		obj.parentNode.childNodes[0].style.display = "block";
+		obj.innerHTML = "Скрыть";
+	{rdelim} else {ldelim}
+		obj.parentNode.childNodes[0].style.display = "none";
+		obj.innerHTML = "Далее";
+	{rdelim}
+{rdelim}
+
+window.parent.elemActions('{$thisname}', 0);
+</script>
+<script language="JavaScript" src="third/tooltip/tooltip.js"></script>
+
+{literal}
+<script>
+function SetPeriod(days) {
+	f = document.forms.navigform;
+	f.period.value = days;
+	if (f.disp_by) {
+		if (days < 7) {
+			f.disp_by.value = 'hour';
+		}
+		else if (days == 'all') {
+			f.disp_by.value = 'month';
+		}
+		else {
+			f.disp_by.value = 'dayofmonth';
+		}
+	}
+	if (f.offset) f.offset.value = "0";
+	f.submit();
+	parent.enable_loading();
+}
+
+function SetForm(from, to, disp_by) {
+	f = document.forms.navigform;
+	f.from_date.value = from;
+	f.to_date.value = to;
+	f.disp_by.value = disp_by;
+	f.submit();
+	parent.enable_loading();
+}
+</script>
+{/literal}
+
+<link href="css/table.css" rel="stylesheet" type="text/css" />
+<link href="css/stat.css" rel="stylesheet" type="text/css" />
+
+<form action="cnt.php" name="navigform" id="navigform" target="_self" style="margin: 0px;" onsubmit="parent.enable_loading();">
+{foreach from=$navig.hidden item=hidden}
+<input type="hidden" name="{$hidden.name}" value="{$hidden.value}" />
+{/foreach}
+<fieldset>
+<legend>{$navig.STR_NAV_PERIOD}</legend>
+<table cellpadding="0" cellspacing="2" width="100%"><tr>
+<td nowrap="nowrap" valign="top" >
+	{$navig.STR_SHOW_FROM} <span class="show_date">{$navig.show_from}</span> {$navig.STR_SHOW_TO} <span class="show_date">{$navig.show_to}</span><br>
+	{$navig.STR_NAV_SELECT_PERIOD} :
+		<a href="#" onclick="SetPeriod(0); return false;" class="navig" title="{$navig.STR_NAV_TODAY_TITLE}">{$navig.STR_NAV_TODAY}</a>
+		<a href="#" onclick="SetPeriod(1); return false;" class="navig" title="{$navig.STR_NAV_YESTERDAY_TITLE}">{$navig.STR_NAV_YESTERDAY}</a>
+		<a href="#" onclick="SetPeriod(7); return false;" class="navig" title="{$navig.STR_NAV_WEEK_TITLE}">{$navig.STR_NAV_WEEK}</a>
+		<a href="#" onclick="SetPeriod(30); return false;" class="navig" title="{$navig.STR_NAV_MONTH_TITLE}">{$navig.STR_NAV_MONTH}</a>
+		<a href="#" onclick="SetPeriod('all'); return false;" class="navig" title="{$navig.STR_NAV_ALL_TITLE}">{$navig.STR_NAV_ALL}</a>
+	<br />
+	<input name="from_date" value="{$navig.from_date}" size="12" onfocus="this.blur()" readonly="readonly" />
+	<a href="javascript:void(0)" onclick="if(self.gfPop)gfPop.fStartPop(document.navigform.from_date,document.navigform.to_date); return false;" hidefocus><img align="absmiddle" src="third/calendar/images/calbtn.gif" width="34" height="22" border="0" alt="{$navig.STR_SELECT_DATE}" /></a>
+	&nbsp;&nbsp;-&nbsp;&nbsp;
+	<input name="to_date" value="{$navig.to_date}" size="12" onfocus="this.blur()" readonly="readonly" />
+	<a href="javascript:void(0)" onclick="if(self.gfPop)gfPop.fEndPop(document.navigform.from_date,document.navigform.to_date); return false;" hidefocus><img align="absmiddle" src="third/calendar/images/calbtn.gif" width="34" height="22" border="0" alt="{$navig.STR_SELECT_DATE}" /></a>
+	</td>
+</tr>
+<tr><td align="center">
+	<button onclick="parent.enable_loading(); this.name='show_button'; this.form.submit(); this.name='';"><img src="images/icons/icon.save.gif" width="16" height="16" align="absmiddle" alt="{$navig.STR_NAV_SHOW}" border="0" /> {$navig.STR_NAV_SHOW}</button>
+	</td></tr>
+</table>
+</fieldset>
+</form>
+
+{$table}
+
+<IFRAME id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>
+<iframe width="174" height="189" name="gToday:normal:agenda.js:gfPop:plugins_range.js" id="gToday:normal:agenda.js:gfPop:plugins_range.js" src="third/calendar/ipopeng.htm" scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; left:-500px; top:0px;"></iframe>

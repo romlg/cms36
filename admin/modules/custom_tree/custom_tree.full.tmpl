@@ -1,0 +1,23 @@
+<script>
+var clickcnt = 0;
+var timer = 0;
+function setclick(href1,href2) {
+	if (clickcnt == 0) {
+        clickcnt++;
+        timer = setTimeout('doRedirect("'+href1+'")',300);
+	} else {
+        clearTimeout(timer);
+        clickcnt = 0;
+        window.location = href2;
+	}
+}
+function doRedirect(href) {
+    clickcnt = 0;
+    clearTimeout(timer);
+    window.location = href;
+}
+</script>
+
+<ul class="tree">
+<?php echo $this->tree;?>
+</ul>

@@ -1,0 +1,39 @@
+{* smarty template *}
+<script>
+var ID = 0; var thisname = '{$thisname}';
+var A{$thisname}0 = new Array(1,0,0,0,0,0,0,1,1);
+var A{$thisname}mod1 = new Array(1, null);
+var A{$thisname}mod0 = new Array(0, null);
+window.parent.elemActions(thisname, ID==0?0:1);
+
+function undo()
+{ldelim}  alert("ок?"); {rdelim}
+
+function mySubmit()
+{ldelim}  document.forms.{$thisname}editform.submit(); {rdelim}
+
+
+</script>
+<form method=post target=tmpcrm name={$thisname}editform action='page.php'>
+<fieldset>
+<input type=hidden name='page' value='clients'>
+<input type=hidden name='do' value='edit'>
+<input type=hidden name='client_id' value='{$id}'>
+<table cellpadding=0 cellspacing=0 width=100%>
+<tr><td width=40%>{$STR_COMP_NAME}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_name] value="{$comp_name}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_FNAME}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_fname] value="{$comp_fname}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_INN}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_inn] value="{$comp_inn}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_KPP}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_kpp] value="{$comp_kpp}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_ZIP}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_zip] value="{$comp_zip}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_ADDR}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_addr] value="{$comp_addr}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_PADDR}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_paddr] value="{$comp_paddr}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_PHONE}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_phone] value="{$comp_phone}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_FAX}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_fax] value="{$comp_fax}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_EMAIL}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_email] value="{$comp_email}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_BANK}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_bank] value="{$comp_bank}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_BIK}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_bik] value="{$comp_bik}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_KS}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_ks] value="{$comp_ks}" {$readonly}></td></tr>
+<tr><td>{$STR_COMP_RS}:</td><td><input type=text size=30 maxlength=99 name=fld[comp_rs] value="{$comp_rs}" {$readonly}></td></tr>
+</table>
+</td><tr>
+</fieldset>

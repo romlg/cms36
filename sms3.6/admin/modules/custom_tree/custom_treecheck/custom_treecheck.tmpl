@@ -1,0 +1,35 @@
+<script type="text/javascript">
+var target_ids = '<?=$this->target_ids?>';
+$(document).ready(function(){
+    target_ids = target_ids.split(',');
+    for (var i=0; i < target_ids.length; i++) {
+        if (target_ids[i]) {
+            $("#treecheck").append('<input type="hidden" name="item[' + target_ids[i] + ']" value="1">');
+        }
+    }
+});
+function checkbox_click(id) {
+    var form = $("#treecheck");
+    var elem = $('[name=item2\\[' + id + '\\]]');
+    if (elem.attr('checked')) {
+        form.append('<input type="hidden" name="item[' + id + ']" value="1">');
+    } else {
+        $('[name=item\\[' + id + '\\]]').remove();
+    }
+}
+</script>
+
+<form name="treecheck" id="treecheck" method="post" action="">
+    <ul class=tree>
+        <?php echo $this->tree;?>
+    </ul>
+
+    <br>
+    <a class="button noClear" href="javascript:void(0);" onclick="document.getElementById('treecheck').submit(); return false;" style="margin-right: 10px;">&nbsp;<?php echo $this->STR_SUBMIT; ?>&nbsp;</a>
+    <a class="button noClear" href="javascript:void(0);" onClick="window.top.parent.$.fancybox.close();">&nbsp;<?php echo $this->STR_CANCEL; ?>&nbsp;</a>
+
+    <input type="hidden" name="page" value="<?php echo $this->name; ?>">
+    <input type="hidden" name="do" value="select">
+    <input type="hidden" name="fieldname" value="<?php echo $this->fieldname; ?>">
+    <input type="hidden" name="target_ids" value="<?php echo $this->target_ids; ?>">
+</form>

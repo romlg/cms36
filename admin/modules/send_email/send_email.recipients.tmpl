@@ -1,0 +1,35 @@
+{$script}
+<script>
+
+function addToList() {ldelim}
+	if (this.ajax_formname != undefined){ldelim}
+	 formname = this.ajax_formname;
+	{rdelim} else {ldelim}
+	 formname = formname || 'editform';
+	{rdelim}
+	document.forms[formname].actions.value='EditPasteRecipients';
+	document.forms[formname].submit();
+	//window.parent.close();
+	checkInvert('id');
+{rdelim}
+
+function PasteRecipients(id) {ldelim}
+	if (this.ajax_formname != undefined){ldelim}
+	 formname = this.ajax_formname;
+	{rdelim} else {ldelim}
+	 formname = formname || 'editform';
+	{rdelim}
+	document.forms[formname].actions.value='EditPasteRecipients';
+	document.forms[formname].submit();
+	window.parent.close();
+{rdelim}
+
+var TABLE = '{$thisname}';
+var ID = 0;
+var A{$thisname}0 = new Array(0,1);
+var A{$thisname}1 = new Array(1,1);
+var A{$thisname}2 = new Array(1,1);
+window.parent.elemActions('{$thisname}', 0);
+</script>
+
+{$table}

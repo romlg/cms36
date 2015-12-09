@@ -1,0 +1,18 @@
+<script for=window event=onkeydown>
+	if (event.keyCode==27) window.close();
+</script>
+
+<!-- recycle -->
+<div align=center>
+{$STR_WHOIS_SERVER}: <select name="whois_server" onChange="window.location='?page=stat/stat_ip&do=showwhois&whois_ip={$ip}&whois_server='+this.value">{$whois_options}</select>
+</div>
+<br>
+{if $error}
+	<div style="text-align: center; color: Red;">{$error.res}</div>
+{else}
+<div style='height: 92%; overflow-y: auto; width: 100%; overflow-x: auto'>
+<pre>
+{$whois.res}
+</pre>
+</div>
+{/if}

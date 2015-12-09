@@ -1,0 +1,43 @@
+<script for="editform" event="onkeydown">
+	if (event.keyCode==27) window.close();
+</script>
+
+<script language="javascript">
+{literal}
+	window.onload = function() {
+		var dH = document.forms['editform'].offsetHeight;
+		var dW = document.forms['editform'].offsetWidth;
+		window.dialogWidth = (dW - 0 + 50) + 'px';
+		window.dialogHeight = (dH  - 0 + 50) + 'px';
+	}
+{/literal}
+</script>
+
+<form method="post" target="tmp{$thisname}" name="editform" onsubmit="window.close()" action="page.php">
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+<fieldset>
+<table width="100%">
+<tr><td>{$STR_NAME}:</td><td><input type="text" size="30" maxlenght="50" name="fld[name]" value="{$name}" /></td></tr>
+{if $discount_types}<tr><td>{$STR_DISCOUNT_TYPE}:</td><td><select name="fld[discount_type]">{$discount_types}</select></td></tr>{/if}
+
+{if $table}<tr><td valign="top">Уведомления:</td><td>
+	 <table>
+	 {foreach from=$table key=k item=v}
+		<tr>
+			<td width="1px"><input type="checkbox" name="ntid[{$v.id}]" value="{$v.id}" {if !empty($v.group_id)}checked="checked"{/if}></td>
+			<td>{$v.descr}</td>
+		</tr>
+	 {/foreach}
+	 </table>
+</td></tr>{/if}
+
+</table>
+</fieldset>
+<br />
+<div style="text-align:center;">
+	<input type="submit" value="{$STR_SAVE}" />
+	<input type="button" value="{$STR_CANCEL}" onClick="window.close()" />
+</div>
+</form>

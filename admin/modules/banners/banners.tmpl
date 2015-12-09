@@ -1,0 +1,45 @@
+<script>
+var edit{$thisname};
+var ID = 0;
+
+{literal}
+function editItem(id) {
+	if (id == undefined) {
+		id = ID;
+	}
+	{/literal}
+	edit{$thisname} = window.open("ced.php?page={$thisname}&do=editform&id="+id+"&root_id={$root_id}", "edit{$thisname}", "width=700, height=500, resizable=1, status=1");
+	edit{$thisname}.focus();
+	{literal}
+}
+
+function clearCTR() {
+	document.forms[formname].actions.value="EditClearCTR";
+	document.forms[formname].submit();
+}
+
+function showRecycle() {
+	{/literal}
+	window.showModalDialog("dialog.php?page={$thisname}&do=showrecycle", "", "dialogWidth:400px; dialogHeight:400px;");
+	{literal}
+}
+function EditPriority(move) {
+	if (!ID) {
+		alert('Select item first');
+		return;
+	}
+	window.open('page.php?page=banners&do=EditPriority&id=' + ID + '&move=' + move, 'tmp' + thisname);
+}
+{/literal}
+
+
+var A{$thisname}0 = new Array(0,1,0,0,1,0,0);
+var A{$thisname}1 = new Array(1,1,1,1,1,1,1);
+var A{$thisname}2 = new Array(0,1,1,1,1,0,0);
+window.parent.elemActions('{$thisname}', 0);
+
+</script>
+
+{$table}
+
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

@@ -1,0 +1,20 @@
+<?php if($this->rows) : ?>
+<table width="98%" align="center" class="table">
+    <tbody>
+    <tr>
+        <td width="5%" nowrap="" align="center">№ вакансии</td>
+        <td width="40%">Должность</td>
+        <td>Адрес</td>
+    </tr>
+    <?php foreach($this->rows as $row) : ?>
+    <tr>
+        <td align="center"><?=$row['id']?></td>
+        <td style="padding: 0 5px;">
+            <a href="<?=$row['href']?>"><?=$row['position']; ?></a>
+        </td>
+        <td style="padding: 0 5px;"><?=$row['address']?></td>
+    </tr>
+    <? endforeach; ?>
+    </tbody>
+</table>
+<? endif; ?>

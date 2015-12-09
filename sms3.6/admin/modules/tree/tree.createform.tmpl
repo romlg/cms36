@@ -1,0 +1,25 @@
+<script for="editform" event="onkeydown" type="text/javascript">
+	if (event.keyCode==27) window.close();
+</script>
+
+<form name="editform" method="post" target="toc" onsubmit="window.returnValue=true;window.close()" action="page.php">
+<fieldset>
+<legend>{$STR_CREATE_TITLE}</legend>
+<table>
+<tr><td>{$STR_NAME}:	</td><td><input type="text" name="fld[name]" value="{$name}" size="30" maxlength="255" /></td></tr>
+<tr><td>{$STR_TYPE}:	</td><td><select name="fld[type]">{$type}</select></td></tr>
+</table>
+</fieldset>
+<br>
+<input type="hidden" name="page" value="ced" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="fld[pid]" value="{$pid}" />
+<input type="hidden" name="fld[visible]" value="{$visible}" />
+<input type="hidden" name="fld[root_id]" value="{$root_id}" />
+{*<input type="hidden" name="fld[protected]" value="{$protected}" />*}
+<input type="hidden" name="id" value="{$id}" />
+
+<div align="center">
+<input class="btn" type="submit" value="{$STR_SAVE}" />
+<input class="btn" type="button" value="{$STR_CANCEL}" onclick="window.close()" />
+</div>

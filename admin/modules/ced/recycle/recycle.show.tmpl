@@ -1,0 +1,27 @@
+<div style="height:290px; overflow-y:auto">
+<?php echo $this->table; ?>
+</div>
+<br />
+<div align="center">
+    <a href="javascript:void(0);" class="button noClear margRight" onclick="if (mySubmit()) document.getElementById('editform').submit();"><?php echo $this->STR_RESTORE; ?></a>
+    <a href="javascript:void(0);" class="button noClear margRight" onclick="deleteItems();"><?php echo $this->delete; ?></a>
+    <a href="javascript:void(0);" class="button noClear" onclick="window.close()"><?php echo $this->STR_CLOSE; ?></a>
+</div>
+
+<script>
+function mySubmit() {
+    form = document.getElementById('editform');
+	form.do.value = 'edit';
+	form.action = 'dialog.php';
+	return true;
+}
+
+function deleteItems() {
+	if (confirm("Вы действительно хотите удалить выбранные элементы?")) {
+        form = document.getElementById('editform');
+        form.do.value = 'delete';
+        form.action = 'dialog.php';
+        form.submit();
+    }
+}
+</script>

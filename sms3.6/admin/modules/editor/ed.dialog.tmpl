@@ -1,0 +1,36 @@
+<style type="text/css">
+{literal}
+.oe {
+	/*background-color:#E5E5E5;
+	padding:5px;*/
+}
+.oe form {
+	margin: 0;
+}
+{/literal}
+</style>
+
+<div class="oe">
+{if !$noform}
+	<form target="tmp{$thisname}{$id}" action="ed.php" method="post" name="editform" id="editform" enctype="multipart/form-data">
+
+	{$form_content}
+
+	<input type="hidden" name="id" value="{$id}" />
+
+	<input type="hidden" name="page" value="{$page}" />
+	<input type="hidden" name="do" value="closeTab" />
+	<input type="hidden" name="esId" value="{$esId}" />
+	<input type="hidden" name="tab" value="{$tab}" />
+	<input type="hidden" name="act2" value="newTab" />
+	<input type="hidden" name="newTab" value="{$tab}" />
+	<input type="hidden" name="frame" value="tmp" />
+</form>
+{else}
+	{$form_content}
+{/if}
+</div>
+
+{*if !$noform}
+	<iframe id="tmp{$thisname}{$id}" name="tmp{$thisname}{$id}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>
+{/if*}

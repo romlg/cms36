@@ -1,0 +1,70 @@
+<?php if(isset($this->menu)): ?>
+<ul class="topMenu">
+    <?php foreach ($this->menu as $k1=>$v1):
+        $class = array();
+        if ($v1['active']) $class[] = "active";
+        if (count($this->menu) > 5 && $k1>=5) $class[] = "left";
+        $class = implode(" ", $class);
+    ?>
+    <li <?php if ($class) echo " class='".$class."'";?>>
+        <a href="/<?=$v1['href'];?>"><?=$v1['name'];?></a>
+        <?php if ($v1['menu']): ?>
+        <div class="levelTwo">
+        <ul>
+            <?php foreach ($v1['menu'] AS $k2=>$v2):
+            $class = array();
+            if ($v2['active']) $class[] = "active";
+            if (count($v1['menu']) > 5 && $k2>=5) $class[] = "left";
+            $class = implode(" ", $class);
+            ?>
+            <li <?php if ($class) echo " class='".$class."'";?>>
+                <?php if (!$v2['menu']): ?>
+                    <a href="/<?=$v2['href']?>"><?=$v2['name']?></a>
+                <?php else: ?>
+                    <span><?=$v2['name']?></span>
+                <?php endif; ?>
+
+                <?php if ($v2['menu']): ?>
+                <ul class="levelThree">
+                    <?php foreach ($v2['menu'] AS $k3=>$v3):
+                    $class = array();
+                    if ($v3['active']) $class[] = "active";
+                    if (count($v2['menu']) > 5 && $k3>=5) $class[] = "left";
+                    $class = implode(" ", $class);
+                    ?>
+                    <li <?php if ($class) echo " class='".$class."'";?>>
+                        <?php if (!$v3['menu']): ?>
+                            <a href="/<?=$v3['href']?>"><?=$v3['name']?></a>
+                        <?php else: ?>
+                            <span><?=$v3['name']?></span>
+                        <?php endif; ?>
+
+                        <?php if ($v3['menu']): ?>
+                        <ul class="levelFour">
+                            <?php foreach ($v3['menu'] AS $k4=>$v4):
+                            $class = array();
+                            if ($v4['active']) $class[] = "active";
+                            if (count($v3['menu']) > 5 && $k4>=5) $class[] = "left";
+                            $class = implode(" ", $class);
+                            ?>
+                            <li <?php if ($class) echo " class='".$class."'";?>>
+                                <a href="/<?=$v4['href'];?>"><?=$v4['name'];?></a>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <?php endif; ?>
+
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php endif; ?>
+
+            </li>
+            <?php endforeach; ?>
+        </ul>
+        </div>
+        <?php endif; ?>
+    </li>
+    <?php endforeach; ?>
+</ul>
+<?php endif; ?>

@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title><?php echo $this->title;?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+	<!--<link rel="stylesheet" type="text/css" href="css/notify.css">-->
+	<link rel="stylesheet" type="text/css" href="css/ajax_table.css">
+
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.fancybox-1.3.4.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.14.custom.css">
+    <!--[if lte IE 6]>
+    <link href="css/style_ie6.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $(window).load(function () {
+            minWidth();
+        });
+
+        $(window).resize(function () {
+            minWidth();
+        });
+    });
+    </script>
+    <![endif]-->
+
+	<script type="text/javascript" src="js/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery.fancybox-1.3.4.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
+	<script type="text/javascript" src="js/lang.js?rnd=281120121558"></script>
+	<script type="text/javascript" src="js/elem.js?rnd=140120131500"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function () {
+		$('.iframeLink').fancybox({
+			'type' : 'iframe',
+			'width' : 800,
+			'height' : 500,
+			'centerOnScroll' : true
+		});
+
+		$('#datepicker').datetimepicker({
+			showOn: 'button',
+			buttonImage: 'images/icons/icon.date.png',
+			buttonImageOnly: true,
+			dateFormat: 'dd-mm-yy'
+		});
+	});
+
+	function onkeydown(event) {
+	    event = event ? event : window.event;
+	    if(event.keyCode==116 || (event.ctrlKey && event.keyCode==82)) {
+	        if (document.all) {
+	            event.keyCode=0;
+	            event.returnValue = false;
+	            event.cancelBubble = true;
+	        } else event = null;
+	        _loaded = false;
+	        window.frames['act'].window.frames['cnt'].location.href = window.frames['act'].window.frames['cnt'].location.href;
+	    }
+	}
+	</script>
+</head>
+
+<body onload="document.onkeydown=onkeydown">
+
+<div class="wrap">
+    <div class="outer">
+
+        <div class="head">
+            <a class="logo" href="<?=ADMIN_LOGO_LINK?>" target="_blank" title="<?=ADMIN_LOGO_ALT?>"><img src="<?=ADMIN_LOGO?>" alt="<?=ADMIN_LOGO_ALT?>"></a>
+            <div class="userPanel">
+                <?php echo $this->lang; ?>
+
+                <p class="user">
+                    Вы вошли как: <strong><?php echo $this->login;?></strong>
+                    <?php if ($this->group_name):?> <span>(<?=$this->group_name?>)</span><?php endif;?>
+                    <a class="changePass" href="/admin/?page=login&do=changepass">Смена пароля</a>
+                    <a class="exit" href="javascript:location.href='/admin/page.php?page=login&do=logout';"><?php echo $this->STR_LOGOUT;?></a>
+                </p>
+            </div>
+        </div>
+
+        <div class="leftCol">
+            <?php echo $this->menu;?>
+        </div>
+
+        <div class="rightCol">
+            <?php echo $this->act;?>
+        </div>
+    </div>
+
+    <div class="clearFooter"></div>
+</div>
+<div class="footer">
+    <p class="copy">Powered by ContentEngine/3.6 &copy; <a target="_blank" href="http://www.rusoft.ru"><strong>Ru</strong>Soft</a></p>
+</div>
+
+</body>
+</html>

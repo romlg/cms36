@@ -1,0 +1,38 @@
+html, body{
+	height: 100%;
+	margin: 0px;
+	padding: 0px
+}
+body, td {
+	font-family: Tahoma, Arial;
+	font-size: 11px;
+	color: black;
+}
+table{
+	margin: 0;
+	padding: 0;	
+	border-collapse: collapse;
+	border-left: 1px solid #D4D0C8;
+	border-top: 1px solid #D4D0C8;
+	font-size: 11px; 
+	width: 100%;
+	margin-top: 10px;
+}
+tr.table_header_row{
+	vertical-align: middle;
+}
+td, th{
+	border-right: 1px solid #D4D0C8;
+	border-bottom: 1px solid #D4D0C8;
+	padding: 2px 3px;
+}
+th{
+	font-size: 11px;
+}
+td.table_header_cell{
+	border-right: 1px solid #D4D0C8;
+	border-bottom: 1px solid #D4D0C8;	
+	padding: 3px 5px;
+	font-weight: bold;
+}
+a img {border:0;}

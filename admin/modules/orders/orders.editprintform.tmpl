@@ -1,0 +1,106 @@
+{literal}
+<script>
+window.parent.top.opener.location.reload();
+</script>
+<style>
+.no_list_hover {
+	background-color: #FFFFFF;
+}
+.no_list_hover2 {
+	background-color: #E9E9E9;
+}
+.list_hover {
+	background-color: #C3D7FB;
+	cursor: hand;
+}
+table.maintable{
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	background-color: #D2D2D2;
+}
+table.maintable th{
+	font-size: 11px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+	background-image: url(images/forborder5.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+	border-bottom: 3px solid #6E6E6E;
+	padding: 0px;
+	height: 18px;
+}
+table.maintable td{
+	font-size: 70%;
+	font-weight: normal;
+	border-left: 1px solid #9C9C9C;
+	border-top: 1px solid #9C9C9C;
+	text-align: left;
+	padding: 1px 3px 1px 3px;
+}
+table.maintable td.lastcolumn{
+	border-right: 1px solid #9C9C9C;
+}
+table.maintable td.lastrow{
+	border-bottom: 1px solid #9C9C9C;
+}
+table.maintable td.lastrowcolumn{
+	border-bottom: 1px solid #9C9C9C;
+	border-right: 1px solid #9C9C9C;
+}
+</style>
+{/literal}
+
+<div align="center"><b>Образец заполнения платежного поручения</b></div><br>
+<table cellspacing="0" cellpadding="0" width="534" border="0">
+<tr><td width="70%">Получатель: {$bill.r_comp_fname}</td><td width="30%" class="lastcolumn" align="left">&nbsp;</td></tr>
+<tr><td>ИНН {$bill.r_comp_inn}/{$bill.r_comp_kpp}</td><td align="left">Р/Сч. № {$bill.r_comp_rs}</td></tr>
+<tr><td>Банк получателя</td><td align="left">БИК {$bill.r_comp_bik}</td></tr>
+<tr><td>{$bill.r_comp_bank}</td><td align="left">К/Сч. № {$bill.r_comp_ks}</td></tr>
+</table><br>
+<div align="center"><b>СЧЕТ № {$bill.id} от {$order.order_date} г.</b></div><br>
+{assign var="nds" value=#NDS#}
+<table cellspacing="0" cellpadding="0" width="534" border="0">
+	{if $bill.fiz_name}
+		<tr><td width="70%">Заказчик: {$bill.fiz_lname} {$bill.fiz_name} {$bill.fiz_tname}</th><td width="30%" class="lastcolumn">Телефон: {$bill.fiz_phone}</td></tr>
+		{if $bill.fiz_fax}<tr><td></td><td>Факс: {$bill.fiz_fax}</td></tr>{/if}
+	{else}
+		<tr><td width="70%">Заказчик: {$bill.comp_fname}</th><td width="30%" class="lastcolumn">Телефон: {$bill.comp_phone}</td></tr>
+		<tr><td>&nbsp;</td><td>{if $bill.comp_fax}Факс: {$bill.comp_fax}{/if}</td></tr>
+	{/if}
+</table><br>
+<table class="maintable" cellspacing="0" cellpadding="0" width="536">
+<tr class="no_list_hover">
+	<td><b>№</b></td>
+	<td><b>№ заказа</b></td>
+	<td><b>Наименование товара</b></td>
+	<td class="lastcolumn"><b>Сумма, {$currency.display}</b></td>
+</tr>
+{foreach from=$product_list item=item key=key}
+<tr class="no_list_hover">
+	<td>{$key+1}</td>
+	<td>{$bill.order_id}</td>
+	<td>{$item.name}</td>
+	<td class="lastcolumn" style="text-align: right;">
+		{if $bill.type eq 'discount'}{$item.customer_price*$item.quantity*$currency.value|string_format:"%.2f"}
+		{else}{$item.price*$item.quantity*$currency.value|string_format:"%.2f"}{/if}
+		</td>
+</tr>
+{/foreach}
+<tr class="no_list_hover">
+		<td style="text-align: right;" colspan="3"><b>Итого:</b></td>
+		<td style="text-align: right;" class="lastcolumn"><b>{$bill.sum*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+<tr class="no_list_hover">
+		<td style="text-align: right;" colspan="3"><b>НДС {$nds*100}%:</b></td>
+		<td style="text-align: right;" class="lastcolumn"><b>{$bill.tax*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+<tr class="no_list_hover">
+		<td class="lastrow" style="text-align: right;" colspan="3"><b>Всего к оплате:</b></td>
+		<td style="text-align: right;" class="lastrowcolumn"><b>{$bill.total*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+</table><br>
+
+<br><br>
+<p onclick="window.print()" onmouseover="this.style.cursor='hand'" style="color: #6581B6; font-weight: bold; text-align: center;">Печатать</p>
+

@@ -1,0 +1,23 @@
+<?php if (!empty($this->menu)): ?>
+	<ul>
+    <?php foreach ($this->menu as $item): ?>
+        <li><a href="/<?=$item['href'];?>" class="map"><?=$item['name'];?></a>
+        <?php if (!empty($item['menu'])): ?>
+            <ul>
+            <?php foreach ($item['menu'] as $subitem): ?>
+                <li><a href="/<?=$subitem['href'];?>" class="map"><?=$subitem['name'];?></a>
+                <?php if (!empty($subitem['menu'])): ?>
+                    <ul>
+                    <?php foreach ($subitem['menu'] as $subitem2): ?>
+                    <li><a href="/<?=$subitem2['href'];?>" class="map"><?=$subitem2['name'];?></a></li>
+                    <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+        </li>
+	<?php endforeach; ?>
+    </ul>
+<?php endif; ?>

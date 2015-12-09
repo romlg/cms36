@@ -1,0 +1,360 @@
+<script type="text/javascript">
+<!--
+var thisname = '{$thisname}';
+var id='{$id}';
+
+{if $root}
+	 var A{$thisname}0 =new Array({$upactions});
+{else}
+	 var A{$thisname}0 =new Array({$upactions});
+{/if}
+
+window.parent.elemActions(thisname, 0);
+
+function Switch(status) {ldelim}
+	window.frames['tmp{$thisname}{$id}'].location = 'page.php?page={$thisname}&do=editstatus&id={$id}&from={$order.status}&bal={$balans.total-$order.total*$currency.value}&to='+status;
+{rdelim}
+function Del() {ldelim}
+var isDel = window.confirm("Вы действительно хотите удалить?");
+if (isDel) {ldelim}
+	window.frames['tmp{$thisname}{$id}'].location = 'page.php?page={$thisname}&do=editDel&id={$id}';
+{rdelim}
+{rdelim}
+
+function AddProducts() {ldelim}
+	window.open('ced.php?page=products&do=ShowProductsForOrder&id={$id}','', 'Width=900, Height=600');
+{rdelim}
+function DelBill() {ldelim}
+	window.frames['tmp{$thisname}{$id}'].location = 'page.php?page={$thisname}&do=DelBill&id={$id}';
+{rdelim}
+
+function CreateSubmit() {ldelim}
+	window.open("cnt.php?page=bills&do=EditCreateBill&payment_type={$order.payment_type}&id="+id, "editbillform", "width=270, height=120, resizable=0, status=no, menubar=no").focus(); 
+	window.parent.top.opener.location.reload();
+{rdelim}
+{literal}
+function PrintSubmit() {
+	window.open("page.php?page=" + thisname + "&do=showprintform&id="+id, "printbillform", "width=600, height=600, resizable=1").focus(); ;
+}
+
+function ApplySubmit() {
+	document.forms.editform.elements.apply.value = 1;
+	document.forms.editform.submit();
+	document.forms.editform2.submit();
+}
+
+function ApplySubmit2() {
+	document.forms.editform3.submit();
+}
+-->
+</script>
+<style>
+table.maintable{
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	background-color: #D2D2D2;
+}
+table.maintable th{
+	font-size: 11px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+	background-image: url(images/forborder5.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+	border-bottom: 3px solid #6E6E6E;
+	padding: 0px;
+	height: 18px;
+}
+table.maintable td{
+	font-size: 70%;
+	font-weight: normal;
+	border-left: 1px solid #9C9C9C;
+	border-top: 1px solid #9C9C9C;
+	text-align: left;
+	padding: 1px 3px 1px 3px;
+}
+table.maintable td.lastcolumn{
+	border-right: 1px solid #9C9C9C;
+}
+table.maintable td.lastrow{
+	border-bottom: 1px solid #9C9C9C;
+}
+table.maintable td.lastrowcolumn{
+	border-bottom: 1px solid #9C9C9C;
+	border-right: 1px solid #9C9C9C;
+}
+h2 {
+	font-size: 110%;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 0px;
+}
+.no_list_hover {
+	background-color: #FFFFFF;
+}
+.block4{
+	color: #FFFFFF;
+	font-weight: bold;
+	background-color: #BCBCBC;
+	padding: 4px 5px 4px 5px;
+	white-space: nowrap;
+	text-align: center;
+}
+div.tableheader{
+	background-image: url(images/forborder4.gif);
+	background-repeat: no-repeat;
+	background-position: left;
+	padding: 0px 5px 0px 5px;
+}
+.Button{
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 11px;
+	color: #FFFFFF;
+	border: 1px solid White;
+	background-color: #BCBCBC;
+	text-decoration: none;
+	height: 18px;
+}
+input {
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	border: 1px solid #9C9C9C;
+	font-size: 100%;
+	width: 95%;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+	width: 100%;
+	padding: 0px 5px 0px 4px;
+}
+</style>
+{/literal}
+
+<form target="tmp{$thisname}{$id}" action="page.php" method="post" name="editform" id="editform" onSubmit="return SaveSubmit()">
+<input type="hidden" name="apply" value="0" />
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+<input type="hidden" name="fld[id]" value="{$id}" />
+
+
+<table width="100%" border="0">
+<tr>
+<td><h2>Информация о Заказе № {$order.id}:</h2></td>
+<td align="right"><h2>Баланс клиента:</h2></td>
+<td align="right" nowrap  {if $balans.total > '0'} style="color:#004A8F;"><h2>{$balans.total}{else} style="color:#FF0000;"><h2>{$balans.total}{/if}</h2></td>
+</tr>
+</table>
+<br>
+
+<table class="maintable" cellspacing="0" cellpadding="0" align="right">
+	<tr class="no_list_hover"><td width="1">Дата&nbsp;заказа</td><td  class="lastcolumn" style="color:#527A95;">{$order.order_date|default:"&nbsp;"}</td></tr>
+	<tr class="no_list_hover"><td width="1">Тип&nbsp;оплаты</td><td class="lastcolumn" style="color:#527A95;">{if !$new and $edit}<select name="fld[payment_type]" style="font-size: 100%;">{html_options options=$order.payment_types selected=$order.payment_type}</select>{else}{$order.payment_type_display|default:"&nbsp;"}{/if}</td></tr>
+	{if $edit}<tr class="no_list_hover"><td width="1">Стоимость&nbsp;доставки</td><td class="lastcolumn" style="color:#527A95;"><input type="text" id="shipping" name="fld[shipping]" value="{$shipping}" style="width: 60px;">&nbsp;<select name="fld[shipping_type]" style="font-size: 100%;" {*onchange='window.location="cnt.php?page={$thisname}&do=editform&id={$id}&shipping_type="+this.value+"&shipping="+document.getElementById("shipping").value'*}>{html_options options=$shipping_types selected=$shipping_type}</select></td></tr>{/if}
+	{*<tr class="no_list_hover"><td width="1">Дата последнего поступления</td><td  class="lastcolumn" style="color:#527A95;">{if $order.date_pay ne '0000-00-00 00:00:00'}{$order.date_pay}{else}не оплачен{/if}</td></tr>*}
+	{if $root}
+		<tr class="no_list_hover"><td width="1">Текущий&nbsp;статус</td><td class="lastcolumn" style="color:#527A95;">{assign var="st" value="`$order.status`"}{$actions.$st}</td></tr>
+		<tr class="no_list_hover"><td class="lastrow" width="1">Перевести&nbsp;в&nbsp;статус</td><td class="lastrowcolumn" style="color:#527A95;"><select name="fld[status]" style="font-size: 100%;">{html_options options=$actions selected=$order.status}</select></td></tr>
+	{else}
+		<tr class="no_list_hover"><td class="lastrow" width="1">Статус</td><td class="lastrowcolumn" style="color:#527A95;"><b>{$order.status2}</b></td></tr>
+	{/if}
+</table><br clear="all"><br>
+</form>
+<form target="tmp{$thisname}{$id}3" action="page.php" method="post" name="editform2" id="editform2">
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="editset" />
+<input type="hidden" name="id" value="{$id}" />
+<table class="maintable" cellspacing="0" cellpadding="0" width="100%">
+<tr class="no_list_hover">
+	<th class="block4" style="background-image: none; border: 0px;" colspan="2" width="70">Арт. сайта</th>
+	<th style="background-image: none; width: 2px; border: 0px;"></th>
+	<th>&nbsp;Арт. произв.&nbsp;</th>
+	<th><div class="tableheader">Производитель</div></th>
+	<th width="100%"><div class="tableheader">Наименование</div></th>
+	<th><div class="tableheader">цена</div></th>
+	<th><div class="tableheader">Ваша цена</div></th>
+	<th><div class="tableheader">кол.</div></th>
+	<th style="background-image: none;"><div class="tableheader">Сумма, руб</div></th>
+	<th style="padding: 0px; width: 5px; background-image: none;"><img src="../images/space.gif" width="5"></th>
+</tr>
+<tr><td colspan="10" height="1" style="padding: 0px; border: 0px;"><img src="../images/white_space.gif" height="1" width="100%"></td></tr>
+<tr><td colspan="10" height="4"></td></tr>
+{foreach from=$product_list item=item key=key}
+	<tr class="no_list_hover">
+	{if $key eq count($product_list)-1 }
+		{assign var="class1" value=" class=\"lastrow\""}
+		{assign var="class2" value=" class=\"lastrowcolumn\""}
+	{else}
+		{assign var="class3" value=" class=\"lastcolumn\""}
+	{/if}
+		<td style="padding: 0px; background-color: #D2D2D2;"></td>
+		<td{$class1}>{$item.art|default:"&nbsp;"}</td>
+		<td{$class1} colspan="2">{$item.art2|default:"&nbsp;"}</td>
+		<td{$class1}>{$item.manufacturer}</td>
+		<td{$class1} width="100%">{$item.name}</td>
+		<td{$class1}>{$item.price*$currency.value|string_format:"%.2f"}{*<input name="fld[products][{$key}][price]" type="text" size="7" value="{$item.price*$currency.value|string_format:'%.2f'}" style="text-align: right;">*}</td>
+		<td{$class1}>{$item.customer_price*$currency.value|string_format:"%.2f"}</td>
+		<td{$class1} style="text-align: center;"><input name="fld[products][{$key}][quantity]" type="text" size="3" value="{$item.quantity}" style="text-align: right;" {if !$edit}readonly{/if}></td>
+		<td{$class2}{$class3} style="text-align: right;">
+			{$item.customer_price*$item.quantity*$currency.value|string_format:"%.2f"}
+		</td>
+		<td style="padding: 0px; background-color: #D2D2D2;"></td>
+	</tr>
+{/foreach}
+<tr><td colspan="11" height="1"></td></tr>
+<tr class="no_list_hover">
+	<td style="padding: 0px; background-color: #D2D2D2;" rowspan="8"></td>
+	<td class="lastrow" colspan="6" bgcolor="#E7E3E4" width="367" rowspan="8">&nbsp;</td>
+	<td><b>Итого:</b></td>
+	<td style="text-align: center;"><b>{$count}</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$order.sum*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+{config_load file="ru.conf" section="cart"}
+{assign var="nds" value=#cart_nds#}
+<tr class="no_list_hover">
+	<td colspan="2"><b>НДС {$nds*100}%:</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$order.tax*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+<tr class="no_list_hover">
+	<td colspan="2"><b>К оплате:</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$order.total*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+<tr class="no_list_hover">
+	<td colspan="2"><b>бонусов:</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$order.bonus}</b></td>
+</tr>
+<tr class="no_list_hover">
+	<td colspan="2"><b>бонусная стоимость:</b></td>{assign var="bonus_price" value = $order.total-$order.bonus}
+	<td style="text-align: right;" class="lastcolumn"><b>{$bonus_price*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+<tr class="no_list_hover">
+	<td colspan="2"><b>доп. скидка:</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b><input name="fld[otkat]" type="text" size="3" value="{$order.otkat}" style="width:40px;text-align: right;" {if !$edit}readonly{/if}>%</b></td>
+</tr>
+<tr class="no_list_hover">
+	<td colspan="2"><b>размер скидки:</b></td>{assign var="otkat" value = $bonus_price*$order.otkat/100}
+	<td style="text-align: right;" class="lastcolumn"><b>{$otkat*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+<tr class="no_list_hover">
+	<td class="lastrow" colspan="2"><b>реальная стоимость:</b></td>{assign var="otkat_price" value = $bonus_price-$otkat}
+	<td style="text-align: right;" class="lastrowcolumn"><b>{$otkat_price*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+<tr><td colspan="9" height="5"></td></tr>
+</table>
+</form>
+
+<table class="maintable" cellspacing="0" cellpadding="0" align="center">
+<tr class="no_list_hover">
+	<td><b>Способ доставки</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$delivery_type|default:"&nbsp;"}</b></td>
+</tr>
+<tr class="no_list_hover">
+	<td><b>Стоимость доставки</b></td>
+	<td style="text-align: right;" class="lastcolumn"><b>{$order.shipping*$currency.value|string_format:"%.2f"}</b></td>
+</tr>
+<tr class="no_list_hover">
+	<td class="lastrow"><b>Оформление доставки</b></td>
+	<td style="text-align: right;" class="lastrowcolumn"><b>{assign var="sh" value="`$order.shipping_type`"}{$shipping_types.$sh}</b></td>
+</tr>
+</table>
+<form target="tmp{$thisname}{$id}2" action="page.php" method="post" name="editform3" id="editform3" onSubmit="return SaveSubmit()">
+<input type="hidden" name="apply" value="0" />
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+<br>
+
+<table class="maintable" cellspacing="0" cellpadding="0" width="536" align="center">
+<tr><td><h2>Адрес&nbsp;доставки:</h2></td></tr>
+<tr><td><textarea id="fld[addr]" name="fld[addr]" rows="4" cols="63">{$order.addr}</textarea></td></tr>
+</table><br>
+
+<table class="maintable" cellspacing="0" cellpadding="0" width="536" align="center">
+<tr><td><h2>Комментарий:</h2></td></tr>
+<tr><td><textarea id="fld[client_comment]" name="fld[client_comment]" rows="4" cols="63">{$order.client_comment}</textarea></td></tr>
+</table>
+</form>
+
+
+<table class="maintable" cellspacing="0" cellpadding="0" width="536" align="center"
+	<tr class="no_list_hover">
+	<td colspan="2"><h2>Информация о клиенте:</h2><br></td>
+	
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">ID клиента:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.client_id}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">ФИО:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.lname}&nbsp;{$order.name}&nbsp;{$order.tname}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Телефон(ы):</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.phone|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Сотовый телефон:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.cell_phone|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Факс:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.fax|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Email:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.email|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">ИНН:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_inn|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">КПП:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_kpp|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Название компании:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_name|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Юридический адрес компании:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_addr|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Почтовый адрес компании:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_paddr|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Телефон компании:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_phone|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Факс компании:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_fax|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Email компании:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_email|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">Наименование банка:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_bank|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">БИК:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_bik|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%">К/счет:</td>
+	<td width="50%" class="lastcolumn" style="color:#527A95;">{$order.comp_ks|default:"&nbsp;"}</td>
+	</tr>
+	<tr class="no_list_hover">
+	<td width="50%" class="lastrow">Р/счет:</td>
+	<td width="50%" class="lastrowcolumn" style="color:#527A95;">{$order.comp_rs|default:"&nbsp;"}</td>
+	</tr>
+ </table><br>
+<br>
+<iframe id="tmp{$thisname}{$id}" name="tmp{$thisname}{$id}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>
+<iframe id="tmp{$thisname}{$id}2" name="tmp{$thisname}{$id}2" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>
+<iframe id="tmp{$thisname}{$id}3" name="tmp{$thisname}{$id}3" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

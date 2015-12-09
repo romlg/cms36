@@ -1,0 +1,48 @@
+<script type="text/javascript">
+var ID = 0;
+var thisname = '{$thisname}';
+
+{literal}
+function close()
+{
+windows.close();
+}
+function mySubmit(item) {
+	item.subm.disabled = true;
+	return true;
+}
+function close()
+{
+if(window.top.opener)
+window.top.opener.focus();
+window.top.close();
+return false;
+}
+function editItem(id) {
+if (id == null) id = ID;
+window.open("crm.php?page=clients&do=showclientinfo&client_id="+id, "edit" + thisname, "width=840, height=550, resizable=1, status=1").focus();
+}
+function addItem(id) {
+if (id == null) id = ID;
+window.open("crm.php?page=clients&do=add&", "edit"+thisname, "width=760, height=520, resizable=1, status=1").focus();
+}
+function createEmail(id) {
+if (id == null) id = ID;
+window.open("cnt.php?page=send_email&client_id="+id, "edit" + thisname, "width=840, height=520, resizable=1, status=1").focus();
+}
+
+function showStat(id) {
+if (id == null) id = ID;
+window.open("crm.php?page=stats&do=showstats&client_id="+id, "edit" + thisname, "width=760, height=520, resizable=1, status=1").focus();
+}
+{/literal}
+// create edit del mail mail2all stats
+var A{$thisname}0 = new Array(0,1,0,0,0,0,0); // никто не выбран
+var A{$thisname}1 = new Array(0,1,1,1,1,0,1); // 1 выбран
+var A{$thisname}2 = new Array(0,1,0,0,0,0,0); // несколько
+window.parent.elemActions(thisname, 0);
+
+</script>
+{$table}
+
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

@@ -1,0 +1,128 @@
+<public:component tagname="xpbox" literalcontent="true">
+/*  Component:	xpBox
+	Last Updated:	24.03.2003
+	Author:		Sergey Ilyinski
+	For more Info, please contact castonet@yahoo.co.uk */
+
+	<public:property name="created"	id="pr_Created"			get="get_Created" />
+	<public:method name="move"		internalname="fnShowHide"/>
+	<public:method name="resizeTo"	internalname="fnResizeTo"/>
+	<public:method name="update"	internalname="fnUpdate"/>
+	<public:attach event="ondocumentready" for="element" onevent="fnInit()" />
+</public:component>
+
+<script language="JavaScript">
+
+var _oDivBody, _oTdBody;
+
+var _oImg, _oImg_u, _oImg_p;
+
+var _bShown	= true;
+
+var _nPInt, _nPCur, _ScrollHeight;
+
+var _nFrom, _nTo;
+
+var _nUInt;
+
+var _nPCoeff = .75;
+var _nPTimes = 50;
+var _nPSpeed = 20;
+
+//-- public methods
+function fnShowHide() {
+
+	if (_bShown) {
+		_ScrollHeight = _oDivBody.scrollHeight;
+		_oImg.src = _oImg_u.src;
+		fnResizeTo(0, false);
+		_bShown = false;
+	}
+	else {
+		_oImg.src = _oImg_p.src;
+		fnResizeTo(_ScrollHeight, false);
+		_bShown = true;
+	}
+	document.cookie = _oDivBody.menu + "=" + _bShown + "; path=;" + _oDivBody.base;
+}
+
+//-- private methods
+function fnResizeTo(i, bFlag) {
+
+	_nFrom = _oDivBody.style.posHeight - 1;
+	_nTo = i + 1;
+	_nPCur = 0;
+
+	if (_nTo - _nFrom == 1)	return;
+	_oDivBody.style.display = 'block';
+
+	bFlag	= (bFlag == null) ? false : bFlag;
+	var bDir	= _nFrom < _nTo ? true : false;
+
+	if (_nPInt) {
+		clearInterval(_nPInt);
+	}
+	_nPInt = setInterval(new Function ("fnProceed(" + bDir + ", " + bFlag + ");"), _nPSpeed);
+}
+
+function fnProceed(bDir, bFlag) {
+
+	if (_nPCur > _nPTimes) {
+		clearInterval(_nPInt);
+	}
+	else {
+		_nPCur++;
+		var coef	= Math.pow(_nPCoeff, _nPCur);
+		_oDivBody.style.posHeight	= _nFrom + Math.ceil((1 - coef) * (_nTo - _nFrom));
+		if (bFlag) {
+			_oTdBody.style.filter	= "progid:DXImageTransform.Microsoft.Alpha(Opacity="+(Math.ceil((bDir ? 1-coef : coef)*100))+", Style=0)";
+		}
+	}
+}
+
+function fnUpdate() {
+
+	if (_ScrollHeight != _oDivBody.scrollHeight && _bShown) {
+		fnResizeTo(_ScrollHeight = _oDivBody.scrollHeight);
+	}
+}
+
+function fnFalse() {
+
+	return false;
+}
+
+function fnInit() {
+
+	element.oncontextmenu = fnFalse;
+
+	_oTdBody = element.rows.item(1).cells.item(0);
+	_oDivBody = _oTdBody.firstChild;
+	_oDivBody.style.overflow = "hidden";
+
+	_ScrollHeight = _oDivBody.scrollHeight;
+
+	_oDivBody.style.posHeight = _ScrollHeight;
+
+	_nUInt = setInterval(fnUpdate, 100);
+
+	element.rows.item(0).onclick = fnShowHide;
+
+	_oImg	= element.rows.item(0).cells.item(0).firstChild.rows.item(0).cells.item(2).firstChild;
+
+	_oImg_u = new Image();
+	_oImg_u.src = "images/xpbox/down.gif";
+	_oImg_p = new Image();
+	_oImg_p.src = "images/xpbox/up.gif";
+
+	if (element.hidden != null) {
+		_ScrollHeight = _oDivBody.scrollHeight;
+		_oImg.src = _oImg_u.src;
+		_oDivBody.style.posHeight = 2;
+		_bShown = false;
+	}
+
+	_bCreated	= true;
+}
+
+</script>

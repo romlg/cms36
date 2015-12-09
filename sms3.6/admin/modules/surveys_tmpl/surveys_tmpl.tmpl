@@ -1,0 +1,21 @@
+<script>
+var ID = 0;
+var thisname = '{$thisname}'; // Со слешами
+var thisname2 = '{$thisname2}'; // Без
+{literal}
+function editItem(id) {
+	if (id == null) id = ID;
+	window.open("ced.php?page=" + thisname + "&do=editform&id="+id, thisname2, "width=600,height=600,status=no,scrollbars=yes,resizable=yes");
+}
+function deleteItem() {
+	document.forms.editform.elements('do').value = 'deleteItems';
+	document.forms.editform.submit();
+}
+{/literal}
+var A{$thisname2}0 = new Array(0,1,0,0,0);
+var A{$thisname2}1 = new Array(1,1,1,1,1);
+var A{$thisname2}2 = new Array(0,1,1,1,1);
+window.parent.elemActions(thisname2, 0);
+</script>
+{$table}
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

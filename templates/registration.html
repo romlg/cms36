@@ -1,0 +1,73 @@
+<div class="profileBox">
+    <?php
+    if (isset($this->errors['global'])) {
+        foreach ($this->errors['global'] AS $key => $item) {
+            echo "<p class='formInfoDesc error png'>" . $item . "</p>";
+        }
+    }
+    ?>
+
+    <?php if (isset($this->reg_confirm)): ?>
+
+        <p class="error"><?php echo $this->message?></p>
+
+    <?php elseif ($this->form): ?>
+
+    <form id="regform" name="regform" action="" method="post">
+        <label for="fld_login">Логин:<span>*</span></label>
+        <input class="text" name="fld[login]" id="fld_login" type="text" value="<?php echo $this->fld['login'];?>"/>
+        <?php if (isset($this->errors['login'])): ?><p class='formInfoDesc error png'><?=$this->errors['login']?></p><?php endif; ?>
+
+        <label for="fld_fio">Ваше имя:<span>*</span></label>
+        <input class="text" name="fld[name]" id="fld_fio" type="text" value="<?php echo $this->fld['name'];?>"/>
+        <?php if (isset($this->errors['name'])): ?><p class='formInfoDesc error png'><?=$this->errors['name']?></p><?php endif; ?>
+
+        <label for="fld_email">E-mail:<span>*</span></label>
+        <input class="text" name="fld[email]" id="fld_email" type="text" value="<?php echo $this->fld['email'];?>"/>
+        <?php if (isset($this->errors['email'])): ?><p class='formInfoDesc error png'><?=$this->errors['email']?></p><?php endif; ?>
+
+        <label for="fld_password1">Пароль:<span>*</span></label>
+        <input class="text" name="fld[password1]" id="fld_password1" type="password" value=""/>
+        <?php if (isset($this->errors['password1'])): ?><p class='formInfoDesc error png'><?=$this->errors['password1']?></p><?php endif; ?>
+
+        <label for="fld_password2">Повтор пароля:<span>*</span></label>
+        <input class="text" name="fld[password2]" id="fld_password2" type="password" value=""/>
+        <?php if (isset($this->errors['password2'])): ?><p class='formInfoDesc error png'><?=$this->errors['password2']?></p><?php endif; ?>
+
+        <a class="button" href="javascript:$('#regform').submit();">Зарегистрироваться</a>
+    </form>
+
+    <?php elseif ($this->form_forgetpassword): ?>
+
+    <form id="regform" name="regform" action="" method="post">
+        <label for="fld_login">Введите свой логин:</label>
+        <input class="text" name="login" id="fld_login" type="text" value=""/>
+        <?php if (isset($this->errors['login'])): ?><p class='formInfoDesc error png'><?=$this->errors['login']?></p><?php endif; ?>
+
+        <a class="button" href="javascript:$('#regform').submit();">Восстановить пароль</a>
+    </form>
+
+    <?php elseif ($this->form_changepassword): ?>
+
+    <form id="regform" name="regform" action="" method="post">
+
+        <input type="hidden" name="id" value="<?php echo (int)$_GET['id']?>"/>
+        <input type="hidden" name="hash" value="<?php echo htmlspecialchars($_GET['hash'])?>"/>
+
+        <label for="fld_password1">Пароль:</label>
+        <input class="text" name="password1" id="fld_password1" type="password" value=""/>
+        <?php if (isset($this->errors['password1'])): ?><p class='formInfoDesc error png'><?=$this->errors['password1']?></p><?php endif; ?>
+
+        <label for="fld_password2">Повтор пароля:</label>
+        <input class="text" name="password2" id="fld_password2" type="password" value=""/>
+        <?php if (isset($this->errors['password2'])): ?><p class='formInfoDesc error png'><?=$this->errors['password2']?></p><?php endif; ?>
+
+        <a class="button" href="javascript:$('#regform').submit();">Сохранить</a>
+    </form>
+
+    <?php else: ?>
+
+        <?php if ($this->text_message) echo "<p class='error'>" . $this->text_message . "</p>"; ?>
+
+    <?php endif; ?>
+</div>

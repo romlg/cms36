@@ -1,0 +1,21 @@
+<script for=product event=onkeydown>
+	if (event.keyCode==27) window.close();
+</script>
+<form method=post target=tmp{$thisname} name=product onsubmit='window.close();' action='page.php'>
+<input type=hidden name=page value='{$thisname}'>
+<input type=hidden name=do value='edit'>
+<input type=hidden name=id value='{$id}'>
+<input type=hidden name="fld[priority]" value='{$priority}'> 
+<fieldset>
+<legend>{$STR_TITLE_ONE}</legend>
+<table width=100% border=0 align=center>
+<tr><td>{$STR_TITLE_EDITFORM}:</td><td><input tabindex=1 type=text size=30 name=fld[name] value="{$name}"></td></tr>
+<tr><td>{$STR_DESCRIPTION}:</td><td><input type=text size=30 maxlength=255 name=fld[description] value="{$description}"></td></tr>
+<tr><td></td><td><input id=fld_visible type=checkbox name=fld[visible] {$visible_checked} value=1> <label for=fld_visible>{$STR_VISIBLE}</label></td></tr>
+</table>
+</fieldset>
+<br>
+<div align=center>
+<input type=submit value='{$STR_SAVE}'>
+<input type=button value='{$STR_CANCEL}' onClick="window.close()">
+</div></form>

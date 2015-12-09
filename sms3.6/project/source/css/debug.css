@@ -1,0 +1,81 @@
+div.debug_form{
+	margin: 0px;
+	padding: 0px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	width: 100%;
+	cursor: pointer;
+	cursor: hand;
+	background-color: #ffffff;
+}
+div.debug_forma{
+	margin: 0px;
+	padding: 0px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	width: 100%;
+	background-color: #ffffff;	
+}
+.debug_header{
+	background-color: #0E89D9;
+	color: #ffffff;
+	font-size: 10px;
+	padding: 4px;
+	font-weight: bold;
+	border: 1px solid #000000;
+}
+.debug_table{
+	width: 100%;
+	border-collapse: collapse;
+	padding: 2px;
+	
+}
+.debug_name{	
+	
+	font-weight: bold;
+	padding: 4px;
+	background-color: #E5E5E5;	
+	width: 100px;
+	border-left: 1px solid #C7C7C7;
+	border-bottom: 1px solid #C7C7C7;
+}
+.debug_value{
+	padding: 4px;
+	background-color: #E5E5E5;	
+	border-left: 1px solid #C7C7C7;
+	border-bottom: 1px solid #C7C7C7;
+}
+.debug_sql_text{
+	background-color: #ffffff;
+	border: 1px solid #C7C7C7;
+	padding: 5px;
+	width: 500px;
+}
+.debug_header_name{
+	background-color: #C6C6C6;
+	padding: 5px;
+	font-weight: bold;
+	border-bottom: 1px solid #E5E5E5;
+}
+.debug_info{
+	background-color: #ffffff;
+	border: 1px solid #C7C7C7;
+	padding: 5px;
+	width: 500px;
+	color: #a01b1b; 
+	font-weight: 600;
+}
+/* רנטפעû */
+.debug_h{
+	color: #a01b1b; 
+}
+.debug_h2{
+	color: #383770; 
+}
+.font9{
+	font-size: 9px;
+}
+.font10{
+	font-size: 10px;
+}
+.font12{
+	font-size: 12px;
+}

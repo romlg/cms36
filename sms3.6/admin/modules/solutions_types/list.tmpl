@@ -1,0 +1,51 @@
+<script type="text/javascript">
+{if $elem_actions}
+  var PID = {$id};
+  var ID = 0;
+  var esId = '{$esId}';
+  var thisname = '{$thisname}';
+  var tab = '{$tab}';
+  var A{$thisname}0 = new Array(1,0,0,0,0);
+  var A{$thisname}1 = new Array(1,1,1,1,1);
+  var A{$thisname}2 = new Array(1,0,1,1,1);
+  window.top.elemActions(thisname, (ID == 0) ? 0 : 1);
+{/if}
+
+function editElem(id) {ldelim}
+	if (id == null) id = ID;
+	// надо передавать пустой tab, иначе не будет работать удаление
+	//window.showModalDialog('ed.php?frame=dialog&page=' + thisname + '&tab=' + tab + '&id=' + PID + '&elem_id=' + id + '&do=elemform&esId=' + esId, '', 'dialogWidth:500px; dialogHeight:250px;');
+
+	window.showModalDialog('ed.php?frame=dialog&page=' + thisname + '&tab=' + tab + '&id=' + PID + '&elem_id=' + id + '&do=elemform&esId=' + esId,'','{if is_array($window_size)}dialogWidth:{$window_size.0}px; dialogHeight:{$window_size.1}px;{else}{$window_size}{/if} status=no;');
+{rdelim}
+{literal}
+function deleteElems(thisname, formname, hide) {
+	formname = formname || 'editform';
+	hide = (hide != null) ? hide : 1;
+	var method = 'DeleteElems';
+	//if (hide < 1) {
+		//method = hide < 0 ? 'EditVisible_1' : 'EditVisible0';
+	//}
+	if (window.showModalDialog('ed.php?frame=dialog&page=' + thisname + '&do=showconfirm&tab=', '', 'dialogWidth:320px; dialogHeight:180px;')) {
+		//document.forms[formname].actions.value = method;
+		document.forms[formname].elements['do'].value = method;
+		document.forms[formname].submit();
+		//alert('delete ' + ID);
+	}
+}
+function swapElems(move, formname) {
+	formname = formname || 'editform';
+	var method = 'SwapElems';
+	document.forms[formname].elements['move'].value = move;
+	document.forms[formname].elements['do'].value = method;
+	document.forms[formname].submit();
+	//alert('swap ' + move);
+}
+{/literal}
+</script>
+
+{$table}
+<script>
+window.top.disable_loading();
+</script>
+<iframe id="tmp{$thisname}{$id}" name="tmp{$thisname}{$id}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

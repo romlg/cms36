@@ -1,0 +1,199 @@
+<link href="/css/styleform.css" rel="stylesheet" type="text/css">
+
+<?php if (!$this->ajax): ?>
+<script type="text/javascript">
+    $(document).ready(function(){
+        window.overlay_timeout_handle = null;
+        window.form_<?=$this->form['hash'];?>_error_timeout_handle = 0;
+        window.on_form<?=$this->form['hash'];?>_result = on_form<?=$this->form['hash'];?>_result;
+        window.popup_<?=$this->form['hash'];?> = popup_<?=$this->form['hash'];?>;
+
+        function del_br() {
+            $('form#form_counter_<?=$this->form['hash'];?> .checkBox').find('br').remove();
+        }
+        
+        function show_message(text,ms_delay) {
+            var form = $('.form_<?=$this->form['hash'];?>.popuprusoft');
+            if (!$(form).find('.close').hasClass('blockClose')) {
+                $("#resultMsg_<?=$this->form['hash'];?>").text(text);
+                form.fadeOut('50');
+                popup_<?=$this->form['hash'];?>('.form_msg_<?=$this->form['hash'];?>','<?=$this->popup;?>');
+                popup_close_timer(ms_delay);
+            }
+        }
+        
+        function popup_close_timer(msec) {
+            window.overlay_timeout_handle = window.setTimeout(function(){
+                window.overlay_timeout_handle = null;
+                $('.form_msg_<?=$this->form['hash'];?> .close').click();
+            }, msec);
+        }
+
+        function dynamic_form_changed<?=$this->form['hash'];?>(mainform) {
+            mainform.find('div.elemBox.file input[type="file"]').change(function () {
+                $(this).parent().next().children('input[type="text"]').attr('value', $(this).val());
+            });
+        }
+
+        function on_form<?=$this->form['hash'];?>_complete(html_changed) {
+            var mainform = $('form#form_counter_<?=$this->form["hash"];?>');
+            mainform.removeClass('blockClose');
+            if (!html_changed) {
+                mainform.find("input[type!='hidden'], textarea").removeAttr('disabled');
+                mainform.find("a#fldsend span").css({
+                    'color' : '',
+                    'background' : ''
+                });
+            } else {
+                dynamic_form_changed<?=$this->form['hash'];?>(mainform);
+            }
+        }
+
+        function on_form<?=$this->form['hash'];?>_error() {
+            show_message("<?=$this->messages['msg_fail']?>",5000);
+            on_form<?=$this->form['hash'];?>_complete(false);
+        }
+
+        function on_form<?=$this->form['hash'];?>_result(result) {
+            var html_changed = false;
+            var mainform = $('form#form_counter_<?=$this->form["hash"];?>');
+
+            if (window.form_<?=$this->form['hash'];?>_error_timeout_handle!=null) {
+                clearTimeout(window.form_<?=$this->form['hash'];?>_error_timeout_handle);
+            }
+            window.form_<?=$this->form['hash'];?>_error_timeout_handle = 0;
+
+            if (result.html!='') {
+                mainform.empty().append($(result.html).find('form#form_counter_<?=$this->form["hash"];?>').html());
+                del_br();
+                if (window.styledSelect) styledSelect();
+                if (window.checked) checked();
+                html_changed = true;
+            }
+            result_msg = $("#resultMsg_<?=$this->form['hash'];?>");
+            if (result.can_close) {
+                var msg_text = '';
+                if (result.message=='')
+                    msg_text = (result.has_errors ? "<?=$this->messages['msg_fail']?>" : "<?=$this->messages['msg_send_email']?>");
+                else
+                    msg_text = (result.message);
+                show_message(msg_text,7000);
+                if (!result.has_errors)
+                    mainform.find("input[type!='hidden'], textarea").val('');
+            } else {
+                if (result.has_errors) {
+                    var prev_elem = mainform.find("p.error:first").prev().prev();
+                    if (prev_elem.length>0) {
+                        var header = $("header");
+                        var top_scroll = prev_elem.offset().top;
+                        if (header.length && header.css("position") == "fixed") {
+                            top_scroll -= header.height() + 30;
+                        }
+                        $("html, body").animate({
+                            scrollTop: top_scroll
+                        }, 200);
+                    }
+                }
+                if (result.message)
+                    alert(result.message);
+            }
+
+            on_form<?=$this->form['hash'];?>_complete(html_changed);
+        }
+
+        function on_submit_handler_<?=$this->form["hash"];?>(e) {
+            var mainform = $(this);
+            if (!mainform.hasClass('blockClose')) {
+                window.form_<?=$this->form['hash'];?>_error_timeout_handle=null;
+                mainform.addClass('blockClose');
+                mainform.find("a#fldsend span").css({
+                    'color' : 'transparent',
+                    'background' : 'url(/images/form_generator-ajax-loader.gif) center center no-repeat'
+                });
+                window.setTimeout(function(){
+                    if (mainform.hasClass('blockClose'))
+                        mainform.find("input[type!='hidden'], textarea").attr('disabled','disabled');
+                }, 50);
+            }
+        }
+
+        $('body').append($('#popupform_<?=$this->form['hash'];?>').html());
+        $('body').append($('#popupform_msg_<?=$this->form['hash'];?>').html());
+        $('#popupform_<?=$this->form['hash'];?>').remove();
+        $('#popupform_msg_<?=$this->form['hash'];?>').remove();
+
+        $('form#form_counter_<?=$this->form["hash"];?>').submit(on_submit_handler_<?=$this->form["hash"];?>);
+        dynamic_form_changed<?=$this->form['hash'];?>($('form#form_counter_<?=$this->form["hash"];?>'));
+
+        $('iframe#target_for_form_<?=$this->form["hash"];?>').load(function(){
+            if (window.form_<?=$this->form['hash'];?>_error_timeout_handle===null) {
+                window.form_<?=$this->form['hash'];?>_error_timeout_handle = window.setTimeout(function(){
+                    window.form_<?=$this->form['hash'];?>_error_timeout_handle = 0;
+                    on_form<?=$this->form['hash'];?>_error();
+                }, 2000);
+            }
+        });
+
+        $('.form_<?=$this->form['hash'];?>.popuprusoft .close, .form_<?=$this->form['hash'];?>.popuprusoft .back, .overlay_<?=$this->form['hash'];?>').click(function () {
+            if (!$(this).hasClass('blockClose')) {
+                $('.overlay_<?=$this->form['hash'];?>, .form_<?=$this->form['hash'];?>.popuprusoft').fadeOut('50');
+            }
+            return false;
+        });
+
+        $('.form_msg_<?=$this->form['hash'];?>.popuprusoft .close, .form_msg_<?=$this->form['hash'];?>.popuprusoft .back, .overlay_<?=$this->form['hash'];?>').click(function () {
+            if (!$(this).hasClass('blockClose')) {
+                $('.overlay_<?=$this->form['hash'];?>, .form_msg_<?=$this->form['hash'];?>.popuprusoft').fadeOut('50');
+                if (window.overlay_timeout_handle!=null){
+                    clearTimeout(window.overlay_timeout_handle);
+                    window.overlay_timeout_handle = null;
+                }
+            }
+            return false;
+        });
+
+        function popup_<?=$this->form['hash'];?>(openClass,with_no_overlay) {
+            var scTop = $(window).scrollTop();
+            if (window.Modernizr && window.Modernizr.touch) {
+                $('.popuprusoft').css('top', scTop+10);
+            }
+            else {
+                $('.popuprusoft').css('top', scTop+100);
+            }
+            var selector = (!with_no_overlay ? '.overlay_<?=$this->form['hash'];?>, ' : '');
+            $(selector+'.popuprusoft.' + openClass).fadeIn('50');
+            return false;
+        }
+
+        del_br();
+        if (window.styledSelect) styledSelect();
+        if (window.checked) checked();
+    });
+</script>
+<iframe id='target_for_form_<?=$this->form["hash"];?>' name='target_for_form_<?=$this->form["hash"];?>' src='' style='display:none'></iframe>
+
+<div id="popupform_msg_<?=$this->form['hash'];?>">
+<div class="overlayrusoft overlay_<?=$this->form['hash'];?>"></div>
+<div class="popuprusoft popupForm form_msg_<?=$this->form['hash'];?>">
+    <span class="close"></span>
+    <div id="resultMsg_<?=$this->form['hash'];?>"></div>
+</div>
+</div>
+<?php endif; ?>
+
+<?php if ($this->popup): ?>
+<div class="overlayrusoft"></div>
+<div id="popupform_<?=$this->form['hash'];?>">
+<div class="popuprusoft popupForm form_<?=$this->form['hash'];?>">
+    <span class="close"></span>
+    <h2 class='popuprusoftTitle'><?=$this->form['name'];?></h2>
+    <?=$this->form_content;?>
+</div>
+</div>
+
+<a onclick="popup_<?=$this->form['hash'];?>('form_<?=$this->form['hash'];?>');" class='button noCn'>
+    <span class="bg"><?=$this->submit_title;?></span>
+</a>
+<?php else: ?>
+    <?=$this->form_content;?>
+<?php endif; ?>

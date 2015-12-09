@@ -1,0 +1,81 @@
+<script language="JavaScript" type="text/javascript" src="/javascripts/comments.js"></script>
+
+<p class="name">
+    <span class="date"><?=$this->publication->getDate(); ?></span>
+    <?=$this->publication->getName(); ?>
+</p>
+
+<?php if ($this->publication->get('allow_comments')): ?>
+<p>Комментариев: <?=$this->publication->getCommentsCount();?></p>
+<?php endif; ?>
+
+<p>
+    <?php $image = $this->publication->getImage(array('200', '200'), 'resize'); if($image) : ?>
+        <img src="<?=$image; ?>" alt="<?=$this->publication->getName(); ?>"/>
+    <? endif; ?>
+    <em><?=$this->publication->getNotice(); ?></em>
+</p>
+<?=$this->publication->getText(); ?>
+<?=$this->publication->getGallery('gallery.html', 4); ?>
+<?=$this->publication->getFiles('files.html'); ?>
+
+<?php if ($this->publication->get('allow_comments')): ?>
+
+    <?php if (!$this->messages['publications_comment_only_users'] || $this->user): ?>
+        <!-- Возможность прокомментировать публикацию -->
+
+        <script type="text/javascript">
+            var ajax_request_url = '<?=$this->publication->getPath(); ?>';
+        </script>
+
+        <br><a class="button btn_add_comment" href="#comment_form">Оставьте свой коментарий</a>
+        <div class="clear"></div>
+
+        <!-- Скрытая форма -->
+        <div style="display: none;">
+            <form id="comment_form" method="post" action="">
+                <p class="error" id="comment_form_error" style="display: none;"></p>
+                <p class="success" id="comment_form_success" style="display: none;"></p>
+                <div class="form_content">
+
+                    <?php if (!$this->messages['publications_comment_only_users'] && !$this->user):?>
+                    <label for="comment_form_name">Ваше имя: </label>
+                    <input id="comment_form_name" name="publication_comment[name]" />
+                    <?php endif;?>
+
+                    <label for="comment_form_comment">Комментарий: </label>
+                    <textarea id="comment_form_comment" class="comment" name="publication_comment[comment]"></textarea>
+
+                    <input type="hidden" name="publication_comment[dir]" value="<?=$this->publication->getPath(); ?>" />
+                    <input type="hidden" name="publication_comment[publication_id]" value="<?=$this->publication->getId(); ?>" />
+                    <input type="hidden" id="pid" name="publication_comment[pid]" />
+                    <input type="submit" value="Отправить" />
+                </div>
+            </form>
+        </div>
+
+    <?php endif ;?>
+
+    <?php
+    function showCommentsTree($tree) {
+        /**
+         * @var TRusoft_View $view_obj
+         */
+        $view_obj = &Registry::get('TRusoft_View');
+        $ret = '';
+        foreach ($tree as $v) {
+            if ($v['menu']) $v['menu'] = showCommentsTree($v['menu']);
+            $view_obj->assign($v);
+            $ret .= $view_obj->render('publication_comment.html');
+        }
+        return $ret;
+    }
+    ?>
+    <?php $comments = $this->publication->getComments(); if ($comments): ?>
+        <div class="commentsWrap">
+        <?php echo showCommentsTree($comments);?>
+        </div>
+    <?php endif; ?>
+<?php endif; ?>
+
+<a href="<?=$this->baseUrl; ?>"><?=$this->messages['publications_return'];?></a>

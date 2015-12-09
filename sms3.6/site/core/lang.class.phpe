@@ -1,0 +1,226 @@
+<?php
+
+class TLang
+{
+
+    // параметры используемых на сайте языков
+    var $languages;
+
+    // текущий рабочий язык
+    var $currentLanguage;
+
+    // языковый префикс для ссылок на сайте (например: 'ru/')
+    var $langDirPrefix;
+
+    function TLang() {
+    }
+
+    // заполняет внутренний массив со всеми параметрами о языках сайта
+    function populateLanguages($languages) {
+        // Если не заданы $languages - выводим оповещение
+        if (count($languages) < 1) {
+            log_notice('languages', false, 'languages not defined!');
+        }
+        $this->languages = $languages;
+    }
+
+    // возвращает, есть ли такой язык в наборе языков сайта
+    function hasLanguage($lang_code) {
+        return array_key_exists($lang_code, $this->languages);
+    }
+
+    // выставляет текущий рабочий язык
+    function setCurrentLanguage($lang_code) {
+        if (!$this->hasLanguage($lang_code)) {
+            return;
+        }
+
+        $this->currentLanguage = $lang_code;
+        if ($lang_code != LANG_DEFAULT) {
+            $this->setLangDirPrefix($lang_code . '/');
+        }
+        $this->setLangRootId($GLOBALS['site_domains'][$GLOBALS['domain']]['langs'][$lang_code]['root_id']);
+    }
+
+    // возвращает текущий рабочий язык
+    function getCurrentLanguage() {
+        return $this->currentLanguage;
+    }
+
+    // проверяет, находится ли указанный домен в списке языков
+    // если да, возвращает код языка, если нет - false
+    function getLangByDomain($domain) {
+        foreach ($this->languages as $k => $v) {
+            if (in_array($domain, $v['domains'])) {
+                return $k;
+            }
+        }
+        return false;
+    }
+
+    // устанавливает языковый префикс для ссылок
+    function setLangDirPrefix($prefix) {
+        $this->langDirPrefix = $prefix;
+    }
+
+    // возвращает языковый префикс для ссылок
+    function getLangDirPrefix() {
+        return $this->langDirPrefix;
+    }
+
+    // устанавливает root_id
+    function setLangRootId($root_id) {
+        $this->langRootId = $root_id;
+    }
+
+    // возвращает root_id
+    function getLangRootId() {
+        return $this->langRootId;
+    }
+
+    // устанавливает системную локаль, руководствуясь параметрами текущего языка
+    function setSystemLocale() {
+        if (!empty($this->languages[$this->currentLanguage]['locale'])) {
+            setlocale(LC_ALL, $this->languages[$this->currentLanguage]['locale']);
+        }
+    }
+
+    // определяет по IP посетителя, по языку в браузере, какой язык необходимо использовать
+    function detectLanguage() {
+
+        $langs = array_keys($this->languages);
+
+        $country = $this->getCountryByIP($_SERVER['REMOTE_ADDR']);
+        if ($country == 'WW') {
+            $country = $this->getCountryByBrowserLang();
+        }
+
+        switch ($country) {
+            case 'AM':
+            case 'AZ':
+            case 'BY':
+            case 'GE':
+            case 'KZ':
+            case 'KG':
+            case 'TM':
+            case 'UA':
+            case 'UZ':
+            case 'SU':
+            case 'RU' :
+                $lang = 'ru';
+                break;
+            default:
+                $lang = 'en';
+                break;
+        }
+
+        if (!in_array($lang, $langs)) $lang = '';
+
+        if (!$lang) {
+            return LANG_DEFAULT;
+        }
+        return $lang;
+    }
+
+    // возвращает язык, установленный в cookie
+    function getSavedLang() {
+        if (!empty($_COOKIE[LANG_COOKIE_NAME])) {
+            return $_COOKIE[LANG_COOKIE_NAME];
+        }
+        return false;
+    }
+
+    // записывает текущий язык в cookie
+    function save() {
+        // @todo change path of cookie
+        setcookie(LANG_COOKIE_NAME, $this->currentLanguage, time() + 3600 * 24 * 365, '/');
+    }
+
+    // возвращает код страны (если не EN), установленный в браузере
+    function getCountryByBrowserLang() {
+        $browser_langs = split(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+        $lang = 'WW';
+        foreach ($browser_langs as $v) {
+            $v = substr($v, 0, 2);
+            if ($v == 'en') {
+                continue;
+            }
+            $lang = strtoupper($v);
+            break;
+        }
+
+        return $lang;
+    }
+
+    // возвращает код страны по IP посетителя
+    function getCountryByIP($ip) {
+        if (!$ip) {
+            return 'WW';
+        }
+        $country = sql_getValue("SELECT country FROM " . STAT_IPS_TABLE . " WHERE INET_ATON('" . $ip . "') BETWEEN ip_from AND ip_to");
+        if ($country) {
+            return $country;
+        }
+        return 'WW';
+    }
+
+    // производит установку языка
+    // @param string $dirs - путь на сайте, по которуму пришел посетитель
+    // @return string - путь, с отрезанным языковым префиксом
+    function setupLanguage($dirs) {
+        //Если язык один - не паримся и ставим
+        if (count($this->languages) == 1) {
+            $this->setCurrentLanguage(current(array_keys($this->languages)));
+            // выкидываем язык из пути, если он там есть и равен установленному языку (единственному)
+            if (count($dirs) && $this->hasLanguage($dirs[0])) {
+                array_shift($dirs);
+            }
+        }
+        // Если языков несколько - ищем стандартным методом
+        else {
+            // Обработка языка из GET и POST
+            if (isset($_GET['lang']) || isset($_POST['lang'])) {
+                $lang = $_GET['lang'] . $_POST['lang'];
+                if ($this->hasLanguage($lang)) {
+                    $this->setCurrentLanguage($lang);
+
+                    // если девелопер передал язык и в dirs, и в lang, тот что в dirs просто выбросим
+                    if ($this->hasLanguage($dirs[0])) {
+                        array_shift($dirs);
+                    }
+                }
+            }
+
+            // Берем язык из $dirs[0]
+            elseif (count($dirs) && $this->hasLanguage($dirs[0])) {
+                $this->setCurrentLanguage($dirs[0]);
+                array_shift($dirs);
+            }
+
+
+            // Если язык до сих пор не поставили
+            if (!$this->getCurrentLanguage()) {
+                if (!DISABLE_COOKIE_LANGUAGE) {
+                    // Берем язык из Cookie
+                    $lang = $this->getSavedLang();
+                    // Если языка в куках нет, выясняем язык пользователя по ip и браузеру
+                    if (!$lang) {
+                        $lang = $this->detectLanguage();
+                    }
+                }
+                else {
+                    $lang = LANG_DEFAULT;
+                }
+                $this->setCurrentLanguage($lang);
+            }
+
+
+        }
+        $this->setSystemLocale();
+
+        $this->save();
+        return $dirs;
+    }
+}
+
+?>

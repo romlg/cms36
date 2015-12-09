@@ -1,0 +1,31 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#form_usage_updater').click(function(e){
+            $('#wait_loading').show();
+            $('#form_usage').html('');
+            $.ajax({
+                type: 'POST',
+                url: '/admin/?page=forms',
+                data: {
+                    'do' : 'show_usage',
+                    'page' : 'forms',
+                    'hash' : '<?=$this->object["hash"];?>'
+                },
+                dataType: 'html',
+                success: function(result){
+                    $('#form_usage').html(result);
+                },
+                error: function() {
+                    $('#form_usage').html('<h3>Сервер недоступен!</h3>');
+                },
+                complete: function() {
+                    $('#wait_loading').hide();
+                }
+            });
+        });
+        $('#form_usage_updater').click();
+    });
+</script>
+<button type="button" id="form_usage_updater">Обновить места использования формы</button>
+<div id="form_usage" style="margin-top:10px"></div>
+<div id="wait_loading" style='background: url("/admin/images/loading.gif") no-repeat scroll center top transparent; clear: both; font-size: 0; height: 5px; line-height: 5px; margin-bottom: 20px; position: relative; display:none;'></div>

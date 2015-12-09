@@ -1,0 +1,23 @@
+{$script}
+<script type="text/javascript">
+{literal}
+function mySubmit(item) {
+	item.subm.disabled = true;
+	return true;
+}
+function addToList() {
+	document.forms[formname].actions.value='postselect';
+	document.forms[formname].submit();
+}
+{/literal}
+var TABLE = '{$thisname}';
+var ID = 0;
+var A{$thisname}0 = new Array(1,0,1);
+var A{$thisname}1 = new Array(0,1,1);
+var A{$thisname}2 = new Array(0,0,1);
+window.top.elemActions('{$thisname}', 0);
+</script>
+
+{$table}
+
+<iframe id="tmp{$thisname}select" "name=tmp{$thisname}select" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

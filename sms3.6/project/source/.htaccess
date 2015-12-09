@@ -1,0 +1,14 @@
+Action gz /scripts/gz.php
+
+<FilesMatch "\.css$">
+        ForceType gz
+</FilesMatch>
+
+<FilesMatch "\.js$">
+        ForceType gz
+</FilesMatch>
+
+<FilesMatch "gz.php">
+ 	ForceType application/x-httpd-php
+</FilesMatch>
+

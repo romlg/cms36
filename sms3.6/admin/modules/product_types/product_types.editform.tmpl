@@ -1,0 +1,28 @@
+<script for=product event=onkeydown>
+	if (event.keyCode==27) top.window.close();
+</script>
+<form method=post target=tmp{$thisname} name=product action='page.php' onSubmit="top.window.close();">
+<input type=hidden name=page value='{$thisname}'>
+<input type=hidden name=do value='edit'>
+<input type=hidden name=id value='{$id}'>
+<fieldset>
+<legend>{$STR_TITLE_EDIT_PARAM}</legend>
+<table width=100% border=0 align=center>
+<tr><td>{$STR_TITLE_EDITFORM}:</td><td><input tabindex=1 type=text size=30 name=fld[name] value="{$name}"></td></tr>
+<tr><td>{$STR_DESCRIPTION}:</td><td><input type=text size=30 maxlength=255 name=fld[description] value="{$description}"></td></tr>
+<tr><td></td><td><input id=fld_visible type=checkbox name=fld[visible] {$visible_checked} value=1> <label for=fld_visible>{$STR_VISIBLE}</label></td></tr>
+</table>
+</fieldset>
+<br>
+
+<div align=center>
+<input type=submit value='{$STR_SAVE}'>
+<input type=button value='{$STR_CANCEL}' onClick="top.window.close()">
+</div></form>
+
+{$params}
+
+<div align=center>
+<!--input type=button value='{$STR_ADD}' onClick='window.showModalDialog("dialog.php?page={$thisname}&do=editparamForm&id="+id, "", "dialogWidth:400px; dialogHeight:250px;")'-->
+<input type=button value='{$STR_ADD}' onClick='window.open("dialog.php?page=product_type_params&do=editForm&product_type_id="+{$id}, "EditParam", "Width=400 Height=250")'>
+</div>

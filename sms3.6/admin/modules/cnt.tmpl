@@ -1,0 +1,67 @@
+<script type="text/javascript">
+function onkeydown(event) {
+    event = event ? event : window.event;
+    if(event.keyCode==116 || (event.ctrlKey && event.keyCode==82)) {
+        if (document.all) {
+            event.keyCode=0;
+            event.returnValue = false;
+            event.cancelBubble = true;
+        } else event = null;
+        _loaded = false;
+        document.location.href = document.location.href;
+    }
+}
+
+function showFiles(frame, name, formname) {
+    if (this.ajax_formname != undefined){
+        formname = this.ajax_formname;
+    } else {
+        formname = formname || 'editform';
+    }
+
+    file = document.forms[formname].elements[name].value;
+    file = file.substring(0, file.lastIndexOf('/'));
+    FmWin = window.open("ced.php?page=fm2&dir="+file+"&field="+name+"&formname="+formname, "linkUrl", "width=700, height=500, resizable=1, status=1");
+    if (FmWin) FmWin.focus();
+}
+
+function showTree(name, formname, frame) {
+    if (this.ajax_formname != undefined){
+        formname = this.ajax_formname;
+    } else {
+        formname = formname || 'editform';
+    }
+
+    name = name || 'url';
+    frame = frame || 'texturl';
+    var url = showModalDialog("dialog.php?page=tree/treeurl&fieldname="+name+"&formname="+formname,frame,"dialogWidth:360px;dialogHeight:300px")
+    if (url != null) {
+        document.forms[formname].elements[name].value=url;
+    }
+}
+
+function changeVisible(chbox, id, table){
+    if (chbox.checked){
+        value = 1;
+    } else {
+        value = 0;
+    }
+    table = "&table="+table;
+    window.frames['tmp'+thisname].location = "cnt.php?page=" + thisname + "&do=changeVisible&checked="+value+"&id="+id+"&name="+chbox.name+table;
+}
+
+function checkSelected() {
+    var form = document.forms[this.ajax_formname];
+    for (var i=0; i < form.elements.length; i++) {
+        var elem = form.elements[i];
+        if (elem.type == 'checkbox' && elem.checked && elem.value != 'on') {
+            return elem.value;
+        }
+    }
+    return false;
+}
+</script>
+
+<div class="textBox">
+	<?php echo $this->content;?>
+</div>

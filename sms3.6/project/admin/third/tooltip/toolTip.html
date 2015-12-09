@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE> New Document </TITLE>
+<META NAME="Generator" CONTENT="EditPlus">
+<META NAME="Author" CONTENT="">
+<META NAME="Keywords" CONTENT="">
+<META NAME="Description" CONTENT="">
+<style>
+.toolTip {
+	color:	black;
+	font:	normal 10px Verdana;
+	border: solid 1px gray;
+	position:	absolute;
+	padding:	2px;
+	background-color: lightyellow;
+}
+</style>
+<script language="JavaScript" src="tooltip.js"></script>
+</HEAD>
+
+<BODY>
+
+<div>
+[<a href="#" onmousemove="toolTip.View('|EXCLUSIVE| <I>следует</I> устанавливать отдельно от других обновлений.\n\nЕсли добавить |EXCLUSIVE| в список выбранных обновлений, Windows Update автоматически удалит из списка все остальные элементы.\n\nЧтобы удалить из списка все выбранные обновления и поместить туда |EXCLUSIVE|, нажмите кнопку ОК.\nЧтобы вернуться к просмотру обновлений, не добавляя |EXCLUSIVE|, нажмите кнопку Отмена.')" onmouseout="toolTip.Hide()">some word 1</a>]
+[<a href="#" onmousemove="toolTip.View('some other advice')" onmouseout="toolTip.Hide()">some word 2</a>]
+[<a href="#" onmousemove="toolTip.View('some more advice')" onmouseout="toolTip.Hide()">some word 3</a>]
+</div>
+
+<script language="JavaScript">
+	var toolTip = new toolTip("toolTip", 300);
+</script>
+</BODY>
+</HTML>

@@ -1,0 +1,15 @@
+<form id='copydlg' class="copyTree">
+    <h3><?php echo $this->copy_to;?></h3>
+    <div class='way'><?php echo $this->from.": ".$this->from_path; ?></div>
+    <div class='way'><?php echo $this->to.": ".$this->to_path; ?></div>
+
+    <input type="submit" class="btn margRight" name="copy" value='<?php echo $this->copy;?>' <?php echo $this->copy_disabled;?>>
+    <input type="submit" class="btn noClear" name="move" value='<?php echo $this->move;?>' <?php echo $this->move_disabled;?>>
+
+    <input type="hidden" name="trg" value='<?php echo $this->id;?>'>
+    <input type="hidden" name="src" value='<?php echo $this->src;?>'>
+    <input type="hidden" name="page" value='<?php echo $this->name;?>'>
+    <input type="hidden" name="do" value="EditProcCopy">
+</form>
+
+<?php echo $this->trees;?>

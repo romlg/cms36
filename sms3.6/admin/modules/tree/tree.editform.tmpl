@@ -1,0 +1,42 @@
+<script>
+{literal}
+function mySubmit(item) {
+	return true;
+}
+{/literal}
+
+var TABLE = 'tree';
+var ID = {$id};
+</script>
+
+<table width="100%" height="100%"><tr><td valign="top">
+<form method="post" target="tmptree{$id}" name="editform" onsubmit="return mySubmit()" action="page.php">
+<fieldset>
+<legend>{$STR_PAGE}</legend>
+<div>
+{$STR_NAME}: <input type="text" name="fld[name]" value="{$name}" />
+{$STR_URL}: <input type="text" name="fld[page]" value="{$page}" />
+</div>
+<br />
+<div>
+<input id="fld_visible" type="checkbox" name="fld[visible]" value="1" {$visible} />&nbsp;<label for="fld_visible">{$STR_VISIBLE}</label><br />
+{*<input id="fld_published" type="checkbox" name="fld[published]" value="1" {$published} />&nbsp;<label for="fld_visible">{$STR_PUBLISHED}</label><br />*}
+{*<input id="fld_restricted" type="checkbox" name="fld[visible]" value="2" {$restricted} />&nbsp;<label for="fld_restricted">{$STR_RESTRICTED}</label><br />*}
+{*<input id="fld_hot" type="checkbox" name="fld[hot]" value="1" {$hot} />&nbsp;<label for="fld_hot">{$STR_HOT}</label><br />*}
+<input type="hidden" name="fld[pid]" value="{$pid}" />
+{if $type == 'text_chapter'}<div style="float: right">
+{$STR_LAYOUT}: <select name="fld[layout]">{$layout}</select>
+</div>{/if}
+</div>
+</fieldset>
+</td></tr>
+<tr><td valign="top">
+<input type="hidden" name="page" value="ced" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+<input type="submit" name="subm" value="{$STR_SAVE}" />
+</form>
+</td></tr>
+<tr><td align="center" height="100%"><font style="font-size: 150px" color="silver">@</font></td></tr>
+</table>
+<iframe id="tmptree{$id}" name="tmptree{$id}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

@@ -1,0 +1,72 @@
+<?php if (!$this->user): ?>
+<script language="JavaScript" type="text/javascript" src="/javascripts/socials.js"></script>
+<div class="block"><div><div><div>Авторизация</div></div></div></div>
+<div class="blockContent">
+    <?php if(count($this->login_error)>0){
+        foreach($this->login_error as $error):?>
+        <p class="error "><?php echo $error?></p>
+        <?php endforeach;
+    }
+    ?>
+    <p>Войти с использованием логина/пароля на сайте</p>
+
+    <form id="login2" name="login2" action="" method="post">
+
+        <label for="fld_login">Логин:</label>
+        <input class="text" name="login" id="fld_login" type="text" value="<?php if (!empty($this->var['login'])) echo $this->var['login'];?>">
+        <label for="fld_password">Пароль:</label>
+        <input class="text" name="password" id="fld_password" type="password">
+
+        <p><a href="/registration/">Регистрация</a>&nbsp;&nbsp;<a href="/registration/?forgetpass=1">Забыли пароль?</a></p>
+
+        <a class="button" href="javascript:void(0);" onclick="document.getElementById('auth_type').value='etur'; $('#login2').submit();">Войти</a>
+
+        <input type="hidden" name="auth_type" id="auth_type" value="">
+    </form>
+
+    <p>или с помощью соц.сетей </p>
+
+    <div id="idps">
+        <table width="100%" border="0">
+            <tr>
+                <td align="center"><img class="idpico" idp="vkontakte" src="/images/hybridauth/vkontakte.png" alt="vkontakte" title="vkontakte"/></td>
+                <td align="center"><img class="idpico" idp="twitter" src="/images/hybridauth/twitter.png" alt="twitter" title="twitter"/></td>
+                <!--td align="center"><img class="idpico" idp="facebook" src="/images/hybridauth/facebook.png" alt="facebook" title="facebook"/></td-->
+                <td></td>
+                <td align="center"><img class="idpico" idp="openid" src="/images/hybridauth/openid.png" alt="openid" title="openid"/></td>
+            </tr>
+            <tr>
+                <td align="center"><img class="idpico" idp="livejournal" src="/images/hybridauth/livejournal.png" alt="livejournal" title="livejournal"/></td>
+                <td align="center"><img class="idpico" idp="google" src="/images/hybridauth/google.png" alt="google plus" title="google plus"/></td>
+                <td align="center">Gos<br>uslugi</td>
+                <td align="center"><span idp="eis" class="idpico">ЕИС ОПРФ</span></td>
+            </tr>
+        </table>
+    </div>
+    <div id="openidid" style="display:none;">
+        <table width="100%" border="0">
+            <tr>
+                <td align="center"><img id="openidimg" src="/images/hybridauth/loading.gif" alt=""/></td>
+            </tr>
+            <tr>
+                <td align="center"><p id="openidm">Введите имя пользователя или название блога</p></td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <input type="text" class="text" name="openidun" id="openidun"/>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <a class="button" href="javascript:void(0);" id="openidbtn">Войти</a>
+                    <a class="button" href="#" id="backtolist">Назад</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<?php else:?>
+    <p>Здравствуйте, <?=$this->user->get('name');?></p>
+    <p><a href="/cabinet/">Личный кабинет</a> | <a href="/cabinet/exit/">Выход</a></p>
+<?php endif; ?>

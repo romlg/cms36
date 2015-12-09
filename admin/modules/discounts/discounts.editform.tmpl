@@ -1,0 +1,33 @@
+<script for="editform" event="onkeydown">
+	if (event.keyCode==27) window.close();
+</script>
+
+<script language="javascript">
+{literal}
+	window.onload = function() {
+		var dH = document.forms['editform'].offsetHeight;
+		var dW = document.forms['editform'].offsetWidth;
+		window.dialogWidth = (dW - 0 + 50) + 'px';
+		window.dialogHeight = (dH  - 0 + 70) + 'px';
+	}
+{/literal}
+</script>
+
+<form method="post" target="tmp{$thisname}" name="editform" onsubmit="window.close()" action="page.php">
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+<input type="hidden" name="fld[auth_group_id]" value="{$auth_group}" />
+<fieldset>
+<table width="100%">
+<tr><td>{$STR_VOLUME}:</td><td><input type="text" size="30" maxlenght="50" name="fld[volume]" value="" /></td></tr>
+<tr><td>{$STR_DISCOUNT}:</td><td><input type="text" size="30" maxlenght="50" name="fld[discount]" value="" /></td></tr>
+</table>
+</fieldset>
+<br />
+<div style="text-align:center;">
+	<input type="submit" value="{$STR_SAVE}" />
+	<input type="button" value="{$STR_CANCEL}" onClick="window.close()" />
+</div>
+</form>
+

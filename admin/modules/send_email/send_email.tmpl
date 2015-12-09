@@ -1,0 +1,74 @@
+<script>
+var disable_submit;
+function mySubmit() {ldelim}
+	if (disable_submit) {ldelim}
+		alert("{$STR_DISABLE_SUBMIT}");
+		return false;
+	{rdelim}
+	window.open("about:blank", "email_log", "width=450, height=300, resizable=1, status=1, scrollbars=1, menubar=1");
+	document.forms.editform.target="email_log";
+	document.forms.editform.submit();
+	disable_submit = 1;
+	return false;
+{rdelim}
+
+function showTemplates() {ldelim}
+	window.showModalDialog("dialog.php?page={$thisname}&do=showtemplates", "", "dialogWidth:460px; dialogHeight:320px;")
+{rdelim}
+function showRecipients() {ldelim}
+	window.open("ced.php?page={$thisname}&do=showrecipients", "recipients", "width=640, height=530, resizable=1, status=1").focus();
+{rdelim}
+function change_editor(sel) {ldelim}
+	document.all['editor_html'].style.display = (sel=="html" ?  "block" : "none");
+	document.all['editor_text'].style.display = (sel=="text" ?  "block" : "none");
+{rdelim}
+</script>
+
+<table width=100% height=100%><tr><td valign=top>
+<form method=post name=editform onsubmit='return mySubmit()' action='page.php' target="tmp{$thisname}">
+<fieldset>
+<legend>{$STR_TITLE}</legend>
+	<table cellpadding=0 cellspacing=0 width=100%><tr>
+		<td>{$STR_MAILTO}:</td>
+		<td>
+			<input type=text name=fld[mailto] value='{$mailto}' size=60 {$mailto_readonly}>
+			<tmpl:client_selector>
+				<input type=button value=' ... ' onclick='showRecipients()'>{$value}
+			</tmpl:client_selector>
+		</td>
+	</tr><tr>
+		<td>{$STR_MAILFROM}:</td>
+		<td><select name=fld[mailfrom]>{$managers}</select></td>
+	</tr><tr>
+		<td>{$STR_SUBJECT}:</td>
+		<td><input type=text name=fld[subject] size=60 value='{$subject}'></td>
+	</tr><tr>
+		<td>{$STR_ATTACH}:</td>
+		<td><input type=text name=fld[attach][] size=60> <input type=button onClick='showFiles("", "fld[attach][]")' value=' ... '></td>
+	</tr><tr>
+		<td>{$STR_CONTENT_TYPE}:</td>
+		<td>
+			<select name=content_type onchange="change_editor(this.value);">
+				<option value="html" SELECTED>HTML</option>
+				<option value="text">TEXT</option>
+			</select>
+		</td>
+	</tr></table>
+</fieldset>
+</td></tr><tr><td valign=top height=100%>
+<div class='hide' id='editor_text' style="height: 100%;">
+	<textarea name="editor[text]" style="height: 100%; width: 100%">{$text}</textarea>
+</div>
+<div class='hide' id='editor_html'>
+	{$editor}
+</div>
+<script>change_editor('html');</script>
+<input type=image src="images/s.gif">
+</td></tr>
+<input type=hidden name=use_client_selection value='{$use_client_selection}'>
+<input type=hidden name=page value='{$thisname}'>
+<input type=hidden name=do value='EditSend'>
+<input type=hidden name=id value='{$id}'>
+</form>
+</table>
+<IFRAME id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

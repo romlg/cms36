@@ -1,0 +1,42 @@
+<div class="menubar" id="DivMenuBar">
+	<dl class="sidebarMenu">
+	<?php foreach ($this->menubar AS $menubar): ?>
+        <dt class="<?php if($menubar['display']=='none') {echo"close";} ?>">
+            <span class="png"><?php echo $menubar['caption']; ?></span>
+        </dt>
+        <dd style="display:<?php echo $menubar['display']; ?>" menu="<?php echo $menubar['menu']; ?>" class="<?php if($menubar['display']=='none') {echo"close";} ?>">
+            <ul id="<?php echo $menubar['menu']; ?>">
+
+                <?php foreach ($menubar['items'] AS $key=>$item):?>
+                    <li id="<?php echo $this->menubar['menu']."_".$key;?>" class="png" style="background-image:url(<?php echo $item['img'];?>);">
+                        <a onclick="clicked('menu_<?php echo $this->menubar['menu']."_".$key;?>');" id="menu_<?php echo $this->menubar['menu']."_".$key;?>" class="control" href="<?php echo $item['link'];?>" hidefocus="hidefocus" <?php if ($item['current']) echo 'style="color: red;"'; ?>>
+                            <?php echo $item['title'];?>
+                        </a>
+                    </li>
+                <?php endforeach;?>
+                
+            </ul>
+        </dd>
+    <?php endforeach;?>
+    </dl>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.sidebarMenu dt').click(function(){
+        var $cont = $(this).next('dd');
+        if ($cont.hasClass('close')) {
+			// Показываем
+            $cont.fadeIn(100);
+            document.cookie = $cont.attr('menu') + "=true; expires=Fri, 31 Dec 2099 23:59:59 GMT";
+        } else {
+            // Скрываем
+            $cont.fadeOut(100);
+            document.cookie = $cont.attr('menu') + "=false; expires=Fri, 31 Dec 2099 23:59:59 GMT";
+        }
+		$(this).toggleClass('close');
+        $cont.toggleClass('close');
+    });
+
+});
+</script>

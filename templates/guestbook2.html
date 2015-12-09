@@ -1,0 +1,24 @@
+<ul>
+    <?php
+    foreach ($this->outputresp as $otziv2) :?>
+
+    <li><B>
+        <a href = "/guestbook/message/<?=$otziv2['id']?>"><?=$otziv2['name'] ?></a> &nbsp &nbsp &nbsp &nbsp <font color='green'><?=$otziv2['date'] ?> </font>
+    </B><br>
+        <?=$otziv2['message'] ?>
+        <?php if ($otziv2['admin_comment'] != '') : ?>
+        <br><br><font color='blue'>
+            <?=$otziv2['admin_comment'] ?>
+        </font>
+        <? endif?>
+
+    </li>
+
+    <hr>
+    <? endforeach?>
+</ul>
+<?= $this->nav ?>
+<br>
+<br>
+<br>
+<?=$this->formoutput ?>

@@ -1,0 +1,68 @@
+<?php if (isset($this->fdata['form']['errors']) && !empty($this->fdata['form']['errors'])):?>
+	<?php foreach ($this->fdata['form']['errors'] as $type=>$errs):?>
+		<p class="error png">
+			<? if ($type == 'empty') echo $this->messages['msg_err_empty'].':';?>
+            <?php foreach ($errs as $k=>$v):?>
+                <?=$v;?><?php if ($k == count($errs)-1):?><?php if ($type == 'empty') echo ', '; else echo '<br>';?><?php endif;?>
+            <?php endforeach;?>
+			{section name=i loop=$errs}
+				{$errs[i]}{if $errs[i.index_next]}{if $type eq 'empty'}, {else}<br>{/if}{/if}
+			{/section}
+		</p> 			
+	<?php endforeach;?>
+<?php endif; ?>
+
+<?php if (isset($this->fdata['form']['result'])):?>
+	<p class="error png"><?=$this->messages[$this->fdata['form']['result']]?></p>
+<?php endif; ?>
+
+<?php if (isset($this->fdata['form'])):?>
+
+<?php if (isset($this->fdata['form']['title'])):?><h2><?=$this->fdata['form']['title']?></h2><?php endif; ?>
+
+<form
+    <?php if (isset($this->fdata['form']['class'])): ?> class="<?=$this->fdata['form']['class']?>"<?php endif; ?>
+    <?php if (isset($this->fdata['form']['name'])): ?> NAME="<?=$this->fdata['form']['name']?>"
+                                                        id="<?=$this->fdata['form']['name']?>"<?php endif; ?>
+                                                        ACTION="<?=$this->fdata['form']['action']?>"
+                                                        METHOD="<?=$this->fdata['form']['method']?>"
+                                                        enctype="multipart/form-data"
+        >
+    <?php foreach ($this->fdata as $gname => $group) : ?>
+    <?php if (isset($this->groups[$gname]) && $gname != 'form' && $gname != 'system'): ?>
+        <fieldset><legend><strong><?=$this->groups[$gname]?></strong></legend>
+        <?php endif; ?>
+    <?php if ($gname != 'form' && $gname != 'system') : ?>
+        <?php if ($gname): ?>
+            <strong><?=$this->messages[$this->fdata['form']['name'] . '_' . $gname];?></strong>
+            <?php endif; ?>
+        <?php if (!empty($group)): ?>
+            <?php foreach ($group as $key => $elem): ?>
+                <?php if (isset($elem['type']) && ($elem['type'] == 'html' || $elem['type'] == 'hidden')): ?>
+                    <?= $elem['html']; ?>
+                    <?php else: ?>
+                    <label>
+                        <?php if (isset($elem['text'])): ?>
+                            <?= $elem['text']; ?>
+                        <?php else: ?>
+                            <?= $this->messages[$this->fdata['form']['name'] . '_fld_' . $elem['name']]; ?>
+                        <?php endif; ?>
+                        <span><?=$elem['req'];?></span>:
+                    </label>
+                    <?= $elem['html']; ?>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        <?php elseif ($gname != 'system'): ?>
+        <?php foreach ($group as $key => $elem): ?>
+            <?php if ($elem['type'] != 'hidden'): ?>
+                <a class="button" href="#" onclick="document.getElementById('<?=$this->fdata['form']['name']?>').submit(); return false">Отправить</a>
+            <?php else: ?>
+                <?= $elem['html']; ?>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        <?php endif; ?>
+    <?php if (isset($this->groups[$gname]) && $gname != 'form' && $gname != 'system'): ?></fieldset><?php endif; ?>
+    <?php endforeach; ?>
+</form>
+<?php endif; ?>
