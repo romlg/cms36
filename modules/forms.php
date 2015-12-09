@@ -11,7 +11,7 @@ class TForm
 	var $help = '';
 	var $show_res = '';
 
-	function TForm($params, &$smarty){
+	function TForm($params){
 		if(!is_array($params)) return;
 		if(isset($params['name'])) $this->form_name = $params['name'];
 		if(isset($params['method'])) $this->method = $params['method'];
@@ -20,11 +20,10 @@ class TForm
 		if(isset($params['req'])) $this->req = $params['req'];
 		if(isset($params['class'])) $this->class = $params['class'];
 		if(isset($params['elements'])) $this->elements = $params['elements'];
-//		$smarty->register_object('form', $this);
 	}
 
 	function generate(){
-		$input_elements = array('checkbox', 'file', 'hidden', 'text', 'password', 'button', 'submit', 'reset');
+		$input_elements = array('file', 'hidden', 'text', 'password', 'button', 'submit', 'reset', 'image');
 		if (!$this->elements) return;
 
 		if ($this->method=='get'){
@@ -34,6 +33,9 @@ class TForm
 			if(isset($_POST[$this->data_var]) && count($_POST[$this->data_var]))
 				$post = &$_POST[$this->data_var];
 			else{
+				$_post = get('post', array(), 's');
+				if(isset($_post[$this->data_var]) && count($_post[$this->data_var]))
+					$post = &$_post[$this->data_var];
 			}
 		}
 		foreach ($this->elements as $ekey=>$element){
@@ -55,48 +57,28 @@ class TForm
 			if (isset($post) && !empty($element['req']) && $element['req']=='1' && (!$post_value || ($element['type']=='select') && empty($post_value[0])))
 				$res['form']['errors']['empty'][] = isset($element['text']) ? $element['text'] : '{#'.$this->form_name.'_fld_'.$element['name'].'#}';
 			if (in_array($element['type'], $input_elements)){
-				if ($element['type']=='checkbox' || $element['type']=='radio'){
-					$name.='[]';
-					if ($res[$group]) $num=count($res[$group]); else $num=0;
-					for($i=1;$i<$element['count']+1;$i++){
-						if ($post_value)
-							if (in_array($i, $post_value)) $checked='checked'; else $checked='';
-						$res[$group][$num]['items'][$i]=array(
-							'title'=>'{#'.$this->form_name.'_fld_'.$element['name'].$i.'#}',
-							'html'=>"<input type='".$element['type']."' name=".$name." value='".$i."' ".$checked." ".(isset($element['atrib']) ? $element['atrib'] : "").">",
-							'value'=>$checked,
-							'name' => $element['name'],
-                            'atrib' => isset($element['atrib']) ? $element['atrib'] : "",
-						);
-						if (isset($element['text']))
-							$res[$group][$num]['items'][$i]['text'] = $element['text'];
-					}
-					if ($element['req'] == 1) $res[$group][$num]['req'] = $this->req;
-				}
-				else{
-					if (isset($element['dontreturn']) || $element['type'] == 'hidden')
-						$value = $element['value'];
-					else
-						$value = empty($post_value) ? (isset($element['value']) ? $element['value'] : $post_value) : $post_value;
+				if (isset($element['dontreturn']) || $element['type'] == 'hidden')
+					$value = $element['value'];
+				else
+					$value = empty($post_value) ? (isset($element['value']) ? $element['value'] : $post_value) : $post_value;
 
-					if ((int)$ekey === $ekey){
-						if (isset($res[$group])) $num = count($res[$group]); else $num=0;
-					} else $num = $ekey;
-					$res[$group][$num] = array(
-						'title' => $element['type']=='hidden'?'':'{#'.$this->form_name.'_fld_'.$element['name'].'#}',
-						'html' => "<input type='".$element['type']."' name=".$name.' value="'.h($value).'" '.(isset($element['atrib'])?$element['atrib']:'').">",
-						'value' => $value,
-						'name' => $element['name'],
-						'type' => $element['type'],
-                        'atrib' => isset($element['atrib']) ? $element['atrib'] : "",
-					);
-					if (isset($element['text']))
-						$res[$group][$num]['text'] = $element['text'];
-					if(isset($element['group']) && $element['group']!='system' && !isset($element['dontreturn'])) $res['form']['data'][$element['name']] = $value;
-					$res[$group][$num]['req'] = null; // чтобы не было Notice
-					if (isset($element['req']))
-						if ($element['req']==1) $res[$group][$num]['req']=$this->req;
-				}
+				if ((int)$ekey === $ekey){
+					if (isset($res[$group])) $num = count($res[$group]); else $num=0;
+				} else $num = $ekey;
+				$res[$group][$num] = array(
+				'title' => $element['type']=='hidden'?'':'{#'.$this->form_name.'_fld_'.$element['name'].'#}',
+				'html' => "<input type='".$element['type']."' name=".$name.' value="'.htmlspecialchars($value).'" '.(isset($element['atrib'])?$element['atrib']:'').">",
+				'value' => $value,
+				'name' => $element['name'],
+				'type' => $element['type'],
+				'atrib' => isset($element['atrib']) ? $element['atrib'] : "",
+				);
+				if (isset($element['text']))
+					$res[$group][$num]['text'] = $element['text'];
+				if(isset($element['group']) && $element['group']!='system' && !isset($element['dontreturn'])) $res['form']['data'][$element['name']] = $value;
+				$res[$group][$num]['req'] = null; // чтобы не было Notice
+				if (isset($element['req']))
+				if ($element['req']==1) $res[$group][$num]['req']=$this->req;
 			}
 			elseif ($element['type'] == 'textarea'){
 				if (!$post_value)
@@ -120,7 +102,7 @@ class TForm
 				if(isset($element['group']) && $element['group']!='system' && !isset($element['dontreturn'])) $res['form']['data'][$element['name']] = $value;
 				if ($element['req']==1) $res[$group][$num]['req']=$this->req;
 			}
-			elseif ($element['type']=='radio'){
+			elseif ($element['type']=='radio' || $element['type']=='checkbox'){
 				$html = '';
 				$name.='[]';
 				if (!$element['options'])
@@ -142,13 +124,13 @@ class TForm
 								$value = $okey;
 								$key = $ovalue;
 							}else $selected='';
-						}elseif ($okey==$element['value']){
+						}elseif (isset($element['value']) && $okey==$element['value']){
 								$selected='checked';
 								$value = $element['value'];
 								$key = $okey;
 						}else $selected='';
 
-						$html .= "<input name='".$name."' ".(isset($element['atrib'])?$element['atrib']:'')." type='radio' value='".$okey."' ".$selected.">$ovalue<br />";
+						$html .= "<input name='".$name."' ".(isset($element['atrib'])?$element['atrib']:'')." type='".$element['type']."' value='".$okey."' ".$selected."> $ovalue<br />";
 					}
 				if ((int)$ekey===$ekey){
 					if (isset($res[$group]))  $num=count($res[$group]); else $num=0;
@@ -182,17 +164,17 @@ class TForm
 					foreach ($element['options'] as $okey=>$ovalue)
 					{
 						if ($post_value){
-							if (in_array($ovalue, $post_value)) {
+							if (in_array($okey, $post_value)) {
 								$selected='selected';
-								$value = $ovalue;
-								$key = $okey;
+								$value = $okey;
+								$key = $ovalue;
 							}else $selected='';
-						}elseif ($ovalue==$element['value']){
+						}elseif ($okey==$element['value']){
 								$selected='selected';
 								$value = $element['value'];
 								$key = $okey;
 						}else $selected='';
-						$html .= "<option value='".$ovalue."' ".(isset($selected)?$selected:'').">".$ovalue."</option>";
+						$html .= "<option name='".$okey."' value='".$okey."' ".(isset($selected)?$selected:'').">".$ovalue."</option>";
 					}
 				$html .= "</select>";
 
@@ -214,10 +196,75 @@ class TForm
 			elseif ($element['type'] == 'html'){
 					if ((int)$ekey === $ekey){
 						if (isset($res[$group])) $num = count($res[$group]); else $num=0;
-					} else $num = $ekey;
-					$res[$group][$num]=array(
+					} else $num = $ekey;				$res[$group][$num]=array(
 					'type' => $element['type'],
 					'html' => $element['value'],
+				);
+			}
+			elseif ($element['type'] == 'calendar'){
+				if (!$post_value)
+					$value = (isset($element['value']) ? $element['value'] : '');
+				else{
+					if (!$element['dontreturn']) $value=$post_value;
+					else $value='';
+				}
+				if ((int)$ekey === $ekey){
+					if (isset($res[$group])) $num = count($res[$group]); else $num=0;
+				} else $num = $ekey;
+				$html = '<div style="width: 100%; text-align: left"><input '.$element['atrib'].' type="text" name="fld['.$element['name'].']" value="'.$value.'">&nbsp;<a href="javascript:void(0)" onclick="if (self.gfPop) gfPop.fPopCalendar(document.forms[\''.$this->form_name.'\'].elements[\'fld['.$element['name'].']\']);return false;" HIDEFOCUS><img name="popcal" align="absmiddle" src="admin/third/calendar/images/calbtn.gif" width="34" height="22" border="0" alt=""></a></div>';
+				$res[$group][$num]=array(
+					'type' => $element['type'],
+					'name' => $element['name'],
+					'value'=> $value,
+					'html' => $html,	
+				);
+			}
+			elseif ($element['type'] == 'upload_files'){
+				if (!$post_value)
+					$value = (isset($element['value']) ? $element['value'] : '');
+				else{
+					if (!$element['dontreturn']) $value=$post_value;
+					else $value='';
+				}
+				$comment = $_REQUEST[$element['name'].'_comment'];
+				if ((int)$ekey === $ekey){
+					if (isset($res[$group])) $num = count($res[$group]); else $num=0;
+				} else $num = $ekey;
+				if (isset($element['files'])) {
+					$html = '<div id="'.$element['name'].'_files_table" style="font-size: 90%; margin-bottom: 10px">';
+					if (!empty($element['files'])) {
+						$html .= '<div class="tenders_list" style="margin-bottom: 10px">
+						<table class="sublevel" id="'.$element['name'].'_tender_files" style="width: 500px; margin: 0"><tr>
+						<th nowrap>Название</th>
+						<th nowrap>Размер</th>
+						<th nowrap>Дата</th>
+						<th>Комментарий</th>
+						<th>Удалить</th></tr>'; 
+						foreach ($element['files'] as $k=>$file) {
+							$html .= '<tr class="'.($k%2 == 0 ? 'lite' : 'dark').'">
+							<td>'.$file['name'].'</td>
+							<td>'.$file['size']['size'].' ('.$file['size']['unit'].')</td>
+							<td>'.$file['date'].'</td>
+							<td>'.($file['comment'] ? $file['comment'] : '&nbsp;').'</td>
+							<td><a href="'.$file['link'].'" target="upload_frame" onclick="if (confirm(\'Вы уверены, что хотите удалить файл '.$file['name'].'?\')) return true; else return false;"><img src="/admin/images/icons/icon.delete.gif" alt="Удалить"></a></td></tr>';
+						}
+						$html .= '</table></div>';
+					}
+					$html .= '</div>';
+					$html .= '<div style="width: 100%; text-align: left; margin-bottom: 30px">
+					<input '.$element['atrib'].' type="file" name="fld['.$element['name'].']" id="fld['.$element['name'].']" value="'.$value.'">
+					<textarea name="fld['.$element['name'].'_comment]" id="fld['.$element['name'].'_comment]" class="registration" style="width: 500px; height: 50px; margin: 0">'.$comment.'</textarea>
+					<input type="button" class="registration" style="width: 102px" value="Прикрепить" onClick="if (this.form.elements[\'fld['.$element['name'].']\'].value != \'\') filesend(\''.$element['name'].'\')">
+					<div id="'.$element['name'].'_console" style="font-size: 90%;"></div>					
+					</div>';
+				}
+				$html .= '';
+				$res[$group][$num]=array(
+					'text' => $element['text'],
+					'type' => $element['type'],
+					'name' => $element['name'],
+					'value'=> $value,
+					'html' => $html,	
 				);
 			}
 			elseif ($element['type'] == 'captcha'){
@@ -237,7 +284,7 @@ class TForm
 				);				
 				if (isset($element['text'])) $res[$group][$num]['text'] = $element['text'];
 				if ($element['req']==1) $res[$group][$num]['req']=$this->req;
-			}
+			}			
 		}
 
 		$res['form']['name'] = $this->form_name;
@@ -268,36 +315,30 @@ class TForm
 			if (!CheckMailAddress($data[$name]))
 				return isset($this->elements[$name]['onerror']) ? $this->elements[$name]['onerror'] : '{#unknown_error#}';
 		} elseif($method == 'phone'){
-			if (!$this->CheckPhone($data[$name]))
+			if (!CheckPhone($data[$name]))
 				return isset($this->elements[$name]['onerror']) ? $this->elements[$name]['onerror'] : '{#unknown_error#}';
 		} elseif($method == 'zip'){
-            $len = ereg("[0-9]+",$data[$name],$regs);
-            if (!$regs) return isset($this->elements[$name]['onerror']) ? $this->elements[$name]['onerror'] : '{#unknown_error#}';
-            if (!$this->CheckNumber($regs[0],6))
+			if (!$this->CheckNumber($data[$name],6))
 				return isset($this->elements[$name]['onerror']) ? $this->elements[$name]['onerror'] : '{#unknown_error#}';
 		} elseif($method == 'bik'){
-			if (!$this->CheckNumber(str_replace(" ","",$data[$name]),9))
+			if (!$this->CheckNumber($data[$name],9))
 				return isset($this->elements[$name]['onerror']) ? $this->elements[$name]['onerror'] : '{#unknown_error#}';
 		} elseif($method == 'ks'){
-			if (!$this->CheckNumber(str_replace(" ","",$data[$name]),20))
+			if (!$this->CheckNumber($data[$name],20))
 				return isset($this->elements[$name]['onerror']) ? $this->elements[$name]['onerror'] : '{#unknown_error#}';
 		} elseif($method == 'inn'){
-			if (!$this->CheckNumber(str_replace(" ","",$data[$name]),10) && !$this->CheckNumber(trim($data[$name]),12))
+			if (!$this->CheckNumber($data[$name],10))
 				return isset($this->elements[$name]['onerror']) ? $this->elements[$name]['onerror'] : '{#unknown_error#}';
         } elseif($method == 'kpp'){
-            if (!$this->CheckNumber(str_replace(" ","",$data[$name]),9))
+            if (!$this->CheckNumber($data[$name],9))
                 return isset($this->elements[$name]['onerror']) ? $this->elements[$name]['onerror'] : '{#unknown_error#}';
-        } elseif($method == 'captcha') {
+		} elseif($method == 'captcha') {
 			$keystring = $_SESSION['captcha_keystring'];
 			unset($_SESSION['captcha_keystring']);
 			if ($data[$name] && (empty($keystring) || $data[$name] !== $keystring)) {
 				return '{#captcha_error#}';
 			}
-        }
-	}
-
-    function checkPhone($phone){
-        return preg_match("/^[0-9\-\—\(\)\+\s]+$/i", $phone);
+		}
 	}
 
 	function CheckNumber($value,$len){

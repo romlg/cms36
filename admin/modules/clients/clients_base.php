@@ -2,7 +2,7 @@
 
 
 class TClients_base extends TTable {
-	
+
 	var $name = 'clients';
 	var $table = 'auth_users';
 	var $selector = false; # show language selector ?
@@ -60,7 +60,7 @@ class TClients_base extends TTable {
 			'login'              => array('Логин',                          'Login',),
 			'email'              => array('E-mail',                         'E-mail',),
 			'balance'            => array('Баланс',                        	'Balance',),
-			'group'              => array('Группа',                        	'Group',),
+			//'group'              => array('Группа',                        	'Group',),
 			'count'              => array('Кол-во',                         'Count',),
 			'sum'                => array('Сумма',                          'Sum',),
 			'header'             => array('Информация',                     'Information',),
@@ -71,8 +71,8 @@ class TClients_base extends TTable {
 			'allow'              => array('Включен',                        'Aviable',),
 			'active'             => array('Активен',                        'Active',),
 			'inactive'           => array('Заблокирован',                   'Blocked',),
-			'last_access'        => array('Дата последнего входа',        	'Last access time',),		
-			'requests'        	 => array('Участие в тендерах',        	'Tender requests',),		
+			'last_access'        => array('Дата последнего входа',        	'Last access time',),
+			'requests'        	 => array('Участие в тендерах',        	'Tender requests',),
 			'subscribe'          => array('Подписан',                       'Subscribed',),
 			'prod_types'         => array('Скидки',				    		'Discounts',),
 			'discnow'            => array('Текущая скидка',				    'Discount',),
@@ -80,6 +80,8 @@ class TClients_base extends TTable {
 			'discount_group'     => array('Скидочная группа',				'Discount group',),
 			'briz_club'     	 => array('Участник Бриз клуба',			'briz club',),
 			'otkat'     	 	 => array('Жесткая скидка',					'Discount',),
+			'addmoney'     	 	 => array('Сумма к зачислению',				'Sum',),
+			'auth'     	 	     => array('Разрешен вход на сайт',			'Auth',),
 		));
 
 		# actions.. #
@@ -99,6 +101,22 @@ class TClients_base extends TTable {
 				'link'	=> 'cnt.deleteItems(\''.$this->name.'\')',
 				'img' 	=> 'icon.delete.gif',
 				'display'	=> 'none',
+			),
+			'addmoney' => array(
+				'Зачислить/списать средства',
+				'Add money',
+				'link'	=> 'cnt.AddMoney()',
+				'img' 	=> 'icon.discounts.gif',
+				'display'	=> 'none',
+				'show_title' => true,
+			),
+			'deleteobjects' => array(
+				'Удалить объекты',
+				'Add money',
+				'link'	=> 'if (confirm(\'Вы уверены, что хотите удалить все объекты выбранных клиентов?\')) cnt.delObjects()',
+				'img' 	=> 'icon.delete.gif',
+				'display'	=> 'none',
+				'show_title' => true,
 			),
 			/*'create_email' => array(
 				'Отправить&nbsp;письмо',
@@ -125,11 +143,12 @@ class TClients_base extends TTable {
 				'show_title'	=> true,
 			),*/
 		);
+		$actions[$this->name]['create']['display'] = 'none';
 		# crm_menu #
 		$this->client_id = $this->GetClientID();
 		require_once(inc('modules/'.$this->name.'/config.php'));
 	}
-	
+
 	//-----------------------------------------------------------
 
 	# gettitle.. #
@@ -137,33 +156,33 @@ class TClients_base extends TTable {
 		global $_elems, $cfg;
 		$title = TTable::GetTitle();
 		$id = $this->GetClientID();
-		
+
 		$_elems = false;
 		if($id){
 			$_elems = true;
 			$title = $this->getClientTitle($id);
-		}		
+		}
 		return $title;
 	}
-	
+
 	//-----------------------------------------------------------
-	
+
 	function getClientTitle($id){
 		global $_name;
-		$row = sql_getRow("SELECT id, login, CONCAT(name,CHAR(32),lname) as name FROM ".$this->table." WHERE id=".$id);
+		$row = sql_getRow("SELECT id, login, fio as name FROM ".$this->table." WHERE id=".$id);
 		$_name = $row['name'];
 		$title = $this->str('title_').$row['id'].' '.$row['name'].' ('.$row['login'].')';
 		return $title;
 	}
-	
+
 	//-----------------------------------------------------------
-	
+
     # elements #
 	function GetBasicElement() {
 		global $elements, $intlang;
 		$crm_menu = $this->crm_menu['client'];
 		$x = '';
-		
+
 		foreach ($crm_menu as $key=>$val)
 		{
 			$menu[$key]['name'] = utf($val[LangID()]);
@@ -179,7 +198,7 @@ class TClients_base extends TTable {
 					'name' => utf($items[LangID()]),
 					);
 		}
-		
+
 		$block = array
 		(
 			'basic_caption'	=> $this->str('crm'),
@@ -190,19 +209,18 @@ class TClients_base extends TTable {
 		);
 		return $block;
 	}
-	
+
 	//-----------------------------------------------------------
 	# get client id #
 	function GetClientID() {
 		$client_id	= (int)get('client_id', 0, 'g');
 		return $client_id;
 	}
-	
+
 	//-----------------------------------------------------------
 
     # get client info #
-	function GetClientInfo() {		
-		
+	function GetClientInfo() {
 		return array(
 			'basic_caption'	=> $this->str('client_info'),
 			'basic_icon'	=> 'box.clients.gif',
@@ -211,10 +229,10 @@ class TClients_base extends TTable {
 		);
 	}
 	//-----------------------------------------------------------
-	
+
 	function getClientDetails($id){
-		
-		$client = sql_getRow("SELECT id, CONCAT(name,' ',lname) AS fullname FROM ".$this->table." WHERE reg_date!=0 AND id=".$id);
+
+		$client = sql_getRow("SELECT id, fio AS fullname, balance FROM ".$this->table." WHERE id=".$id);
 		if (!is_array($client)) return '';
 
 		$details = array(
@@ -229,10 +247,10 @@ class TClients_base extends TTable {
 		);
 		return $details;
 	}
-	
+
 	//-----------------------------------------------------------
 
-	function doAdd() {
+	function editdoAdd() {
 		if(@$_POST['fld']['pass1'] or @$_POST['fld']['pass2']) {
 			if(($_POST['fld']['pass1']==$_POST['fld']['pass2']) AND ($_POST['fld']['pass1']!='' AND $_POST['fld']['pass2']!=''))  {
 				$_POST['fld']['pass']=md5($_POST['fld']['pass1']);
@@ -262,20 +280,20 @@ class TClients_base extends TTable {
 		$client_id = sql_getLastId();
 		if (!$client_id) return "<script>alert('".$this->str('error').": ".e($err)."');</script>";
 
-		$def_id = sql_getValue("SELECT id FROM auth_groups ORDER BY priority DESC");
-		$res = sql_query("INSERT INTO auth_users_groups (`user_id`,`group_id`)  VALUES('".$client_id."','".$def_id."')");
+		//$def_id = sql_getValue("SELECT id FROM auth_groups ORDER BY priority DESC");
+		//$res = sql_query("INSERT INTO auth_users_groups (`user_id`,`group_id`)  VALUES('".$client_id."','".$def_id."')");
 
 		return "<script>alert('".$this->str('saved')."'); window.top.opener.location.reload(); window.top.location.href = 'crm.php?page=".$this->name."&do=showclientinfo&client_id=".$client_id."';</script>";
 	}
-	
-	//-----------------------------------------------------------	
+
+	//-----------------------------------------------------------
 	// сохраняем
 	function Edit() {
 		$fld = get('fld',array(),'p');
 		$client_id = (int)get('client_id', 0, 'p');
-		
-		if($client_id > 0) {		
-			
+
+		if($client_id > 0) {
+
 			// updating password
 			if(@$fld['pass1'] or @$fld['pass2']) {
 					if(($fld['pass1']==$fld['pass2']) AND ($fld['pass1']!='' AND $fld['pass2']!=''))  {
@@ -289,7 +307,7 @@ class TClients_base extends TTable {
 			unset($fld['pass2']);
 			$reload = "";
 			// updating group
-			if(isset($fld['group'])) {
+			/*if(isset($fld['group'])) {
 				$group = (int) sql_getValue("SELECT group_id FROM auth_users_groups WHERE user_id=".$client_id);
 				if($group>0) {
 					if($group!=$fld['group'])
@@ -300,22 +318,30 @@ class TClients_base extends TTable {
 				}
 				unset($fld['group']);
 				$reload = "window.top.location.reload();";
-				
-			}
+
+			}*/
 
 			// preparing visible parametr
 			if(isset($fld['login'])) {
-				if(@$fld['visible']) $fld['visible']=1;
+				/*if(@$fld['visible']) $fld['visible']=1;
 				else $fld['visible']=0;
 
 				// preparing subscribe parametr
 				if(@$fld['subscribe']) $fld['subscribe']=1;
 				else $fld['subscribe']=0;
-				
+
 				// preparing subscribe parametr
 				if(@$fld['enable']) $fld['enable']=1;
-				else $fld['enable']=0;
+				else $fld['enable']=0;*/
+				if(@$fld['trusted']) $fld['trusted']=1;
+				else $fld['trusted']=0;
+				if(@$fld['free']) $fld['free']=1;
+				else $fld['free']=0;
+				if(@$fld['auth']) $fld['auth']=1;
+				else $fld['auth']=0;
 			}
+
+			if((int)sql_getValue("SELECT auth FROM $this->table WHERE id=\"$client_id\"")==0 && $fld['auth']>0) SendNotify('CLIENT_REGISTRATION', $id, $fld);
 
 			// updating information
 			foreach($fld as $k=>$v)	{
@@ -330,13 +356,13 @@ class TClients_base extends TTable {
 		}
 	}
 	//-----------------------------------------------------------
-	
+
 	function Send_Email()
 	{
 		$client_id = $this->GetClientID();
 		header("location: cnt.php?page=send_email&client_id=".$client_id."&id[]=".$client_id);
 	}
-	
+
 	//-----------------------------------------------------------
 }
 ?>

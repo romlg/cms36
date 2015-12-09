@@ -1,0 +1,42 @@
+{$script}
+<script for=product event=onkeydown>
+	if (event.keyCode==27) window.close();
+</script>
+
+<form action="page.php" method="post" name="editform" id="editform" target="tmp{$thisname}2">
+<input type="hidden" name="page" value='{$thisname}'>
+<input type="hidden" name="do" value='editaddMoney'>
+<input type="hidden" name="client_id" value="{$client_id}" />
+<fieldset>
+Чтобы списать средства, введите перед суммой знак "-"
+<table width=100% border=0 align=center>
+<tr><td>{$STR_ADDMONEY}:</td><td><input type="text" size=30 name="sum" value="0.00" onchange="ChangeSum(this.value)" onkeyup="ChangeSum(this.value)"></td></tr>
+<tr id="tmpl1" style="display: none"><td>Шаблон письма:</td><td style="border: 1px solid silver">{$template1}</td></tr>
+<tr id="tmpl2" style="display: none"><td>Шаблон письма:</td><td style="border: 1px solid silver">{$template2}</td></tr>
+<tr><td>Комментарий:</td><td><textarea name="admin_comment" cols="40" rows="6"></textarea></td></tr>
+</table>
+</fieldset>
+
+<br>
+<div align="center">
+<input type="submit" value='{$STR_SAVE}'>
+<input type="button" value='{$STR_CANCEL}'">
+</div></form>
+
+{literal}
+<script type="text/javascript">
+function ChangeSum(value) {
+    if (value < 0) {
+        document.getElementById('tmpl1').style.display = 'none';
+        document.getElementById('tmpl2').style.display = document.all ? 'block' : 'table-row';
+    }
+    else {
+        document.getElementById('tmpl2').style.display = 'none';
+        document.getElementById('tmpl1').style.display = document.all ? 'block' : 'table-row';
+    }
+}
+ChangeSum(0);
+</script>
+{/literal}
+
+<iframe id="tmp{$thisname}2" name="tmp{$thisname}2" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

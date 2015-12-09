@@ -1,0 +1,16 @@
+<script>
+var ID = 0;
+var thisname = '{$thisname}';
+{literal}
+function editItem(id) {
+	if (id == null) id = ID;
+	window.showModalDialog("dialog.php?page=" + thisname + "&do=editform&id="+id, "", "dialogWidth: 550px; dialogHeight: 400px; status: no;");
+}
+{/literal}
+var A{$thisname}0 = new Array(0,1,0);
+var A{$thisname}1 = new Array(1,1,1);
+var A{$thisname}2 = new Array(0,1,1);
+window.parent.elemActions(thisname, 0);
+</script>
+{$table}
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

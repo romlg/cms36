@@ -1,0 +1,32 @@
+{$script}
+<script for="editform" event="onkeydown">
+	if (event.keyCode==27) window.close();
+</script>
+
+<script language="javascript">
+{literal}
+	window.onload = function() {
+		var dH = document.forms.editform.offsetHeight;
+		var dW = document.forms.editform.offsetWidth;
+		window.dialogWidth = (dW - 0 + 50) + 'px' ;
+		window.dialogHeight = (dH  - 0 + 50) + 'px';
+	}
+{/literal}
+</script>
+<!--"onsubmit="window.close()" -->
+<form method="post" target="tmp{$thisname}{$id}" name="editform" action="page.php" >
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+<fieldset>
+<table>
+<tr><td>{$STR_NAME}:</td><td><input type="text" size="30" maxlenght="50" name="fld[name]" value="{$name}" /></td></tr>
+<tr><td>{$STR_PARENT}:</td><td>{html_options options=$parent name="fld[pid]" selected=$pid}</td></tr>
+</table>
+</fieldset>
+<br />
+<div style="text-align:center;">
+	<input type="submit" value="{$STR_SAVE}" />
+	<input type="button" value="{$STR_CANCEL}" onClick="window.close()" />
+</div>
+<iframe id="tmp{$thisname}{$id}" name="tmp{$thisname}{$id}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe></form>

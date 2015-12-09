@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+	<title>Версия для печати</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+	<link rel="STYLESHEET" type="text/css" href="../print.css">
+	<script type="text/javascript" src="../main.js"></script>
+</head>
+
+<body onLoad="window.print();">
+<p style="float: right">Дата: {$smarty.now|date_format:"%d.%m.%Y %H:%M:%S"}</p>
+<h3>{$title}</h3>
+{if $filter}
+	{foreach from=$filter item=f key=k}
+	{$k}: {$f}<br>
+	{/foreach}
+{/if}
+<table class="prod" cellpadding="0" cellspacing="0" border="0">
+<tr>
+{foreach from=$fields item=item key=key}
+	{if !empty($item)}
+		<th>{$item}</th>
+	{/if}
+{/foreach}
+</tr>
+{foreach from=$objects item=item key=key}
+<tr>
+	{foreach from=$fields item=subitem key=subkey}
+		{if !empty($subitem)}
+		<td {if $align.$subkey}style="text-align: {$align.$subkey}"{/if}>{$item.$subkey|default:"&nbsp;"}</td>
+		{/if}
+	{/foreach}
+</tr>
+{/foreach}
+</table>
+
+</body>
+</html>

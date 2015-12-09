@@ -6,8 +6,8 @@
 function change_type(sel) {
 	if (sel.length > 0) {
 		for (i = 0; i < sel.options.length; i++) {
-			div = document.getElementById('banner_'+sel.options[i].value);
-			if (sel.options[i].value == sel.value) {
+			div = document.getElementById('banner_'+sel.options(i).value);
+			if (sel.options(i).value == sel.value) {
 				div.style.display = 'block';
 			}
 			else {
@@ -77,22 +77,10 @@ var ID = '{$id}';
 	<td><input type="text" name="fld[name]" value="{$name}" size="30" maxsize="50" /></td>
 </tr><tr>
 	<td valign="top">{$STR_VISIBLE}:</td>
-	<td><input type="checkbox" name="fld[visible]" value="1" {if $visible}checked{/if} /></td>
-</tr>
-{if isset($second_visible)}<tr>
-	<td valign="top">{$STR_SECOND_VISIBLE}:</td>
-	<td><input type="checkbox" name="fld[second_visible]" value="1" {if $second_visible}checked{/if} /></td>
-</tr>{/if}
-{if isset($show_at_sites) and count($sites)>0}<tr>
-	<td valign="top">{$STR_SHOW_AT_SITES}:</td>
-	<td><select name="fld[show_at_sites][]" multiple>
-		{foreach from=$sites item=item key=key}
-			<option value="{$key}"{if !empty($show_at_sites) and in_array($key, $show_at_sites)}selected="selected"{/if}>{$item}</option>
-		{/foreach}
-	</select></td>
-</tr>{/if}<tr>
-	<td></td>
-	<td><input type="checkbox" name="pages" value="1" {if $pages}checked{/if} /> {$STR_PAGES}&nbsp;&nbsp;
+	<td>
+		<input type="checkbox" name="fld[visible]" value="1" {if $visible}checked{/if} />
+		<br />
+		<input type="checkbox" name="pages" value="1" {if $pages}checked{/if} /> {$STR_PAGES}&nbsp;&nbsp;
 			<input type="hidden" name="fld[pages]" value="{$pages}" />
 			<button onClick="getPages(this.form)">&nbsp;...&nbsp;</button>
 		<br />
@@ -134,19 +122,9 @@ var ID = '{$id}';
 	<td>
 		{$img_preview} <br clear="all" />
 		<input type="text" name="fld[image]" value="{$image}" size="40" maxlength="255" />
-		<button onClick="showFiles('banners', 'fld[image]'); return false;">&nbsp;...&nbsp;</button>
+		<button onClick="showFiles('banners', 'fld[image]');">&nbsp;...&nbsp;</button>
 	</td>
 </tr>
-{if isset($alt_image)}
-<tr>
-	<td valign="top">{$STR_ALT_IMAGE}:</td>
-	<td>
-		{$alt_img_preview} <br clear="all" />
-		<input type="text" name="fld[alt_image]" value="{$alt_image}" size="40" maxlength="255" />
-		<button onClick="showFiles('banners', 'fld[alt_image]'); return false;">&nbsp;...&nbsp;</button>
-	</td>
-</tr>
-{/if}
 <tr>
 	<td valign="top">{$STR_LINK}:</td>
 	<td valign="top">
@@ -163,6 +141,7 @@ var ID = '{$id}';
 <div class="hide" id="banner_html">
 	{$STR_BANNER_HTML}:<br />
 	{$html}
+	{*<textarea name="fld[html]" rows="5" cols="50">{$html}</textarea>*}
 </div>
 <script>
 	change_type(document.forms.editform.elements['type']);

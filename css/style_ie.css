@@ -2,18 +2,56 @@ body { behavior:url("../css/csshover.htc"); }
 
 .wrap {
 height:100%;
-width:expression(document.body.clientWidth < 1000? "1000px" : "auto");
 }
 
-.footer { width:expression(document.body.clientWidth < 1000? "1000px" : "auto"); }
-
-.blockContent img { width:expression(this.width > 200 ? 200: true); }
-
-.catalogPic li img { width:expression(this.width > 206 ? 206: true); }
-
-.vitrina .frame img {
-width:expression(this.width > 150 ? 150: true);
-height:expression(this.height > 150 ? 150: true);
+.headBanner img {
+width:expression(this.width > 690 ? 690: true);
+height:expression(this.height > 68 ? 68: true);
 }
 
-.error { height:12px; }
+.mainLeftCol img {
+width:expression(this.width > 754 ? 754: true);
+}
+
+.leftTopBox .banner img {
+width:expression(this.width > 380 ? 380: true);
+}
+
+.mainRightCol img {
+width:expression(this.width > 200 ? 200: true);
+}
+
+.leftCol .banner img {
+width:expression(this.width > 254 ? 254: true);
+}
+
+.objGallery td img {
+width:expression(this.width > 50? 50: true);
+}
+
+.blockSearch .starDescription {
+height:102px;
+}
+
+.bigButton {
+margin-right:5px;
+}
+
+.shadowBox .cn {
+background:none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/shadow.png', sizingMethod = 'crop' );
+}
+
+.shadowBox .tl, .shadowBox .tr {
+padding-right:42px;
+}
+
+.greenBlock .tl, .greenBlock .tr {
+padding-right:38px;
+}
+
+
+/*img {
+width:expression(this.width > 138 ? 138: true);
+height:expression(this.height > 114 ? 114: true);
+}*/

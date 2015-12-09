@@ -52,10 +52,26 @@ function showStat(id) {
 if (id == null) id = ID;
 window.open("crm.php?page=stats&do=showstats&client_id="+id, "edit" + thisname, "width=760, height=520, resizable=1, status=1").focus();
 }
+
+function delObjects() {
+	if (this.ajax_formname != undefined){
+		formname = this.ajax_formname;
+	} else {
+		formname = formname || 'editform';
+	}
+
+	try{
+	    document.forms[formname].actions.value = 'delObjects';
+	} catch(e){
+		document.forms[formname].elements['do'].value = 'delObjects';
+	}
+	document.forms[formname].submit();
+}
+
 {/literal}
-var A{$thisname}0 = new Array(0,0,1,0,0,0,0,0); // никто не выбран
-var A{$thisname}1 = new Array(0,1,1,1,0,0,0,0); // 1 выбран
-var A{$thisname}2 = new Array(0,0,1,1,0,0,0,0); // несколько
+var A{$thisname}0 = new Array(0,0,1,0,0,0); // никто не выбран
+var A{$thisname}1 = new Array(0,1,1,1,0,1); // 1 выбран
+var A{$thisname}2 = new Array(0,0,1,1,0,1); // несколько
 window.parent.elemActions(thisname, 0);
 
 </script>

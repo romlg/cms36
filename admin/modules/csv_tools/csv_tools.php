@@ -1,8 +1,8 @@
 <?php
 
-/* $Id: csv_tools.php,v 1.1 2009-02-18 13:09:08 konovalova Exp $
+/* $Id: csv_tools.php,v 1.1 2008-02-08 14:33:28 bobka Exp $
  */
- require ('ss_zip.class.php');
+ require 'modules/csv_tools/ss_zip.class.php';
 class TCSVTools extends TTable {
 
 	var $name = 'csv_tools';
@@ -83,10 +83,10 @@ class TCSVTools extends TTable {
 			$actions = get('actions', '', 'p');
 			if ($actions) return $this->$actions();
 		}
-		require_once(core('table.lib'));
+		require_once(core('ajax_table'));
 		$ret['thisname'] = $this->name;
 
-		$ret['table'] = table(array(
+		$ret['table'] = ajax_table(array(
 			'columns'	=> array(
 				array(
 					'select'	=> 'id',
@@ -127,7 +127,7 @@ class TCSVTools extends TTable {
 		}
 
 		if ($config['fields_request'][0] == '*') { // если поля не перечислены , и задан SKIP делаем полный список
-			foreach($this->getRows('DESCRIBE '.$config['table_base']) AS $field){
+			foreach(sql_getRows('DESCRIBE '.$config['table_base']) AS $field){
 				if(!$config['fields_ignored'] || !in_array($field['Field'], $config['fields_ignored'])){
 					$fields_request[] = $field['Field'];
 				}
@@ -149,11 +149,10 @@ class TCSVTools extends TTable {
 	function download(){
 		$config = $this->get_config();
 		if(!$config) return "<SCRIPT>alert('".$this->str('err_no_config')."')</SCRIPT>";
-		$rows = mysql_query('SELECT '.implode(',', $config['fields_request']).' FROM  '.$config['table_base']);
-//pr('SELECT '.implode(',', $config['fields_request']).' FROM  '.$config['table_base']);
+		$rows = sql_query('SELECT '.implode(',', $config['fields_request']).' FROM  '.$config['table_base']);
 		if (!$rows) return "<SCRIPT>alert(\"Error: ".mysql_error()."\")</SCRIPT>";
 
-		require (module('Bs_CsvUtil.class.php'));
+		require ('modules/csv_tools/Bs_CsvUtil.class.php');
 		$Bs_CsvUtil = & new Bs_CsvUtil();
 
 		// первой строкой выдаем заголовки таблицы
@@ -189,18 +188,20 @@ class TCSVTools extends TTable {
 	}
 
 	function upload(){
-		if(!$_FILES['file'])
+		$file = $_POST['file'];
+		if (substr($file, 0, strlen('@temp')) == '@temp') $file = substr($file, strlen('@temp'));
+		if(!$file || !is_file($file))
 			return '<script>alert("Файл потеряли")</script>';
 		if(!($config = $this->get_config()))
 			return "<SCRIPT>alert('".$this->str('err_no_config')."')</SCRIPT>";
 
-		require (module('Bs_CsvUtil.class.php'));
+		require ('modules/csv_tools/Bs_CsvUtil.class.php');
 		$Bs_CsvUtil = & new Bs_CsvUtil();
-		$fInfo = pathinfo($_FILES['file']['name']);
+		$fInfo = pathinfo($file);
 
 		# gzip decode
 		if ($fInfo["extension"]=="gz") {
-			$zp = gzopen($_FILES['file']["tmp_name"], "rb");
+			$zp = gzopen($file, "rb");
 			if ($zp) {
 					while ($buf = gzread($zp, 65535)) $data.= $buf;
 					gzclose($zp);
@@ -212,7 +213,7 @@ class TCSVTools extends TTable {
 		}
 		elseif ($fInfo["extension"]=="zip" && @function_exists("zip_open")) {
 
-			$zip = zip_open($_FILES['file']["tmp_name"]);
+			$zip = zip_open($file);
 
 			if ($zip) {
 			   //	while (
@@ -229,7 +230,7 @@ class TCSVTools extends TTable {
 		   $data = $Bs_CsvUtil->csvStringToArray($data, ';', 'both', TRUE, FALSE, TRUE);
 		}
 		else {
-			$data = $Bs_CsvUtil->csvFileToArray($_FILES['file']['tmp_name'], ';', 'both', TRUE, FALSE, TRUE);
+			$data = $Bs_CsvUtil->csvFileToArray($file, ';', 'both', TRUE, FALSE, TRUE);
 		}
 		if(!count($data)) return '<script>alert("Пустой файл")</script>';
 
@@ -254,13 +255,13 @@ class TCSVTools extends TTable {
 				}
 
 				//echo "SELECT ".implode(',',$config['keys'])." FROM ".$config['table_base'].$where.'<br>';
-				if($this->getrow("SELECT ".implode(',',$config['keys'])." FROM ".$config['table_base'].$where))
+				if(sql_getRow("SELECT ".implode(',',$config['keys'])." FROM ".$config['table_base'].$where))
 					$sql = 'UPDATE '.$config['table_base'].' SET '.$sql.$where;
 				else
 					$sql = 'INSERT '.$config['table_base'].' SET '.$sql;
 				//echo $sql."<br>";
 
-				if($res = my_query($sql)){
+				if($res = sql_query($sql)){
 					//echo "$i ";
 				}else{
 					echo "<br>строка ".($i+1)." ошибка: ".mysql_error().'<br>';
@@ -281,6 +282,6 @@ class TCSVTools extends TTable {
 
 }
 
-$GLOBALS['csv_tools'] = & Registry::get('TCSVTools');
+$GLOBALS['csv_tools'] = &new TCSVTools();
 
 ?>

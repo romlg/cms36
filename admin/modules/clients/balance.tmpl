@@ -1,0 +1,28 @@
+{config_load file="`$content.domain`__`$lang`.conf" section="cabinet"}
+{literal}
+<style>
+.objectsList th {padding: 1px 5px;}
+.objectsList td {padding: 1px 7px 1px;}
+</style>
+{/literal}
+
+{if $list}
+<table class="objectsList">
+	<tr>
+        <th width="135" align="center">Дата</th>
+        <th width="12%" align="center">Сумма (руб.)</th>
+        <th width="12%" align="center">Баланс (руб.)</th>
+        <th width="64%" align="center">Примечание</th>
+    </tr>
+	{foreach from=$list item=item key=key}
+    <tr {if $item.sum > 0}style="background-color: #c5ffc5"{/if}>
+        <td style="white-space: nowrap">{$item.date|date_format:"%Y-%m-%d %H:%M:%S"}</td>
+        <td style="white-space: nowrap; text-align: right">{$item.sum}</td>
+        <td style="white-space: nowrap; text-align: right">{$item.balance}</td>
+        <td>{$item.comment}</td>
+    </tr>
+	{/foreach}
+</table>
+{else}
+{if $free}<div align="center">{#cabinet_free_user#}</div>{/if}
+{/if}

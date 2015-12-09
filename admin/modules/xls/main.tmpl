@@ -1,0 +1,50 @@
+{literal}
+<script type="text/javascript">
+var thisname = '{/literal}{$thisname}{literal}';
+function Export(type){
+    window.frames['tmp'+thisname].location = "cnt.php?page=" + thisname + "&do=showExport&type=" + type;
+    //document.getElementById('tmp'+thisname).location = "cnt.php?page=" + thisname + "&do=showExport&type=" + type;
+}
+function Import(type){
+    location.href = '/admin/cnt.php?page=' + thisname + '&do=showDownloadForm&type=' + type;
+}
+</script>
+
+<style type="text/css">
+a.button {
+background:url(../images/button_bg_l.gif) left top no-repeat;
+height:20px;
+display:block;
+float:left;
+padding:0 0 0 2px;
+line-height:20px;
+color:#fff;
+cursor:pointer;
+margin: 10px;
+}
+a.button:hover, a.button:visited {
+color:#fff;
+}
+a.button span {
+background:url(../images/button_bg_r.gif) right top no-repeat;
+display:block;
+float:left;
+overflow:hidden;
+line-height:20px;
+padding:0 15px;
+}
+</style>
+{/literal}
+
+<table>
+<tr>
+    <td><a href="#" onclick="Export('catalog'); return false;" class="button"><span>Скачать каталог</span></a></td>
+    <td><a href="#" onclick="Export('price'); return false;" class="button"><span>Скачать прайс-лист</span></a></td>
+</tr>
+<tr>
+    <td><a href="#" onclick="Import('catalog'); return false;" class="button"><span>Закачать каталог</span></a></td>
+    <td><a href="#" onclick="Import('price'); return false;" class="button"><span>Закачать прайс-лист</span></a></td>
+</tr>
+</table>    
+
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

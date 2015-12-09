@@ -1,0 +1,43 @@
+<script for="editform" event="onkeydown">
+	if (event.keyCode==27) window.close();
+</script>
+
+<script language="javascript">
+{literal}
+	window.onload = function() {
+		var dH = document.forms['editform'].offsetHeight;
+		var dW = document.forms['editform'].offsetWidth;
+		window.dialogWidth = (dW - 0 + 50) + 'px';
+		window.dialogHeight = (dH  - 0 + 50) + 'px';
+	}
+{/literal}
+</script>
+
+<form method="post" target="tmp{$thisname}" name="editform" onsubmit="window.close()" action="page.php">
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+<fieldset>
+<table width="100%">
+<tr><td>{$STR_NAME}:</td><td><input type="text" size="30" maxlenght="50" name="fld[name]" value="{$name}" /></td></tr>
+<tr><td>{$STR_OKRUG}</td><td>
+<select name="fld[okrug][]" multiple>
+<option value="1"{$osel[1]}>{$STR_OKRUG1}</option>
+<option value="2"{$osel[2]}>{$STR_OKRUG2}</option>
+<option value="3"{$osel[3]}>{$STR_OKRUG3}</option>
+<option value="4"{$osel[4]}>{$STR_OKRUG4}</option>
+<option value="5"{$osel[5]}>{$STR_OKRUG5}</option>
+<option value="6"{$osel[6]}>{$STR_OKRUG6}</option>
+<option value="7"{$osel[7]}>{$STR_OKRUG7}</option>
+<option value="8"{$osel[8]}>{$STR_OKRUG8}</option>
+<option value="9"{$osel[9]}>{$STR_OKRUG9}</option>
+</select>
+</td></tr>
+</table>
+</fieldset>
+<br />
+<div style="text-align:center;">
+	<input type="submit" value="{$STR_SAVE}" />
+	<input type="button" value="{$STR_CANCEL}" onClick="window.close()" />
+</div>
+</form>

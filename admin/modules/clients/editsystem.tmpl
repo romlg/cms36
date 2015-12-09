@@ -22,12 +22,12 @@ function mySubmit()
 <table cellpadding=0 cellspacing=0 width=100%>
 <tr><td width=40%>{$STR_CLIENT_ID}:</td><td><input disabled type=text size=30 maxlength=99 name=fld[id] value="{$id}" {$readonly}></td></tr>
 <tr><td>{$STR_LOGIN}:</td><td><input type=text size=30 maxlength=99 name=fld[login] value="{$login}" {$readonly}></td></tr>
-<!--<tr><td>{$STR_EMAIL}:</td><td><input type=text size=30 maxlength=99 name=fld[email] value="{$email}" {$readonly}></td></tr>-->
 <tr><td>{$STR_PASS1}:</td><td><input type=password size=30 maxlength=99 name=fld[pass1] {$readonly}></td></tr>
 <tr><td>{$STR_PASS2}:</td><td><input type=password size=30 maxlength=99 name=fld[pass2] {$readonly}></td></tr>
-<tr><td>{$STR_GROUP}:</td><td>{html_options name=fld[group] options=$groups selected=$selected_group}</td></tr>
-<tr><td>{$STR_ALLOW}:</td><td><input type=checkbox name=fld[visible] {$allow_checked}></td></tr>
-<tr><td>{$STR_SUBSCRIBE}:</td><td><input type=checkbox name=fld[subscribe] {$subscribe_checked}></td></tr>
+<!--<tr><td>{$STR_GROUP}:</td><td>{html_options name=fld[group] options=$groups selected=$selected_group}</td></tr>-->
+<tr><td>{$STR_TRUSTED}:</td><td><input type=checkbox name=fld[trusted] {$trusted_checked}></td></tr>
+<tr><td>{$STR_FREE}:</td><td><input type=checkbox name=fld[free] {$free_checked}></td></tr>
+<tr><td>{$STR_AUTH}:</td><td><input type=checkbox name=fld[auth] {$auth_checked}></td></tr>
 
 </table>
 </td><tr>

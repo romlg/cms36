@@ -1,0 +1,101 @@
+<script for="editform" event="onkeydown">
+	if (event.keyCode==27) window.close();
+</script>
+
+<script language="javascript">
+{literal}
+	window.onload = function() {
+		var dH = document.forms['editform'].offsetHeight;
+		var dW = document.forms['editform'].offsetWidth;
+		window.dialogWidth = (dW - 0 + 50) + 'px';
+		window.dialogHeight = (dH  - 0 + 50) + 'px';
+	}
+	
+	function InsertAreaRow(name, id) {
+		var arrArea = '<select name=fld[area]['+id+'][flat]><option value="0">--- Не выбрано ---</option><option value="1">1-ком.кв.</option><option value="2">2-ком.кв.</option><option value="3">3-ком.кв.</option><option value="4">4-ком.кв.</option><option value="5">5-ком.кв.</option><option value="6">более 5-комнат</option></select>';
+
+		var myTable = document.getElementById('tab_'+name);
+		var myRow = myTable.insertRow(-1);
+		var cell0 = myRow.insertCell(0).innerHTML = arrArea;
+		var cell1 = myRow.insertCell(1).innerHTML = "от [>] <input name=fld[area]["+id+"][from] type='text' size='5' > м<sup>2</sup>";
+		var cell1 = myRow.insertCell(2).innerHTML = "до [<=] <input name=fld[area]["+id+"][to] type='text' size='5' > м<sup>2</sup>";
+		var cell2 = myRow.insertCell(3).innerHTML = "<a href='#' onclick='deleteAreaRow(this);'>Удалить</a>";
+		b++;
+	}
+	
+	function deleteAreaRow(obj) {
+		var td = obj.parentNode.parentNode.cells[0];
+		var name;
+		if (td.childNodes[0].nodeName == 'SELECT') {
+			indx = td.childNodes[0].selectedIndex;
+			name = td.childNodes[0].options[indx].text
+		}
+		else name = td.childNodes[1].value;
+			
+		if (confirm('Удалить ' + name + '?')) {
+			var delRow = obj.parentNode.parentNode;
+			var tbl = delRow.parentNode.parentNode;
+			var rIndex = delRow.sectionRowIndex;
+			var rowArray = new Array(delRow);
+			deleteRows(rowArray);
+		}
+	}
+	
+	function deleteRows(rowObjArray){
+		for (var i=0; i<rowObjArray.length; i++){
+			var rIndex = rowObjArray[i].sectionRowIndex;
+			rowObjArray[i].parentNode.deleteRow(rIndex);
+		}
+	}	
+	var b = 0;
+{/literal}
+</script>
+
+<form method="post" target="tmp{$thisname}" name="editform" onsubmit="window.close()" action="page.php">
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+<fieldset>
+<table width="100%">
+
+<tr><td>{$STR_STARS}:</td><td>
+<select name="fld[stars]">
+	<option value='0'>--- Не выбрано ---</option>
+	<option value='1' {$selected1}>1 звезда</option>
+	<option value='2' {$selected2}>2 звезды</option>
+	<option value='3' {$selected3}>3 звезды</option>
+	<option value='4' {$selected4}>4 звезды</option>
+	<option value='5' {$selected5}>5 звёзд</option>
+</select>
+</td></tr>
+<tr><td>{$STR_STOREY}:</td><td>
+	от <input type="text" size="5" maxlenght="50" name="fld[storey_from]" value="{$storey_from}" />&nbsp;&nbsp;
+	до <input type="text" size="5" maxlenght="50" name="fld[storey_to]" value="{$storey_to}" />
+</td></tr>
+<tr><td>{$STR_MATERIAL}:</td><td>
+	{$material}
+</td></tr>
+<tr><td colspan="2">{$STR_AREA}:</td><td></tr>
+<tr><td colspan="2">
+	<table cellpadding=3 cellspacing=1 id='tab_area' bgcolor="#cecece">
+	<tr>
+		<td>Количество комнат</td>
+		<td>Общая площадь от</td>
+		<td>Общая площадь до</td>
+		<td>Удалить</td>
+	</tr>
+	{$areas}
+	</table>
+	<div align=left style='padding-left:10px;padding-top:10px;'>
+		<button onclick='InsertAreaRow("area","{$counter}"+b); return false;'>Добавить строку</button>
+	</div>	
+</td></tr>
+
+</table>
+</fieldset>
+<br />
+<div style="text-align:center;">
+	<input type="submit" value="{$STR_SAVE}" />
+	<input type="button" value="{$STR_CANCEL}" onClick="window.close()" />
+</div>
+</form>

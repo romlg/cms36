@@ -1,0 +1,96 @@
+{literal}
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAaxoG2u7_GPLUYuljkVZijxSXilaLZEIxw7u44iYiLanAlEeBOBQcL-3-j8PO18LA9FRb-hEpNXusUw&hl=ru" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+var map;
+var marker;
+function load() {
+	if (GBrowserIsCompatible()) {
+		map = new GMap2(document.getElementById("map"));
+		map.addControl(new GLargeMapControl());
+		map.addControl(new GMapTypeControl());
+
+		var geocoder = new GClientGeocoder();
+
+		{/literal}
+		{if $object.x > 0 and $object.y > 0}
+			var point = new GLatLng({$object.x}, {$object.y});
+			setPoint(point, 12);
+		{else}
+			{literal}
+			geocoder.getLatLng({/literal}"{$object.address}"{literal},
+				function(point) {
+					if (!point) {
+						alert({/literal}"Адрес '{$object.address}' не найден.\r\nОтметьте маркер вручную."{literal});
+						point = new GLatLng(55.75, 37.61);
+						setPoint(point, 8);
+					} else {
+						setPoint(point, 12);
+					}
+					document.getElementById('fld_x').value = point.lat();
+					document.getElementById('fld_y').value = point.lng();
+				}
+			);
+			{/literal}
+		{/if}
+		{literal}
+	}
+}
+
+function setPoint(point, mas) {
+	map.setCenter(point, mas);
+	marker = new GMarker(point, {draggable: true});
+
+	var html = '';
+	{/literal}
+	html += "<b>{$object.address}</b><br>";
+	{if $object.obj_type_id eq 'room'}
+		{if $object.room > 0}
+			html += "{$object.room}-комн. квартира<br>";
+		{else}
+			html += "Комната<br>";
+		{/if}
+	{elseif $object.obj_type_id eq 'house'}
+		html += "Тип объекта: {$object.object_type}<br>";
+	{elseif $object.obj_type_id eq 'commerce'}
+		html += "Назначение: {$object.purpose}<br>";
+	{/if}
+	html += "<br>Цена: {$object.price}";
+	{literal}
+
+	GEvent.addListener(marker, "dragstart", function() {
+		map.closeInfoWindow();
+	});
+	GEvent.addListener(marker, "dragend", function() {
+		marker.openInfoWindowHtml(html);
+		point = marker.getPoint();
+		document.getElementById('fld_x').value = point.lat();
+		document.getElementById('fld_y').value = point.lng();
+	});
+	map.addOverlay(marker);
+	marker.openInfoWindowHtml(html);
+}
+
+function SaveSubmit() {
+	document.forms.editform.elements.apply.value = 0;
+	document.forms.editform.submit();
+	window.close();
+}
+function ApplySubmit() {
+	document.forms.editform.elements.apply.value = 1;
+	document.forms.editform.submit();
+}
+
+window.onload = load;
+window.onunload = GUnload;
+</script>{/literal}
+<table cellpadding="5" cellspacing="0" bgcolor="#E5E5E5">
+<tr>
+	<td align="left">{$STR_X}:</td>
+	<td><input type="text" name="fld[x]" value="{$object.x}" size="10" id="fld_x"></td>
+	<td align="left">{$STR_Y}:</td>
+	<td><input type="text" name="fld[y]" value="{$object.y}" size="10" id="fld_y"></td>
+	<td align="right" width="100%"><INPUT TYPE="button" VALUE="&nbsp;Отменить&nbsp;" onClick="document.getElementById('fld_x').value = ''; document.getElementById('fld_y').value = '';"></td>
+</tr>
+</table>
+<div id="map" style="border: 1px solid black; margin: 10px 0; width: 500px; height: 450px"></div>
+

@@ -1,33 +1,23 @@
-<script type="text/javascript">
-var ID = 0;
-var thisname = '{$thisname}';
-var client_id = '{$client_id}';
+{$script}
 
-{literal}
-function mySubmit(item) {
+<script>
+function mySubmit(item) {ldelim}
 	item.subm.disabled = true;
 	return true;
-}
-function editItem(id) {
+{rdelim}
+
+var ID = 0;
+var thisname = '{$thisname}';
+
+function editItem(id) {ldelim}
 	if (id == null) id = ID;
-	window.open("ced.php?page=" + thisname + "&do=editform&id="+id, "edit" + thisname, "width="+(screen.width-150)+", height="+(screen.height-100)+",top=0px,left=0px, resizable=1, status=1").focus();
-}
-function createOrder(id){
-	if (id == null) id = client_id;
-	window.open("ced.php?page=orders&do=editformfromclients&client_id="+id, "edit" + thisname, "width="+(screen.width-150)+", height="+(screen.height-100)+", height=520,top=0px,left=0px, resizable=1, status=1").focus();
-}
+	window.open("ed.php?page=" + thisname + "&id=" + id + "&frame=single", "edit" + thisname, "width=700, height=550, resizable=1").focus();
+{rdelim}
 
-{/literal}
-
-if (client_id>0)
-	var A{$thisname}0 = new Array(0,1);
-else var A{$thisname}0 = new Array(0,0);
-var A{$thisname}1 = new Array(1,0);
-var A{$thisname}2 = new Array(0,0);
-window.parent.elemActions(thisname, 0);
-
+var A{$thisname}0 = new Array(0,0);
+var A{$thisname}1 = new Array(1,1);
+var A{$thisname}2 = new Array(0,1);
+window.parent.elemActions('{$thisname}', ID==0?0:1);
 </script>
-
-{$table}
-
-<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>
+{$params}
+<IFRAME id=tmp{$thisname} name=tmp{$thisname} src='about:blank' width=0 height=0 border=0 style='visibility:hidden'></IFRAME>

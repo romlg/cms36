@@ -1,0 +1,39 @@
+<script type="text/javascript">
+var ID = 0;
+var thisname = '{$thisname}';
+
+{literal}
+function mySubmit(item) {
+	item.subm.disabled = true;
+	return true;
+}
+
+function editItem(id) {
+	if (id == null) id = ID;
+	window.open("ced.php?page=" + thisname + "&do=editform&id="+id, "edit" + thisname, "width=700, height=450, resizable=1, status=1").focus();
+}
+
+function changeVisibleN(chbox, id){
+	if (chbox.checked){
+		value = 1;
+	} else {
+		value = 0;
+	}
+	document.frames('tmp'+thisname).location = "cnt.php?page=" + thisname + "&do=changeVisible&checked="+value+"&id="+id;
+}
+
+function LoadPrice() {
+    document.location.href = 'cnt.php?page=import_flat&do=showcsvform';
+}
+{/literal}
+
+var A{$thisname}0 = new Array(0,0,0,1);
+var A{$thisname}1 = new Array(0,0,0,1);
+var A{$thisname}2 = new Array(0,0,0,1);
+window.parent.elemActions(thisname, 0);
+
+</script>
+
+{$table}
+
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

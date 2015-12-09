@@ -10,81 +10,25 @@ window.parent.elemActions("crm", 0);
 <fieldset><legend>{$STR_CLIENT_INFO}</legend>
 <table width=100%>
 <table cellpadding=0 cellspacing=0 width=100%>
-{if $lname}<tr><td class="mbox">{$STR_LNAME}:</td><td class="mbox" align=right><b>{$lname}</td></tr>{/if}
-{if $name}<tr><td class="mbox">{$STR_NAME}:</td><td class="mbox" align=right><b>{$name}</td></tr>{/if}
-{if $tname}<tr><td class="mbox">{$STR_TNAME}:</td><td class="mbox" align=right><b>{$tname}</td></tr>{/if}
+{if $fio}<tr><td class="mbox">{$STR_LNAME}:</td><td class="mbox" align=right><b>{$fio}</td></tr>{/if}
 {if $addr}<tr><td class="mbox">{$STR_ADDR}:</td><td class="mbox" align=right><b>{$addr}</td></tr>{/if}
 {if $phone}<tr><td class="mbox">{$STR_PHONE}:</td><td class="mbox" align=right><b>{$phone}</td></tr>{/if}
-{if $cell_phone}<tr><td class="mbox">{$STR_CELL_PHONE}:</td><td class="mbox" align=right><b>{$cell_phone}</td></tr>{/if}
-{if $fax}<tr><td class="mbox">{$STR_FAX}:</td><td class="mbox" align=right><b>{$fax}</td></tr>{/if}
-</table>
-</fieldset>
-<fieldset><legend>{$STR_BILL}</legend>
-<table width=100%>
-<table cellpadding=0 cellspacing=0 width=100%>
-<tr><td class="mbox">{$STR_HEADER}:</td><td class="mbox" align=right><b>{$STR_COUNT}</td><td class="mbox" align=right><b>{$STR_SUM}</td></tr>
-<tr><td class="mbox">{$STR_RECIEVE_BILLS}:</td><td class="mbox" align=right><b>{$recieve_bills}</td><td class="mbox" align=right><b>{$recieve_bills_sum}</td></tr>
-<tr><td class="mbox">{$STR_PAID_BILLS}:</td><td class="mbox" align=right><b>{$paid_bills}</td><td class="mbox" align=right><b>{$paid_bills_sum}</td></tr>
-<tr><td class="mbox">{$STR_BONUS}:</td><td class="mbox" align=right><b>{$bonus}</td><td class="mbox" align=right><b>{$bonus_sum}</td></tr>
-<tr><td class="mbox">{$STR_ORDERS}:</td><td class="mbox" align=right><b>{$orders}</td><td class="mbox" align=right><b>{$orders_sum}</td></tr>
-<tr><td class="mbox">{$STR_READY_ORDERS}:</td><td class="mbox" align=right><b>{$ready_orders}</td><td class="mbox" align=right><b>{$ready_orders_sum}</td></tr>
-<tr><td class="mbox">{$STR_BALANCE}:</td><td class="mbox" align=right><b></td><td class="mbox" align=right><b>{$balance}</td></tr>
+{if $comp_name}<tr><td class="mbox">{$STR_COMP_NAME}:</td><td class="mbox" align=right><b>{$comp_name}</td></tr>{/if}
+<tr><td class="mbox">{$STR_BALANCE}:</td><td class="mbox" align=right {$balance_style}><b>{$balance} руб.</td></tr>
 </table>
 </fieldset>
 </td>
 <td valign="top">
-				<fieldset><legend>{$STR_SYSTEM_INFO}</legend>
+<fieldset><legend>{$STR_SYSTEM_INFO}</legend>
 <table width=100%>
 <table cellpadding=0 cellspacing=0 width=100%>
 {if $id}<tr><td class="mbox">{$STR_CLIENT_ID}:</td><td class="mbox" align=right><b>{$id}</td></tr>{/if}
 {if $login}<tr><td class="mbox">{$STR_LOGIN}:</td><td class="mbox" align=right><b>{$login}</td></tr>{/if}
-<!--{if $email}<tr><td class="mbox">{$STR_EMAIL}:</td><td class="mbox" align=right><b>{$email}</td></tr>{/if}-->
-{if $status}<tr><td class="mbox">{$STR_ALLOW}:</td><td class="mbox" align=right><b>{$status}</td></tr>{/if}
+<!--<tr><td class="mbox">{$STR_GROUP}:</td><td class="mbox" align=right><b>{$group}</td></tr>-->
+<tr><td class="mbox">{$STR_TRUSTED}:</td><td class="mbox" align=right><b>{$trusted}</td></tr>
+<tr><td class="mbox">{$STR_FREE}:</td><td class="mbox" align=right><b>{$free}</td></tr>
+<tr><td class="mbox">{$STR_AUTH}:</td><td class="mbox" align=right><b>{$auth}</td></tr>
 </table>
 </fieldset>
 
-{if $dis_group}
-<fieldset><legend>{$STR_DISCOUNT_GROUP}</legend>
-<table width=100%>
-<table cellpadding=0 cellspacing=0 width=100%>
-	{if $dis_group.name}<tr><td class="mbox">{$STR_GROUP}:</td><td class="mbox" align=right><b>{$dis_group.name}</td></tr>{/if}
-	{if !empty($dis_group.pr_volume)}<tr><td class="mbox">{$STR_DISCNOW}:</td><td class="mbox" align=right><b>{$dis_group.now}%</td></tr>{/if}
-	<tr><td colspan="2">
-	<fieldset><legend>{$STR_PROD_TYPES}</legend>
-	<table width=100%>
-	<!--<tr><td class="mbox">{$STR_PROD_TYPES}:</td><td class="mbox" align=right><b>{$STR_DISCOUNT}</td></tr>-->
-	{foreach from=$dis_group.pr_types key=k item=i}
-	<tr><td class="mbox">{$i.name}:</td><td class="mbox" align=right><b>{if !$i.discount}0{/if}{$i.discount}%</td></tr>
-	{/foreach}
-	{foreach from=$dis_group.pr_volume key=k item=i}
-	<tr><td class="mbox">с {$i.volume}:</td><td class="mbox" align=right><b>{if !$i.discount}0{/if}{$i.discount}%</td></tr>
-	{/foreach}	
-	</table>
-	</fieldset>
-</td></tr>
-</table>
-</fieldset>
-{/if}
-
-{if $comp_name}
-<fieldset><legend>{$STR_COMPANY_INFO}</legend>
-<table width=100%>
-<table cellpadding=0 cellspacing=0 width=100%>
-{if $comp_name}<tr><td class="mbox">{$STR_COMP_NAME}:</td><td class="mbox" align=right><b>{$comp_name}</td></tr>{/if}
-{if $comp_fname}<tr><td class="mbox">{$STR_COMP_FNAME}:</td><td class="mbox" align=right><b>{$comp_fname}</td></tr>{/if}
-{if $comp_inn}<tr><td class="mbox">{$STR_COMP_INN}:</td><td class="mbox" align=right><b>{$comp_inn}</td></tr>{/if}
-{if $comp_kpp}<tr><td class="mbox">{$STR_COMP_KPP}:</td><td class="mbox" align=right><b>{$comp_kpp}</td></tr>{/if}
-{if $comp_zip}<tr><td class="mbox">{$STR_COMP_ZIP}:</td><td class="mbox" align=right><b>{$comp_zip}</td></tr>{/if}
-{if $comp_addr}<tr><td class="mbox">{$STR_COMP_ADDR}:</td><td class="mbox" align=right><b>{$comp_addr}</td></tr>{/if}
-{if $comp_paddr}<tr><td class="mbox">{$STR_COMP_PADDR}:</td><td class="mbox" align=right><b>{$comp_paddr}</td></tr>{/if}
-{if $comp_phone}<tr><td class="mbox">{$STR_COMP_PHONE}:</td><td class="mbox" align=right><b>{$comp_phone}</td></tr>{/if}
-{if $comp_fax}<tr><td class="mbox">{$STR_COMP_FAX}:</td><td class="mbox" align=right><b>{$comp_fax}</td></tr>{/if}
-{if $comp_email}<tr><td class="mbox">{$STR_COMP_EMAIL}:</td><td class="mbox" align=right><b>{$comp_email}</td></tr>{/if}
-{if $comp_bank}<tr><td class="mbox">{$STR_COMP_BANK}:</td><td class="mbox" align=right><b>{$comp_bank}</td></tr>{/if}
-{if $comp_bik}<tr><td class="mbox">{$STR_COMP_BIK}:</td><td class="mbox" align=right><b>{$comp_bik}</td></tr>{/if}
-{if $comp_ks}<tr><td class="mbox">{$STR_COMP_KS}:</td><td class="mbox" align=right><b>{$comp_ks}</td></tr>{/if}
-{if $comp_rs}<tr><td class="mbox">{$STR_COMP_RS}:</td><td class="mbox" align=right><b>{$comp_rs}</td></tr>{/if}
-</table>
-
-</fieldset></td>
-{/if}</tr></table>
+</tr></table>

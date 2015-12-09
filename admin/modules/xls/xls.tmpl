@@ -1,0 +1,388 @@
+<script type="text/javascript">
+var thisname = '{$thisname}';
+{literal}
+document.body.style.backgroundColor="#ECEAEA";
+document.body.scroll  ='no';
+
+var agent = navigator.userAgent.toLowerCase();
+var major = parseInt(navigator.appVersion);
+var minor = parseFloat(navigator.appVersion);
+
+var isNN = ((agent.indexOf('mozilla') != -1) && ((agent.indexOf('spoofer') == -1) && (agent.indexOf('compatible') == -1)));
+var isOPERA = agent.indexOf("opera")>-1 && window.opera;
+var isIE = (agent.indexOf("msie") != -1 && !isOPERA);
+
+function setOpacity(elem, nOpacity, add) {
+	if (isIE) {
+	    try {
+    		nOpacity *= 100;	
+    	    var oAlpha = elem.filters['DXImageTransform.Microsoft.alpha'] || elem.filters.alpha;
+    	    if (add) {
+    		  if (oAlpha) oAlpha.opacity += nOpacity;
+    		  else elem.style.filter += "progid:DXImageTransform.Microsoft.Alpha(opacity="+nOpacity+")";
+    	    } else {
+    		  if (oAlpha) oAlpha.opacity = nOpacity;
+    		  else elem.style.filter += "progid:DXImageTransform.Microsoft.Alpha(opacity="+nOpacity+")";
+    	    }
+	    } catch (e) {}
+	} else {
+		try {
+		    if (add) {
+    			elem.style.opacity += nOpacity;
+    			elem.style.MozOpacity += nOpacity;
+    			elem.style.KhtmlOpacity += nOpacity;
+		    } else {
+    			elem.style.opacity = nOpacity;
+    			elem.style.MozOpacity = nOpacity;
+    			elem.style.KhtmlOpacity = nOpacity;
+		    }
+		} catch (e) {}
+	}
+}
+
+function getOpacity(elem){
+	if (isIE) {
+	    var oAlpha = elem.filters['DXImageTransform.Microsoft.alpha'] || elem.filters.alpha;
+	    if (oAlpha) {
+	        return oAlpha.opacity/100;
+	    } else {
+	        //elem.style.filter += "progid:DXImageTransform.Microsoft.Alpha(opacity="+nOpacity+")";
+	    }
+	} else {
+		try {
+   			return elem.style.opacity;
+		} catch (e) {}
+		try {
+   			return elem.style.MozOpacity;
+		} catch (e) {}
+		try {
+   			return elem.style.KhtmlOpacity;
+		} catch (e) {}
+	}
+}
+
+function changeAlpha(func){
+	if (this.direction<0){
+		window.clearTimeout();
+		setOpacity(this.element, 1, false);
+		showAlpha(-15, func);
+	} else if (this.direction >0){
+		window.clearTimeout();
+		setOpacity(this.element, 0, false);
+		showAlpha(15, func);
+	}
+}
+
+function showAlpha(direction, func){
+    setOpacity(this.element, direction, true);
+	if (getOpacity(this.element) <= 0 || getOpacity(this.element)>=1){
+		if (direction<0){
+			this.element.style.visibility = "hidden";
+			setOpacity(this.element, 0, false);
+			if (func) func();
+		} else {
+			setOpacity(this.element, 1, false);
+		}
+	} else{
+		window.setTimeout('showAlpha('+direction+')',1);
+	}	
+}
+
+
+function SetCounts(a1,a2,a3,a4){
+	document.getElementById('a1').innerHTML = a1;
+	document.getElementById('a2').innerHTML = a2;
+	document.getElementById('a3').innerHTML = a3;
+	document.getElementById('a4').innerHTML = a4;
+}
+
+
+window.onload = function(){
+//	setSizes();
+//	startLoad();
+//	showDownloadFrom();
+}
+window.onresize = function(){
+//	setSizes();
+}
+
+function setSizes(){
+	height = document.body.offsetHeight;
+	width = document.body.offsetWidth;
+	if (height<200 || width<300){
+		top.window.resizeTo(600,500);
+		height = 500;
+		width = 600;
+	}
+	document.getElementById('load').style.height = (height)+'px';
+	document.getElementById('load').style.width = (width-17)+'px';
+	
+//	document.getElementById('downloadForm').style.height='100px';
+//	document.getElementById('downloadForm').style.width='350px';
+//	document.getElementById('downloadForm').style.top=document.body.offsetHeight/2-250+'px';
+//	document.getElementById('downloadForm').style.left=document.body.offsetWidth/2-180+'px';
+}
+
+function showDownloadFrom(){
+	this.element = document.getElementById('downloadForm');
+	this.element.style.visibility = "visible";
+	if (this.direction != 1){
+		this.direction = 1;
+		changeAlpha();
+	}
+}
+function hideDownloadFrom(){
+	this.element = document.getElementById('downloadForm');
+	if (this.direction != -1){
+		this.direction = -1;
+		changeAlpha();
+	}
+}
+
+function startLoad(){
+	document.getElementById('load').style.visibility = "visible";
+}
+function stopLoad(){
+	document.getElementById('load').style.visibility = "hidden";
+}
+
+
+function dStart(element, event){
+    var ev = window.event || event;
+	this.x = ev.x - document.getElementById(element).offsetLeft;
+	this.y = ev.y - document.getElementById(element).offsetTop;
+	this.mdown = 1;
+}
+function drag(id, event){
+	if (this.mdown == 1){
+	    var ev = window.event || event;
+		element = document.getElementById(id);
+		if (element.offsetTop < 10 && this.lastY>ev.y){
+			element.style.top = 9;
+		} else if(document.body.offsetHeight - element.offsetTop< 110 && this.lastY<ev.y){
+			element.style.top = document.body.offsetHeight-109;
+		} else if(element.offsetLeft < 10 && this.lastX>ev.x){
+			element.style.left = 9;
+		}  else if(document.body.offsetWidth - element.offsetLeft< 260 && this.lastX<ev.x){
+			element.style.left = document.body.offsetWidth-259;
+		} else {
+			this.lastY = ev.y;
+			this.lastX = ev.x;
+			element.style.top=ev.y - this.y;
+			element.style.left=ev.x - this.x;
+		}
+	}
+}
+
+	//document.getElementById('downloadForm').style.top=document.body.offsetHeight/2-50+'px';
+	//document.getElementById('downloadForm').style.left=document.body.offsetWidth/2-120+'px';
+{/literal}
+</script>
+
+<table align="center">
+	<tr valign="top" align="center">
+		<td style="color:red"><div id="error"></div></td>
+	</tr>
+</table>
+<div id="msg_div"></div>
+<table align="center">
+	<tr valign="top" align="center">
+		<td>Дата последней загрузки:</td>
+		<td><div id="a1">{$update_time}</div></td>
+	</tr>
+	<tr valign="top">
+		<td>Количество квартир в базе на текущий момент:</td>
+		<td><div id="a2">{$rows}</div></td>
+	</tr>
+	<tr valign="top" align="center">
+		<td colspan="2" width="400"><font color='red'><b>ВНИМАНИЕ!!! Для расчета предварительной стоимости квартиры на сайте используются данные загруженные из базы WINNER в разделе `Импорт объектов`</b></font></td>
+	</tr>	
+	<tr valign="top" align="center">
+		<td valign="middle" align="center" colspan="2">
+		<fieldset>
+		<legend> загрузка файла </legend>		
+		<form target="tmp{$thisname}" action="page.php" method="post" name="editform" id="editform" enctype="multipart/form-data">
+		<input type="hidden" name="page" value="xls">
+		<input type="hidden" name="do" value="editdownload">
+		<input type="hidden" name="type" value="{$type}">
+		<table>
+			<tr>
+				<td>Выберите файл для загрузки: </td>
+				<td><input name="file" type="file" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" name="input_file"></td>
+			</tr>
+			<tr>
+				<td colspan="2" width="100%" align="center"><input type="submit" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" value="загрузить"></td>
+			</tr>			
+		</table>
+		</form>
+		</fieldset>
+		</td>
+	</tr>	
+	
+	<tr>
+		<td valign="middle" align="center" colspan="2">
+		<fieldset>
+		<legend> настройки формы </legend>
+		<form target="tmp{$thisname}" action="page.php" method="post" name="editforms" id="editforms" enctype="multipart/form-data">
+		<input type="hidden" name="page" value="xls">
+		<input type="hidden" name="do" value="editsettings">
+		<input type="hidden" name="type" value="{$type}">
+			<table cellpadding="0" cellspacing="2" width="100%">	
+			<tr>
+				<td>Выберите обязательные поля для формы на сайте:</td>
+			</tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[1]" value="1" {if isset($required.1)}checked{/if}> Метро
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[2]" value="2" {if isset($required.2)}checked{/if}> Тип дома
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[3]" value="3" {if isset($required.3)}checked{/if}> Количество комнат
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[4]" value="4" {if isset($required.4)}checked{/if}> Этаж квартиры
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[5]" value="5" {if isset($required.5)}checked{/if}> Этажность
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[6]" value="6" {if isset($required.6)}checked{/if}> Расстояние от метро
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[7]" value="7" {if isset($required.7)}checked{/if}> Общая площадь
+			</td></tr>
+			<tr><td height="20"></td></tr>
+			<tr>
+				<td>Задайте проценты для расчета средней стоимости на сайте:</td>
+			</tr>
+			<tr><td width="100%">
+				<input type="text" name="percent[10]" value="{if isset($percent.10)}{$percent.10}{/if}" style="width:25px;">% - <input type="text" name="percent[11]" value="{if isset($percent.11)}{$percent.11}{/if}" style="width:25px;">% для 1-комн 
+			</td></tr>
+			<tr><td width="100%">
+				<input type="text" name="percent[20]" value="{if isset($percent.20)}{$percent.20}{/if}" style="width:25px;">% - <input type="text" name="percent[21]" value="{if isset($percent.21)}{$percent.21}{/if}" style="width:25px;">% для 2-комн
+			</td></tr>
+			<tr><td width="100%">
+				<input type="text" name="percent[30]" value="{if isset($percent.30)}{$percent.30}{/if}" style="width:25px;">% - <input type="text" name="percent[31]" value="{if isset($percent.31)}{$percent.31}{/if}" style="width:25px;">% для 3-комн
+			</td></tr>
+			<tr><td width="100%">
+				<input type="text" name="percent[40]" value="{if isset($percent.40)}{$percent.40}{/if}" style="width:25px;">% - <input type="text" name="percent[41]" value="{if isset($percent.41)}{$percent.41}{/if}" style="width:25px;">% для 4-комн
+			</td></tr>
+			<tr><td width="100%">
+				<input type="text" name="percent[50]" value="{if isset($percent.50)}{$percent.50}{/if}" style="width:25px;">% - <input type="text" name="percent[51]" value="{if isset($percent.51)}{$percent.51}{/if}" style="width:25px;">% для 5комн и более
+			</td></tr>
+			<tr>
+				<td width="100%" align="center"><input type="submit" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" value="сохранить"></td>
+			</tr>
+			</table>
+		</form>
+		</fieldset>
+		</td>
+	</tr>	
+</table>
+
+<div id="load" style="position:absolute;FILTER: alpha(opacity=0);opacity:0;top:0px;left:0px;height:100px;width:350px;visibility:hidden;" onmousemove="drag('downloadForm', event);">
+	<table bgcolor="#E0DDDD" width="100%" height="100%">
+	<tr>
+		<td align="center"><b>идет загрузка...</b></td>
+	</tr>									
+	</table>
+</div>
+
+<!-- div id="downloadForm" style="width:350px;height:100px;FILTER: alpha(opacity=0);opacity:0;position:absolute;visibility:hidden;top:0px;left:0px;border:1px">
+<table height="100%" width="100%">
+	<tr>
+		<td valign="middle" align="center">
+		<form target="tmp{$thisname}" action="page.php" method="post" name="editform" id="editform" enctype="multipart/form-data">
+		<input type="hidden" name="page" value="xls">
+		<input type="hidden" name="do" value="editdownload">
+		<input type="hidden" name="type" value="{$type}">
+		<table id="down_table" style="background-color:#ffffff;border: 1px solid #000000;" onmousedown = "dStart('downloadForm', event);drag('downloadForm', event);" onmousemove="drag('downloadForm', event);" onmouseup="window.mdown = 0;">
+			<tr>
+				<td>
+					<table cellpadding="0" cellspacing="2" bgcolor="white" width="100%">
+					<tr>
+					<td bgcolor="#0F89DA" style="border: 1px solid #1C5180" background="images/xpbox/blue_bg.gif">
+					<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+					<td style="color: white;cursor:hand;"><img align="absmiddle" src="images/xpbox/blue_bg.gif" width="4" height="23" border="0"><b>Форма загрузки файла</b></td>
+					</tr>
+					</table>
+					</td>
+					</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td width="100%" align="center"><input name="file" type="file" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" name="input_file"></td>
+			</tr>
+			<tr>
+				<td width="100%" align="center"><input type="submit" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" value="загрузить"></td>
+			</tr>			
+		</table>
+		</form>
+		</td>
+	</tr>
+</table>
+</div-->
+
+<!--div id="downloadForm2" style="width:350px;height:100px;border:1px">
+<table height="100%" width="100%">
+	<tr>
+		<td valign="middle" align="center">
+		<form target="tmp{$thisname}" action="page.php" method="post" name="editform" id="editform" enctype="multipart/form-data">
+			<table cellpadding="0" cellspacing="2" bgcolor="white" width="100%">	
+			<tr>
+				<td>Выберите обязательные поля для формы на сайте:</td>
+			</tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[1]" value="1" {if isset($required.1)}checked{/if}> Метро
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[2]" value="2" {if isset($required.2)}checked{/if}> Тип дома
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[3]" value="3" {if isset($required.3)}checked{/if}> Количество комнат
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[4]" value="4" {if isset($required.4)}checked{/if}> Этаж квартиры
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[5]" value="5" {if isset($required.5)}checked{/if}> Этажность
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[6]" value="6" {if isset($required.6)}checked{/if}> Расстояние от метро
+			</td></tr>
+			<tr><td width="100%">
+				<input type="checkbox" name="required[7]" value="7" {if isset($required.7)}checked{/if}> Общая площадь
+			</td></tr>
+			<tr><td height="20"></td></tr>
+			<tr>
+				<td>Задайте проценты для расчета средней стоимости на сайте:</td>
+			</tr>
+			<tr><td width="100%">
+				<input type="text" name="percent[10]" value="" style="width:25px;">% - <input type="text" name="percent[11]" value="" style="width:25px;">% для 1-комн 
+			</td></tr>
+			<tr><td width="100%">
+				<input type="text" name="percent[20]" value="" style="width:25px;">% - <input type="text" name="percent[21]" value="" style="width:25px;">% для 2-комн
+			</td></tr>
+			<tr><td width="100%">
+				<input type="text" name="percent[30]" value="" style="width:25px;">% - <input type="text" name="percent[31]" value="" style="width:25px;">% для 3-комн
+			</td></tr>
+			<tr><td width="100%">
+				<input type="text" name="percent[40]" value="" style="width:25px;">% - <input type="text" name="percent[41]" value="" style="width:25px;">% для 4-комн
+			</td></tr>
+			<tr><td width="100%">
+				<input type="text" name="percent[50]" value="" style="width:25px;">% - <input type="text" name="percent[51]" value="" style="width:25px;">% для 5комн и более
+			</td></tr>
+			<tr>
+				<td width="100%" align="center"><input type="submit" style="font-family: Tahoma;border: 1px solid #9C9C9C;font-size: 90%;padding: 0px 5px 0px 4px;" value="загрузить"></td>
+			</tr>
+			</table>
+		</form>
+		</td>
+	</tr>
+</table>
+</div-->
+
+<iframe id="tmp{$thisname}" name="tmp{$thisname}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>

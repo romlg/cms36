@@ -10,10 +10,9 @@ class TNewsElement extends TElems {
 		'title'	    => array('Новость','News',),
 		'name'	    => array('Название','name',),
 		'caption'	=> array('Новости','News',),
-		'h_add'	    => array('Новый документ','New Document',),
-		'h_edit'	=> array('Новость','News',),
 		'name'	    => array('Заголовок','Title',),
 		'image'	    => array('Изображение','Image',),
+		'alt'		=> array('Alt для изображения',		'Alt for image'),
 		'date'	    => array('Дата','Date',),
 		'description'=> array('Описание','Description',),
 		'text'		 => array('Текст',	'Text',),
@@ -23,46 +22,56 @@ class TNewsElement extends TElems {
 	var $order = " ORDER BY priority ";
 	var $window_size = "dialogwidth=550px; dialogheight:600px;";
 	//поля для выборки из базы элема
-var $elem_fields = array(
-'columns' =>  array(
-	'visible'=> array(
-		'type'  =>'checkbox',
-	),
-	'date' => array(
-		'type' => 'input_calendar',
-		'display' => array(
-			'func'=>'get_Date',
+	var $elem_fields = array(
+		'columns' =>  array(
+			'visible'=> array(
+				'type'  =>'checkbox',
 			),
-	),
-	'name'=>array(
-	  'type'    => 'text',
-	  'size'    => '57',
-	 ),
-	 'description'=>array(
-	   'type'    =>'textarea',
-	   'rows'    => '3',
-	   'cols'    => '54',
-	   'display' => array(
-			'colspan' => true,
-			)
-	   ),
-	 'text'=>array(
-	   'type'    =>'fck',
-	   'toolbar' => 'Common',
-	   'size'    => array('100%','270'),
-	   'display' => array(
-			'colspan' => true,
-			)
-	   ),
-	 'priority'=>array(
-	   'type'  =>'hidden',
-	  ),
-
-   ),
-   'title'	=> 'Новость',
-   'id_field' => 'pid',
-   'type' => 'multi',
-);
+			'date' => array(
+				'type' => 'input_calendar',
+				'display' => array(
+					'func'=>'get_Date',
+				),
+			),
+			'name'=>array(
+				'type'    => 'text',
+				'size'    => '57',
+			),
+			/*'image'=>array(
+				'type'    => 'input_image',
+				'display'    => array(
+					'size'	=>array('120','92'),
+				),
+			),
+			'alt'	=> array(
+				'type' => 'text',
+				'size' => '40',
+			),*/
+			'description'=>array(
+				'type'    =>'textarea',
+				'rows'    => '3',
+				'cols'    => '54',
+				'display' => array(
+					'colspan' => true,
+				)
+			),
+			'text'=>array(
+				'type'    =>'fck',
+				'toolbar' => 'Common',
+				'size'    => array('100%','270'),
+				'display' => array(
+					'colspan' => true,
+				)
+			),
+			'priority'=>array(
+				'type'  =>'hidden',
+			),
+		),
+		'folder'	=> 'news',
+		'title'		=> 'Новость',
+		'id_field'	=> 'pid',
+		'type'		=> 'multi',
+	);
 	var $elem_where="";
 	var $elem_req_fields = array('name');
 	var $script;
@@ -81,14 +90,11 @@ var $elem_fields = array(
 		array(
 			'select'	=> 'name',
 			'display'	=> 'name',
-			'flags'		=> FLAG_SEARCH | FLAG_SORT,
+			'flags'		=> FLAG_SEARCH,
 		),
 		array(
 			'select'	=> 'date',
-			'as'		=> 'date',
 			'display'	=> 'date',
-			'width'		=> '1%',
-			'type'		=> 'datetime',
 			'flags'		=> FLAG_SORT,
 		),
 	);

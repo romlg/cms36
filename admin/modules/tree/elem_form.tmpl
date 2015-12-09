@@ -1,203 +1,384 @@
-<style type="text/css">
-    table.element_form_table {
-        margin: 0;
-    }
-    table.element_form_table input {
-        width: 170px;
-    }
-    table.element_form_table select {
-        width: 80px;
-    }
-    table.element_form_table input.small, table.element_form_table select.small {
-        width: 50px;
-    }
-    table.element_form_table input.middle {
-        width: 110px;
-    }
-</style>
-<script type="text/javascript">
-    var form_id = '<?=$this->object["form_id"];?>';
+{literal}<script type="text/javascript">
+<!--
+function SaveSubmit() {
+	document.forms.editform.elements.apply.value = 0;
+	document.forms.editform.submit();
+	window.close();
+}
+function ApplySubmit() {
+	document.forms.editform.elements.apply.value = 1;
+	document.forms.editform.submit();
+}
 
-    $(document).ready(function () {
-        if (form_id) {
-            OpenForEdit();
-        } else {
-            AddElement(0);
-        }
-    });
 
-    function AddElement(td) {
-        var table = createTable();
-        if (td == 0) {
+var num = 1;
+var otkat;
+var oldnum;
+var form_id = '{/literal}{$object.form_id}{literal}';
 
-        } else {
-            td.parents('table').after(table);
-        }
-        return table;
-    }
+window.onload = function(){
+	document.body.style.backgroundColor = "#E5E5E5";
+	if (form_id){
+		OpenForEdit();
+	} else {
+		AddElement(0);
+	}
+	this.otkat = document.getElementById('elements').innerHTML;
+	this.oldnum = this.num;	
+}
 
-    function DelElement(table) {
-        if ($("table.element_form_table").length < 2) {
-            alert('Ќельз€ удалить единственную строку.');
-        }
-        else {
-            table.remove();
-        }
-        return true;
-    }
+function Undo(){ 
+	document.getElementById('elements').innerHTML = this.otkat;	
+	this.num = this.oldnum;
+}
 
-    function createTable() {
+function AddElement(prn){
+	
+	this.otkat = document.getElementById('elements').innerHTML;
+	this.oldnum = this.num;
+	
+	//prn - пор€дковый номер его и за которым мы следуем.
+	if (prn == this.num-1){ //вставл€ем в конец
+		var pageStart = document.getElementById('elements').innerHTML;
+		var pageEnd = '';
+    	var table = createTable(this.num);
+    	
+	} else if(prn < this.num-1){ // вставл€ем между
+		//сначала вырезаем все до места вставки
+		var pageStart = '';
+		for ( i=1; i<=prn ;i++){
+			pageStart += document.getElementById('table_'+i).outerHTML; 
+		}
+		
+		//теперь вырезаем все после места вставки
+		var pageEnd = '';
+		for ( i=this.num-1; i>=prn+1 ;i--){
+			//производим переномерацию всех таблиц и их элемов (увеличиваем на 1) с последней таблицы
+			ni = i+1;
+			reNum(i, 1);
+			pageEnd = document.getElementById('table_'+ni).outerHTML + pageEnd; 
+		}
+		
+		//создаем таблицу
+		var table = createTable(prn+1);
+	}
+	
+	var page = pageStart+table.outerHTML+pageEnd;
+	document.getElementById('elements').innerHTML = page;
+	this.num++;
+	return true;
+}
 
-        var table = $("<table class='element_form_table'>");
+function DelElement(prn){
+		
+		if (prn == '1' & this.num==2){
+			alert('Ќельз€ удалить единственную строку.');
+			return true;
+		}
+		
+		this.otkat = document.getElementById('elements').innerHTML;
+		this.oldnum = this.num;
+		
+		document.getElementById('table_'+prn).outerHTML = '';
+		
+		var pageStart = '';
+		for ( i=1; i<prn ;i++){
+			pageStart += document.getElementById('table_'+i).outerHTML; 
+		}
 
-        if ($("table.element_form_table").length == 0) {
-            var tr0 = $("<tr>");
-            tr0.append("<td align='center'>Ќазвание</td>");
-            tr0.append("<td align='center'>“ип пол€</td>");
-            tr0.append("<td align='center'>Placeholder</td>");
-            tr0.append("<td align='center'>ѕоле в таблице</td>");
-            tr0.append("<td align='center'>ѕроверка</td>");
-            tr0.append("<td align='center'>*</td>");
-            tr0.append("<td align='center'>+</td>");
-            tr0.append("<td align='center'></td>");
-            table.append(tr0);
-        }
+		//теперь вырезаем все после места вставки
+		var pageEnd = '';
+		for ( i=prn+1; i<this.num ;i++){
+			//производим переномерацию всех таблиц и их элемов (увеличиваем на 1) с начала
+			ni = i-1;
+			reNum(i, -1);
+			pageEnd =  pageEnd + document.getElementById('table_'+ni).outerHTML; 
+		}	
+		
+		var page = pageStart+pageEnd;
+	
+		document.getElementById('elements').innerHTML = page;
+		this.num--;	
+		return true;	
+}
 
-        var tr1 = $("<tr>");
-        var tr2 = $("<tr>");
+function reNum(nnum, where){
+	ni = nnum+where;
 
-        var td1 = $("<td>");
-        var td2 = $("<td>");
-        var td3 = $("<td>");
-        var td4 = $("<td>");
-        var td5 = $("<td>");
-        var td6 = $("<td>");
-        var td7 = $("<td>");
-        var td8 = $("<td>");
-        var td9 = $("<td colspan='7'>");
+	document.getElementById('table_'+nnum).id = 'table_'+ni+'';
+	document.getElementById('table_'+ni).ID = 'table_'+ni+'';
+	
+	document.getElementById('tr1_'+nnum).id = 'tr1_'+ni+'';
+	document.getElementById('tr2_'+nnum).id = 'tr2_'+ni+'';
+	document.getElementById('div_'+nnum).id = 'div_'+ni+'';
+	
+	document.getElementById('text_'+nnum).id = 'text_'+ni+'';
+	document.getElementById('text_'+ni).ID = 'text_'+ni+'';
 
-        td1.append($('<input type="text" size="30" name="fld[genform][text][]">'));
+	document.getElementById('db_field_'+nnum).id = 'db_field_'+ni+'';
+	document.getElementById('db_field_'+ni).ID = 'db_field_'+ni+'';
 
-        var select = $("<select name='fld[genform][select][]'>");
-        select.change(function () {
-            ChangeVisible(table);
-        });
-        <?php foreach ($this->types as $key => $item): ?>
-        select.append($("<option value='<?=$key?>'><?=$item?></option>"));
-        <?php endforeach; ?>
-        td2.append(select);
+	document.getElementById('select_'+nnum).id = 'select_'+ni+'';
+	document.getElementById('select_'+ni).ID = 'select_'+ni+'';
+	document.getElementById('select_'+ni).onchange = 'ChangeVisible('+ ni +', this)';
 
-        td3.append($('<input type="text" size="30" name="fld[genform][placeholder][]" class="middle">'));
-        td4.append($('<input type="text" size="12" name="fld[genform][db_field][]" class="middle">'));
+	document.getElementById('textarea_'+nnum).id = 'textarea_'+ni+'';
+	document.getElementById('textarea_'+ni).ID = 'textarea_'+ni+'';
+	
+	document.getElementById('buttonadd_'+nnum).id = 'buttonadd_'+ni+'';
+	document.getElementById('buttonadd_'+ni).onclick = 'AddElement('+ni+')';
 
-        var select2 = $("<select name='fld[genform][check][]'>");
-        <?php foreach ($this->check as $key => $item) : ?>
-        select2.append($("<option value='<?=$key?>'><?=$item?></option>"));
-        <?php endforeach; ?>
-        td5.append(select2);
+	document.getElementById('buttondel_'+nnum).id = 'buttondel_'+ni+'';
+	document.getElementById('buttondel_'+ni).onclick = 'DelElement('+ni+')';
 
-        var select3 = $("<select name='fld[genform][req][]' class='small'>");
-        <?php foreach ($this->req as $key => $item) : ?>
-        select3.append($("<option value='<?=$key?>'><?=$item?></option>"));
-        <?php endforeach; ?>
-        td6.append(select3);
+	return true;
+}
 
-        var select4 = $("<select name='fld[genform][show][]' class='small'>");
-        <?php foreach ($this->show as $key => $item) : ?>
-        select4.append($("<option value='<?=$key?>'><?=$item?></option>"));
-        <?php endforeach; ?>
-        td7.append(select4);
+function createTable(num){
 
-        var buttonadd = $('<a href="javascript:void(0);" class="button" style="clear: none; margin-right: 5px;">+</a>');
-        buttonadd.click(function () {
-            AddElement($(this).parent('td'));
-        });
-        td8.append(buttonadd);
-        var buttondel = $('<a href="javascript:void(0);" class="button" style="clear: none;">-</a>');
-        buttondel.click(function () {
-            DelElement($(this).parents('table'));
-        });
-        td8.append(buttondel);
+   	var table = document.createElement('<TABLE CELLPADDING ="0" CELLSPACING="0" BGCOLOR="#E5E5E5" >');
+    table.ID='table_'+ num +'';
 
-        var div = $('<div style="display:none">');
-        div.append($('<textarea cols="36" rows="3" name="fld[genform][textarea][]">'));
-        div.append($('<div style="clear: both; font-size: 10px;">значени€ в поле заключаютс€ в одинарные кавычки и раздел€ютс€ зап€той, например: \'1\',\'2\',\'3\'</div>'));
-        td9.append(div);
+    if (num == 1) {
+		var tr0 = document.createElement('<TR>');
+		var td01 = document.createElement('<TD align="center">');
+	    td01.innerHTML = "Ќазвание";
+		tr0.appendChild(td01);    
+		var td02 = document.createElement('<TD align="center">');
+	    td02.innerHTML = "“ип пол€";
+		tr0.appendChild(td02);    
+		var td03 = document.createElement('<TD align="center">');
+	    td03.innerHTML = "ѕоле в таблице";
+		tr0.appendChild(td03);    
+		var td04 = document.createElement('<TD align="center">');
+	    td04.innerHTML = "ѕроверка";
+		tr0.appendChild(td04);    
+		var td05 = document.createElement('<TD align="center">');
+	    td05.innerHTML = "*";
+		tr0.appendChild(td05);    
+		var td06 = document.createElement('<TD align="center">');
+	    td06.innerHTML = "+";
+		tr0.appendChild(td06);    
+		var td07 = document.createElement('<TD align="center">');
+		tr0.appendChild(td07);
+	}
+	
+    var tr1 = document.createElement('<TR>');
+    var tr2 = document.createElement('<TR>');
+    tr1.ID='tr1_'+ num +'';
+    tr2.ID='tr2_'+ num +'';
+    
+    var td1 = document.createElement('<TD>');
+    var td2 = document.createElement('<TD>');
+    var td3 = document.createElement('<TD>');
+    var td4 = document.createElement('<TD>');
+    var td5 = document.createElement('<TD>');
+    var td6 = document.createElement('<TD>');
+    var td7 = document.createElement('<TD>');
+    var td8 = document.createElement('<TD colspan="3">');
+    
+    var input = document.createElement('<INPUT TYPE="text" SIZE="30">');
+    input.id='text_'+ num +'';
+    input.ID='text_'+ num +'';
+    //input.NAME='text_'+ num +'';
+    input.NAME='fld[text][]';
+    
+    var input2 = document.createElement('<INPUT TYPE="text" SIZE="12">');
+    input2.id='db_field_'+ num +'';
+    input2.ID='db_field_'+ num +'';
+    input2.NAME='fld[db_field][]';
 
-        tr1.append(td1);
-        tr1.append(td2);
-        tr1.append(td3);
-        tr1.append(td4);
-        tr1.append(td5);
-        tr1.append(td6);
-        tr1.append(td7);
-        tr1.append(td8);
-        tr2.append(td9);
+    var select = document.createElement('<SELECT onChange="ChangeVisible('+ num +', this)">');
+    select.id='select_'+ num +'';
+    select.ID='select_'+ num +'';
+    //select.NAME='select_'+ num +'';
+    select.NAME='fld[select][]';
+        
+    {/literal}
+	
+    {foreach from=$types key=key item=item}
+    var option = document.createElement('<OPTION>');
+    option.VALUE="{$key}";
+    option.innerText="{$item}";
+    select.appendChild(option);
+    {/foreach}
+        
+    var select2 = document.createElement('<SELECT>');
+    select2.id='select2_'+ num +'';
+    select2.ID='select2_'+ num +'';
+    select2.NAME='fld[check][]';
 
-        table.append(tr1);
-        table.append(tr2);
+    {foreach from=$check key=key item=item}
+    var option = document.createElement('<OPTION>');
+    option.VALUE="{$key}";
+    option.innerText="{$item}";
+    select2.appendChild(option);
+    {/foreach}
 
-        $("#elements").append(table);
+    var select3 = document.createElement('<SELECT>');
+    select3.id='select3_'+ num +'';
+    select3.ID='select3_'+ num +'';
+    select3.NAME='fld[req][]';
 
-        return table;
-    }
+    {foreach from=$req key=key item=item}
+    var option = document.createElement('<OPTION>');
+    option.VALUE="{$key}";
+    option.innerText="{$item}";
+    select3.appendChild(option);
+    {/foreach}
 
-    function ChangeVisible(table) {
-        var select = table.find("[name=fld\\[genform\\]\\[select\\]\\[\\]]");
-        if (select.val() == 'radio' || select.val() == 'select' || select.val() == 'checkbox') {
-            table.find('div').show();
-        } else {
-            table.find('div').hide();
-        }
-        return true;
-    }
+    var select4 = document.createElement('<SELECT>');
+    select4.id='select4_'+ num +'';
+    select4.ID='select4_'+ num +'';
+    select4.NAME='fld[show][]';
 
-    function OpenForEdit() {
-        <?php foreach ($this->object['elems'] as $key => $v) : ?>
-        var table<?=$key?> = AddElement(0);
-        table<?=$key?>.find("[name=fld\\[genform\\]\\[text\\]\\[\\]]").val('<?=$v["text"]?>');
-        table<?=$key?>.find("[name=fld\\[genform\\]\\[select\\]\\[\\]]").val('<?=$v["type"]?>');
-        table<?=$key?>.find("[name=fld\\[genform\\]\\[placeholder\\]\\[\\]]").val('<?=$v["placeholder"]?>');
-        table<?=$key?>.find("[name=fld\\[genform\\]\\[db_field\\]\\[\\]]").val('<?=$v["db_field"]?>');
-        table<?=$key?>.find("[name=fld\\[genform\\]\\[check\\]\\[\\]]").val('<?=$v["check"]?>');
-        table<?=$key?>.find("[name=fld\\[genform\\]\\[req\\]\\[\\]]").val('<?=$v["req"]?>');
-        table<?=$key?>.find("[name=fld\\[genform\\]\\[show\\]\\[\\]]").val('<?=$v["show"]?>');
-        table<?=$key?>.find("textarea").text("<?=mysql_real_escape_string($v['value']);?>");
-        ChangeVisible(table<?=$key?>);
-        <?php endforeach; ?>
-    }
+    {foreach from=$show key=key item=item}
+    var option = document.createElement('<OPTION>');
+    option.VALUE="{$key}";
+    option.innerText="{$item}";
+    select4.appendChild(option);
+    {/foreach}
 
-</script>
+    {literal}
+    var div = document.createElement('<DIV style="display:none">');
+    div.id='div_'+ num +'';
 
-<input type="hidden" name="fld[genform][form_id]" value="<?=$this->object['form_id'];?>"/>
+    var textarea = document.createElement('<TEXTAREA COLS="36" ROWS="2">');
+    textarea.id='textarea_'+ num +'';
+    textarea.ID='textarea_'+ num +'';
+    //textarea.NAME='textarea_'+ num +'';  
+    textarea.NAME='fld[textarea][]';  
+    var buttonadd = document.createElement('<INPUT TYPE="button" VALUE="&nbsp;+&nbsp;" ONCLICK="AddElement('+num+');">');
+    buttonadd.id='buttonadd_'+ num +'';
+    var buttondel = document.createElement('<INPUT TYPE="button" VALUE="&nbsp;-&nbsp;" ONCLICK="DelElement('+num+');">');
+    buttondel.id='buttondel_'+ num +'';
+    
+    td1.appendChild(input);
+	tr1.appendChild(td1);    
 
+    td2.appendChild(select);
+	tr1.appendChild(td2);    
+
+    td3.appendChild(input2);
+	tr1.appendChild(td3);    
+
+    td4.appendChild(select2);
+	tr1.appendChild(td4);    
+
+    td5.appendChild(select3);
+	tr1.appendChild(td5);
+    
+    td6.appendChild(select4);
+	tr1.appendChild(td6);
+
+    td7.appendChild(buttonadd);
+    td7.appendChild(buttondel);
+	tr1.appendChild(td7);    
+
+    div.appendChild(textarea);
+    td8.appendChild(div);
+	tr2.appendChild(td8);    
+
+    if (num == 1) table.appendChild(tr0);    
+    table.appendChild(tr1);    
+	table.appendChild(tr2);
+	return table;
+}
+
+function ChangeVisible(num, object){
+	if (object.value == 'radio' || object.value == 'select' || object.value == 'checkbox'){
+		document.getElementById('div_'+num).style.display = 'block';
+	} else {
+		document.getElementById('div_'+num).style.display = 'none';
+	}
+	return true;
+}
+
+function OpenForEdit(){
+	{/literal}
+	{foreach from=$object.elems key=key item=v}
+ 		AddElement({$key});
+		{assign var=num value=$key+1}
+		document.getElementById('text_'+{$num}).value = '{$v.text}';
+		document.getElementById('db_field_'+{$num}).value = '{$v.db_field}';
+		document.getElementById('select_'+{$num}).value = '{$v.type}';
+		document.getElementById('select2_'+{$num}).value = '{$v.check}';
+		document.getElementById('select3_'+{$num}).value = '{$v.req}';
+		document.getElementById('select4_'+{$num}).value = '{$v.show}';
+		ChangeVisible({$num}, document.getElementById('select_'+{$num}));
+		
+		document.getElementById('textarea_'+{$num}).innerText = "{$v.value}";
+	{/foreach}
+	{literal}
+}
+
+function set_checkbox(name) {
+	val = document.forms.editform.elements['fld[' + name + ']'].value;
+	box = document.forms.editform.elements[name];
+	if (val) {
+		box.checked = true;
+		return;
+	}
+	box.checked = false;
+}
+
+function getPages(form) {
+	ret = window.showModalDialog('dialog.php?page=tree/treecheck', form.elements['fld[pages]'].value, 'dialogWidth:350px; dialogHeight:430px;');
+	
+	setTimeout('set_checkbox(\'pages\')', 200);
+	if (!ret) {
+		return;
+	}
+	if (ret == 'nothing') {
+		form.elements['fld[pages]'].value = '';
+		return;
+	}
+	form.elements['fld[pages]'].value = ret;
+}
+
+function getExcept(form) {
+	ret = window.showModalDialog('dialog.php?page=tree/treecheck', form.elements['fld[except]'].value, 'dialogWidth:350px; dialogHeight:430px;');
+	setTimeout('set_checkbox(\'except\')', 200);
+	if (!ret) {
+		return;
+	}
+	if (ret == 'nothing') {
+		form.elements['fld[except]'].value = '';
+		return;
+	}
+	form.elements['fld[except]'].value = ret;
+}
+-->
+</script>{/literal}
+<input type="hidden" name="fld[form_id]" value="{$object.form_id}" />
+<div align="right"><INPUT TYPE="button" VALUE="&nbsp;ќтменить&nbsp;" ONCLICK="Undo();"></div><br>
 <table cellpadding="0" cellspacing="0" bgcolor="#E5E5E5" align="center" width="100%">
-    <tr>
-        <td align="left"><?=$this->STR_NAME?>:</td>
-        <td><input type="text" name="fld[genform][name]" value="<?=$this->object['name'];?>" size="50"></td>
-    </tr>
-    <tr>
-        <td align="left"><?=$this->STR_DB_TABLE?>:</td>
-        <td><input type="text" name="fld[genform][db_table]" value="<?=$this->object['db_table'];?>" size="50"></td>
-    </tr>
-    <tr>
-        <td align="left"><?=$this->STR_EMAIL?>:</td>
-        <td><textarea name="fld[genform][email]"><?=$this->object['email'];?></textarea></td>
-    </tr>
-    <tr>
-        <td valign="top"><?=$this->STR_VISIBLE?>:</td>
-        <td><input type="checkbox" name="fld[genform][visible]" value="1" <?php if ($this->object['visible']) echo "checked";?> /></td>
-    </tr>
-    <?php if (isset($this->object['submit_title'])): ?>
-    <tr>
-        <td valign="top"><?=$this->STR_SUBMIT_TITLE?>:</td>
-        <td><input type="text" name="fld[genform][submit_title]" value="<?=$this->object['submit_title'];?>" size="50"></td>
-    </tr>
-    <?php endif; ?>
+<tr>
+	<td align="left">{$STR_NAME}:</td>
+	<td><input type="text" name="fld[name]" value="{$object.name}" size="50"></td>
+</tr>
+<tr>
+	<td align="left">{$STR_DB_TABLE}:</td>
+	<td><input type="text" name="fld[db_table]" value="{$object.db_table}" size="50"></td>
+</tr>
+<tr>
+	<td align="left">{$STR_EMAIL}:</td>
+	<td><textarea name="fld[email]" cols="40">{$object.email}</textarea></td>
+</tr>
+<tr>
+	<td valign="top">{$STR_VISIBLE}:</td>
+	<td><input type="checkbox" name="fld[visible]" value="1" {if $object.visible}checked{/if} /></td>
+</tr>
 </table>
-
-<fieldset>
-    <span id="elements"></span>
-</fieldset>
-<p>* - об€зательное поле или нет</p>
-<p>+ - публиковать на странице или нет</p>
+<br>
+<table cellpadding="0" cellspacing="0" bgcolor="#E5E5E5" align="center" width="100%">
+<tr>
+	<td>
+	<fieldset>
+	<span id="elements"></span>
+	<div>* - об€зательное поле или нет</div>
+	<div>+ - публиковать на странице или нет</div>
+	</fieldset>
+	</td>
+</tr>
+</table>

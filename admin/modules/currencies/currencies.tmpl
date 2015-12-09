@@ -9,7 +9,10 @@ function mySubmit(item) {
 }
 function editItem(id) {
 	if (id == null) id = ID;
-	window.open("ced.php?page=" + thisname + "&do=editform&id="+id, "edit" + thisname, "width=450, height=320, resizable=1, status=1").focus();
+	window.open("ced.php?page=" + thisname + "&do=editform&id="+id, "edit" + thisname, "width=450, height=220, resizable=1, status=1").focus();
+}
+function Refresh() {
+    window.frames['tmp'+thisname].location = "cnt.php?page=" + thisname + "&do=editRefresh";
 }
 {/literal}
 

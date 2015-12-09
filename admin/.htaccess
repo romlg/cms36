@@ -1,0 +1,17 @@
+DirectoryIndex index.php
+
+Action engine /admin/index.php virtual
+
+<FilesMatch "^([^.]+)$">
+        ForceType engine
+</FilesMatch>
+
+<FilesMatch "\.php$">
+        ForceType engine
+</FilesMatch>
+
+
+
+<FilesMatch "index.php">
+ 	ForceType application/x-httpd-php
+</FilesMatch>

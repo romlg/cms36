@@ -1,258 +1,321 @@
 <?php
+define('SHOW_LEVELS', 3);
+define('DISTRICT', 195);
 
-/**
- * Класс для регистрации пользователя
- */
+class TRegistration {
+	var $name = 'registration';
 
-class TRegistration
-{
+	function TRegistration() {
+	}
 
-    /**
-     * @var TAuth
-     */
-    var $auth = null;
+	function show_auth(&$params) {
+		$auth_obj = &Registry::get('TUserAuth');
+		$id = $auth_obj->checkHash();
+		if ($id){
+			$sql = "UPDATE auth_users SET auth=1 WHERE id=".$id;
+			sql_query($sql);
+			$auth_obj->login($id);
+			$r = get('redirect', '', 's');
+			$profile = $auth_obj->getUserProfile($id);
 
-    /**
-     * @var строковые константы
-     */
-    private $_messages = array();
+			$profile['type_id'] = sql_getValue("SELECT name FROM auth_groups WHERE id=(SELECT group_id FROM auth_users_groups WHERE user_id=".$profile['id'].")");
+			$profile['district_id'] = sql_getValue("SELECT name FROM obj_locat_districts WHERE id=".$profile['district_id']." AND visible>0");
+			SendNotify('CLIENT_AUTH_TO_ADMIN', $id, $profile);
 
-    function TRegistration() {
-        $this->auth = & Registry::get('TAuth');
-        $this->_messages = sql_getRows("
-        SELECT
-            IF(s1.name IS NOT NULL, s1.name, s2.name) AS name,
-            IF(s1.value IS NOT NULL, s1.value, s2.value) AS value
-        FROM strings AS s1, strings AS s2
-        WHERE
-            s1.root_id=" . ROOT_ID . "
-            AND s2.root_id=" . getMainRootID() . "
-            AND s1.module='registration' AND s2.module='registration'",
-            true);
-    }
+			if ($r){
+				redirect($r);
+			} else {
+				redirect('/cabinet/success_auth');
+			}
+		} else {
+			redirect('/nko/registration');
+		}
+	}
 
-    /**
-     * Отображение формы регистрации
-     * @return array
-     */
-    function showRegForm() {
-        if ($this->auth->getCurrentUserId() > 0) redirect('/');
+	function show_forget_password(){
+		$auth_obj = &Registry::get('TUserAuth');
+		$id = $auth_obj->checkHash();
+		if (!$id){
+			$auth_obj->sendHash('SEND_HASH', mysql_escape_string(get('login', '', 'pg')));
+		} else {
+			$auth_obj->login($id);
+			redirect('/cabinet/cart');
+		}
+	}
 
-        $ret = array('form' => true);
+	function show_menu(){
+		$auth_obj = & Registry::get('TUserAuth');
+		$profile = $auth_obj->getCurrentUserData();
 
-        if (isset($_GET['auth']) && $_GET['auth'] == 1) {
-            if (($err = $this->checkAuthHash()) !== true) {
-                // если проверка не прошла, покажем сообщение, а форму регистрации скроем
-                $ret = array('form' => false);
-                $ret['errors']['global'][] = $err;
-                return $ret;
-            } else {
-                // Все ОК, на главную страницу
-                redirect('/');
-            }
-        }
+		if ($profile){
+			$menu_obj = new TMenu;
 
-        if (isset($_GET['forgetpass']) && $_GET['forgetpass'] == 1) {
-            $ret = $this->forgetPassword();
-            return $ret;
-        }
+			$params['_block']['params'] = array(
+				'return_parent' => true,
+				'levels' => 2,
+				'full' => true,
+				'start_uri' => '/cabinet/',
+				'types' => array('text', 'module'),
+			);
+			$ret['authmenu'] = $menu_obj->show_menu($params['_block']['params']);
+		} else { $ret = true;}
+		return $ret;
+	}
 
-        $fld = get('fld', array(), 'p');
-        if ($fld) {
-            $errors = $this->checkRegData($fld);
-            if ($errors) {
-                $ret['errors'] = $errors;
-            } else {
-                if (($user_id = $this->register($fld)) === false) {
-                    $ret['errors']['global'][] = $this->getMessage('error_create_user');
-                } else {
-                    if ($this->sendAuthHash($user_id) === false) {
-                        $ret['errors']['global'][] = $this->getMessage('error_send_auth_mail');
-                    } else {
-                        $_POST = null;
-                        $ret['form'] = false;
-                        $ret['text_message'] = $this->getMessage('auth_text');
-                    }
-                }
-            }
-        }
-        $ret['fld'] = $fld;
+	function show_form_user(&$params) {
+		$page = &Registry::get('TPage');
+		$page->tpl->config_load($page->content['domain'] . "__" . lang().'.conf');
+		$auth_obj = &Registry::get('TUserAuth');
+		$profile = $auth_obj->getCurrentUserData();
 
-        return $ret;
-    }
+		if (!$profile){
+			$fld = (isset($_POST) && isset($_POST['fld'])) ? $_POST['fld'] : array();
+			if (!empty($fld)){
+				//получаем все строковые константы
+				$sql = "SELECT name, strings.* FROM strings WHERE module='".$this->name."'";
+				$str = sql_getRows($sql, true);
 
-    /**
-     * Проверка данных с формы регистрации
-     * @param $fld
-     * @return array
-     */
-    function checkRegData($fld) {
+				//проверка полей и сохранение
+				if (empty($fld['login'])){
+					$error['login'] = $str['error_login_empty']['value'];
+				} else {
+					$prf = $auth_obj->getUserProfile($auth_obj->getId($fld['login']));
+					if (isset($prf['auth']) && $prf['auth'] == 1) $error['login'] = $str['error_login']['value']; //пользователь существует
+					if (!CheckMailAddress($fld['login'])) $error['login'] = $str['error_login_incorrect']['value']; // Некорректный email
+				}
 
-        $error = array();
+				$req_fields = array('fio', 'password1', 'password2');
+				foreach($req_fields as $key=>$val){
+					if (empty($fld[$val]))
+						$error[$val] = $str['error_'.$val]['value'];
+				}
 
-        $req_fields = array(
-            'login', 'email', 'password1', 'password2', 'name',
-        );
-        foreach ($req_fields as $val) {
-            if (empty($fld[$val]))
-                $error[$val] = $this->getMessage('error_' . $val . '_empty');
-        }
+				$keystring = $_SESSION['captcha_keystring'];
+    	    	unset($_SESSION['captcha_keystring']);
+        		if (empty($keystring) || $fld['captcha'] !== $keystring) {
+        			$error['captcha'] = $str['error_captcha']['value']; // Ошибка при вводе проверочной комбинации
+    	    	}
 
-        if (!empty($fld['login'])) {
-            $count = sql_getValue("SELECT COUNT(*) FROM auth_users WHERE login='" . h($fld['login']) . "'");
-            if ($count) {
-                $error['login'] = $this->getMessage('error_login_exists');
-            }
-        }
-        if ($fld['email']) {
-            if (!CheckMailAddress($fld['email'])) {
-                $error['email'] = $this->getMessage('error_email_incorrect');
-            }
-            $count = sql_getValue("SELECT COUNT(*) FROM auth_users WHERE email='" . h($fld['email']) . "'");
-            if ($count) {
-                $error['email'] = $this->getMessage('error_email_exists');
-            }
-        }
-        if ($fld['password1'] && $fld['password1'] != $fld['password2']) {
-            $error['password1'] = $this->getMessage('error_passwords');
-        }
+				if ($fld['password1']!=$fld['password2']){$error['global'][] = $str['error_passwords']['value'];}
+				//if ($fld['login']!=$fld['login2']){$error['global'][] = $str['error_emails']['value'];}
 
-        return $error;
-    }
+				if (empty($error)){
+					if (isset($prf['auth']) && $prf['auth'] == 0){
+						$sql = "DELETE FROM auth_users WHERE id = ".$prf['id'];
+						sql_query($sql);
+					}
+					//сохраняем пользователя
+					$fld['auth'] = 0;
+					$fld['visible'] = 0;
+					$fld['password'] = $fld['password1'];
+					unset($fld['password1']);
+					unset($fld['password2']);
+					unset($fld['captcha']);
 
-    /**
-     * Создание новой учетной записи
-     * @param $fld
-     * @return int|bool
-     */
-    function register($fld) {
+					$fld['reg_date'] = date('Y-m-d H:i:s');
+					$fields = "`".implode( "`,`", array_keys($fld))."`";
+					$values = "";
+					foreach ($fld as $k=>$v){
+						if ($k == 'password'){$v = md5($v);}
+						$values .= ",'".mysql_escape_string($v)."'";
+					}
 
-        $data = array(
-            'login' => $fld['login'],
-            'auth' => 0,
-            'reg_date' => date('Y-m-d H:i:s'),
-            'visible' => 1,
-            'name' => $fld['name'],
-            'email' => $fld['email'],
-            'password' => md5($fld['password1']),
-            'root_id' => ROOT_ID
-        );
-        $user = new User();
-        $user->setData($data);
-        $id = $user->create();
+					$sql= "INSERT INTO auth_users (".$fields.") VALUES (".substr($values,1).")";
+					sql_query($sql);
+					$id = sql_getLastId();
 
-        if (!is_int($id)) return false;
+					//получаем идентификатор группы пользователя(группа с наивысшим приоритетом = 1)
+					$sql= "SELECT id FROM `auth_groups` ORDER BY priority ASC LIMIT 1";
+					$group_id = sql_getValue($sql);
 
-        return $id;
-    }
+					if ($id) {
+						$sql = "UPDATE auth_users SET auth=1 WHERE id=".$id;
+						sql_query($sql);
 
-    /**
-     * Отправка письма со ссылкой для подтверждения регистрации
-     * @param $id
-     * @return bool
-     */
-    function sendAuthHash($id) {
-        $user = new User($id);
+						//прикрепляем пользователя к группе
+						$sql = "REPLACE INTO auth_users_groups (user_id, group_id) VALUES('".$id."','".$group_id."')";
+						sql_query($sql);
 
-        $rnd = mt_rand(0, 999);
-        $hash = $this->auth->createChPassHash($user->get('email') . $rnd);
+						$auth_obj = &Registry::get('TUserAuth');
 
-        $user->setData(array('confirm_email_hash' => $hash));
-        $user->update();
+						$fld['user_id'] = $id;
+						$fld['site_name'] = $page->tpl->get_config_vars('title');
+						$fld['site_url'] = $_SERVER['HTTP_HOST'];
+						$fld['hash'] = $auth_obj->fp_createChPassHash($fld['login']);
+						$fld['user'] = true;
 
-        $data = array(
-            'site_name' => $_SERVER['HTTP_HOST'],
-            'user_id' => $id,
-            'hash' => $hash
-        );
-        return Notify("SEND_AUTH_MAIL", $user->get('email'), $data);
-    }
+						SendNotify('USER_REGISTRATION_TO_ADMIN', $id, $fld);
+//						SendNotify('CLIENT_REGISTRATION', $id, $fld);
+/*
+						$redirect = '/cabinet/cart';
+						session_start();
+						unset($_SESSION['smsm']['login_registration_redirect']);
+						session_write_close();
+						redirect($redirect);
+*/
+						$ret['form'] = false;
+						$ret['error']['global'] = 'Учетная запись была создана.';
+						$page = &Registry::get('TPage');
+						unset($page->tpl->_tpl_vars['text']);
+						return $ret;
+					} else {
+						$error['global'] = 'Ошибка создания учетной записи! Свяжитесь с администратором сайта.';
+					}
+				}
+			}
+		}
+		$ret['form'] = true;
+		$ret['fld'] = isset($fld) ? $fld : array();
+		$ret['error'] = isset($error) ? $error : array();
+		$ret['dirs'] = get('dirs', $_SERVER['REDIRECT_URL'],'pg');
+		return $ret;
+	}
 
-    /**
-     * Проверка хеш-строки из ссылки для завершения авторизации
-     * @return bool|string
-     */
-    function checkAuthHash() {
-        $user_id = (int)get('id', 0, 'g');
-        $hash = get('hash', '', 'g');
-        $id = (int)sql_getValue("SELECT id FROM auth_users WHERE id={$user_id}");
-        if (!$id) {
-            return $this->getMessage('error_user_id');
-        }
-        $user = new User($user_id);
-        if ($hash != $user->get('confirm_email_hash')) {
-            return $this->getMessage('error_auth_hash');
-        }
-        // Все ОК, авторизуем
-        $user->setData(array('auth' => 1));
-        $user->update();
-        $this->auth->login($user_id);
-        return true;
-    }
 
-    /**
-     * Функция "Забыли пароль"
-     * @return array
-     */
-    function forgetPassword() {
-        $res = array('form_forgetpassword' => 1, 'form' => 0);
+	function verifyPhone($phone){
+		/**
+		 * Делаем формат телефона по-мягче
+		//формат ввода: (111)111-11-11
+		//пишем регулярное выражение
+		if (preg_match("/\([0-9]+?\)[0-9]{3}-[0-9]{2}-([0-9]+)$/", $phone)){
+			return true;
+		}
+		*/
+		if (preg_match('/[^0-9\s\(\)\-]/',$phone)) {
+			return false;
+		}
+		if (strlen(preg_replace('/[^0-9]/','',$phone)) < 7)
+		{
+			return false;
+		}
+		return true;
+	}
 
-        $login = get('login', '', 'p');
-        if ($login) {
-            $r = $this->auth->sendChangePassNotify($login);
-            if ($r !== true) {
-                $res['errors']['global'][] = $r;
-            } else {
-                $res = array('form_forgetpassword' => 0, 'form' => 0);
-                $res['text_message'] = $this->getMessage('forget_password_text');
-            }
-            return $res;
-        }
+	function CheckNumber($value,$len){
+		if (!is_numeric($value)) return false;
+		if (strlen($value) != $len) return false;
+		return true;
+	}
 
-        $hash = get('hash', '', 'gp');
-        $user_id = (int)get('id', 0, 'gp');
-        if ($user_id || $hash) {
-            $id = (int)sql_getValue("SELECT id FROM auth_users WHERE id={$user_id}");
-            if (!$id) {
-                $res['errors']['global'][] = $this->getMessage('error_user_id');
-            }
-            elseif ($this->auth->checkChPassHash($user_id, $hash) === false) {
-                $res['errors']['global'][] = $this->getMessage('error_auth_hash');
-            }
-            elseif ($id && $hash) {
-                $res = array('form_forgetpassword' => 0, 'form' => 0, 'form_changepassword' => 1);
-                if ($_POST) {
-                    $password1 = get('password1', '', 'p');
-                    $password2 = get('password2', '', 'p');
-                    if (!$password1) {
-                        $res['errors']['global'][] = $this->getMessage('error_password1');
-                    }
-                    elseif (!$password2) {
-                        $res['errors']['global'][] = $this->getMessage('error_password2');
-                    }
-                    elseif ($password1 != $password2) {
-                        $res['errors']['global'][] = $this->getMessage('error_passwords');
-                    }
-                    else {
-                        if ($this->auth->changePassword($id, $password1, $hash) === false) {
-                            $res['errors']['global'][] = $this->getMessage('error_auth_hash');
-                        } else {
-                            $res = array('form_forgetpassword' => 0, 'form' => 0, 'form_changepassword' => 0);
-                            $res['errors']['global'][] = $this->getMessage('change_pwd');
-                        }
-                    }
-                }
-            }
-        }
-        return $res;
-    }
+	function show_login_form(&$params){
+		$ret = array();
+		$ret['form'] = true;
+		$auth_obj = &Registry::get('TUserAuth');
+		$user_id = $auth_obj->getCurrentUserId();
+		if ($user_id) {
+			$ret['form'] = false;
+			redirect('/cabinet/cart/');
+			$ret['dirs'] = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/';
+		} else {
+			$ret['dirs'] = '/cabinet/login';
+		}
+		return $ret;
+	}
 
-    /**
-     * Возвращает строковую константу
-     * @param $code
-     * @return mixed
-     */
-    function getMessage($code) {
-        return isset($this->_messages[$code]) ? $this->_messages[$code] : $code;
-    }
+	function show_login_registration_form(&$params) {
+		$what_order = $_POST['what_order'];
+		$auth_obj = &Registry::get('TUserAuth');
+		$user_id = $auth_obj->getCurrentUserId();
+
+		if ($what_order != "") {
+			$redirect = "/cabinet/basket/step1?filter";
+		}
+		else {
+			$redirect = isset($_SESSION['smsm']['login_registration_redirect']) ? $_SESSION['smsm']['login_registration_redirect'] : '/cabinet';
+		}
+		if ($user_id) {
+			session_start();
+			$_SESSION['what_order'] = $what_order;
+			unset($_SESSION['smsm']['login_registration_redirect']);
+			session_write_close();
+			redirect($redirect);
+		}
+		// Показываем форму экспресс-регистрации
+		$_GET['express'] = 1;
+
+		if (basename($_SERVER['HTTP_REFERER']) == 'basket') {
+			$cart_obj = &Registry::get('TCart');
+			$cart = $cart_obj->show_basket();
+
+			$basket_buttons = ($cart['products'])?1:0;
+		}
+
+		$ret = $this->show_form();
+		$ret['basket_buttons'] = $basket_buttons;
+		return $ret;
+	}
+
+	function show_cart(){
+		$auth_obj = &Registry::get('TUserAuth');
+		session_start();
+		$post = isset($_POST['fld']) ? $_POST['fld'] : array();
+		session_write_close();
+
+		$page = &Registry::get('TPage');
+
+		$user_id = $auth_obj->getCurrentUserId();
+
+		if (!$user_id){
+			session_start();
+			$_SESSION['smsm']['login_registration_redirect'] = $page->content['href'];
+			session_write_close();
+			redirect("/registruser/");
+		}
+
+		if ($user_id && !empty($post)){
+			//получаем все строковые константы
+			$sql = "SELECT name, strings.* FROM strings WHERE module='".$this->name."'";
+			$str = sql_getRows($sql, true);
+			//обновляем карточку данного пользователя
+
+			if (empty($post['login'])){
+				$error['email'] = $str['error_login_empty']['value'];
+			} else {
+				$prf = $auth_obj->getUserProfile($auth_obj->getId($post['login']));
+				if (isset($prf['auth']) && $prf['auth'] == 1 && $prf['id']!=$user_id) $error['login'] = $str['error_login']['value']; //пользователь существует
+				if (!CheckMailAddress($post['login'])) $error['login'] = $str['error_login_incorrect']['value']; // Некорректный email
+			}
+
+			$req_fields = array('fio', 'login');
+			foreach($req_fields as $key=>$val){
+				if (empty($post[$val]))
+					$error[$val] = $str['error_'.$val]['value'];
+			}
+			if ($post['password1']!=$post['password2']){$error['global'][] = $str['error_passwords']['value'];}
+			if ($post['login']!=$post['login2']){$error['global'][] = $str['error_emails']['value'];}
+
+			if (empty($error)){
+				if ($post['password1']) $post['password'] = md5($post['password1']);
+				unset($post['login2']);
+				unset($post['password1']);
+				unset($post['password2']);
+				unset($post['password0']);
+				$str = "";
+				foreach ($post as $k=>$v){
+					$str .= ", `".$k."`='".e($v)."' ";
+				}
+
+				$sql = "UPDATE auth_users SET ".substr($str,1)." WHERE id=".$user_id;
+
+				sql_query($sql);
+				$auth_obj->setLoginCookie();
+				$auth_obj->setUserData($user_id);
+			} else {
+				$profile = $post;
+			}
+		}
+		if (!isset($profile)){
+			$profile = $auth_obj->getCurrentUserData();
+		}
+
+		$ret['form'] = true;
+		$ret['fld'] = isset($profile) ? $profile : array();
+		$ret['error'] = isset($error) ? $error : array();
+		$ret['dirs'] = get('dirs', $_SERVER['REDIRECT_URL'],'pg');
+		return $ret;
+	}
+
+	########################
 }
+
+?>

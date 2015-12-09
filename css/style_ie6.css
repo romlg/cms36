@@ -1,0 +1,39 @@
+body { behavior:url("/css/csshover.htc"); }
+#wrap {height:100%}
+.supply {font-size: 1px; line-height: 1px;}
+.supplyDesc {font-size: 11px; line-height: normal;}
+.searchParts ul li a span, .searchParts ul li span span {float: none}
+
+#ie6sux {
+background:#ffffe1 url(/images/upgradebrowser/ico_alert2.gif) 15px 3px no-repeat;
+border-bottom:1px solid #aca899;
+display:block;
+position:relative;
+width:expression(document.body.clientWidth > 1000? "auto" :"920px");
+height:20px;
+line-height:12px;
+padding:3px 40px 0px 40px;
+margin:0;
+vertical-align:top;
+text-align:center;
+font:11px arial bold;
+color:black;
+z-index:100;
+zoom:1;
+}
+
+	#ie6sux a { font-weight:bold; color:red; text-decoration:underline; }
+	
+	#ie6sux a:hover { text-decoration:none; }
+	
+	#ie6sux a.close {
+	background:url(/images/upgradebrowser/ico_close.png) left top no-repeat;
+	display:block;
+	float:left;
+	width:12px;
+	height:12px;
+	text-indent:-10000px;
+	position:absolute;
+	top:5px;
+	right:10px;
+	}

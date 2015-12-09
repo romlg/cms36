@@ -25,6 +25,13 @@ class TCurrencies extends TTable {
 				'img' 	=> 'icon.delete.gif',
 				'display'	=> 'none',
 			),
+			'refresh' => array(
+				'Обновить',
+				'Refresh',
+				'link'	=> 'cnt.Refresh()',
+				'img' 	=> 'icon.module.gif',
+				'display'	=> 'block',
+			),
 		);
 
 		// экшены для формы редактирования
@@ -108,31 +115,31 @@ class TCurrencies extends TTable {
 					'display'	=> 'id',
 					'type'		=> 'checkbox',
 				),
-				array(
+				/*array(
 					'select'	=> 'iso',
 					'display' => 'iso',
 					'flags' => FLAG_SEARCH | FLAG_SORT,
-				),
+				),*/
 				array(
 					'select'	=> 'name',
 					'display' => 'name',
 					'flags' => FLAG_SEARCH | FLAG_SORT,
 				),
-				array(
+				/*array(
 					'select'	=> 'display',
 					'display' => 'display',
 					'flags' => FLAG_SEARCH | FLAG_SORT,
-				),
+				),*/
 				array(
 					'select'	=> 'value',
 					'display' => 'value',
 					'flags' => FLAG_SEARCH | FLAG_SORT,
 				),
-				array(
+				/*array(
 					'select'	=> 'description',
 					'display' => 'description',
 					'flags' => FLAG_SEARCH | FLAG_SORT,
-				),
+				),*/
 			),
 			'from'		=> $this->table,
 			'orderby'	=> '',
@@ -175,7 +182,7 @@ class TCurrencies extends TTable {
 		$apply = (int)get('apply', 0, 'p');
 
 		// пытаемся записать изменение в БД, параметр - массив обязательных полей
-		$res = $this->Commit(array('display', 'name','value'));
+		$res = $this->Commit(array('name','value'));
 
 		// проверяем на apply
 		$close = !$apply ? 'window.parent.top.close();' : '';
@@ -193,6 +200,23 @@ class TCurrencies extends TTable {
 	}
 
 	########################
+	
+	function editRefresh() {
+	    $a = file("http://export.rbc.ru/free/cb.0/free.fcgi?period=DAILY&tickers=USD&d1=".date('j')."&m1=".date('n')."&y1=".date('Y')."&separator=%3B&data_format=BROWSER");
+	    if (empty($a)) {
+	        return "<script>alert('Сервер с валютами временно недоступен');</script>";
+	    }
+	    $a = split(";",$a[0]);
+	    $value = $a[5];
+	    $sql = 'UPDATE '.$this->table.' SET value="'.$value.'" WHERE name="USD"';
+	    sql_query($sql);
+	    $err = sql_getError();
+	    if (!$err) {
+	        touch_cache('currencies');
+	        return "<script>alert('".$this->str('saved')."'); window.parent.location.reload();</script>";
+	    }
+	    return "<script>alert('".$this->str('error').": ".mysql_escape_string($err)."')</script>";
+	}
 }
 
 $GLOBALS['currencies'] =  & Registry::get('TCurrencies');

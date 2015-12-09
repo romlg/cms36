@@ -1,104 +1,19 @@
-body {
-	margin:0;
-	padding:0;
-	color: black;
-	background-color: white;
-	font-size: 70%;
-	font-family: Arial;
+html,body{
+	margin: 0px;
+	background-color: White;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 9px;
 }
-td {
-	font-size: 70%;
-	font-family: Arial;
-}
-.visible {
-	display: block;
-	visibility: visible;
-}
-.hidden {
-	display: none;
-	visibility: hidden;
-}
-.title {
-	color:black;
-	font-family: Tahoma, Arial narrow, Verdana bold Italic, Verdana;
-	font-weight: bold;
-	text-decoration: none;
-	text-transform: uppercase;
-	padding-bottom: 5px;
-}
-table.print {
-	border-left: 1px solid #AAAAAA;
-	border-top: 1px solid #AAAAAA;
-}
-table.print td {
-	font-size: 70%;
-	font-family: Arial;
-	font-weight: normal;
-	border-bottom: 1px solid #AAAAAA;
-	border-right: 1px solid #AAAAAA;
-}
-table.print th {
-	border-bottom: 1px solid #AAAAAA;
-	border-right: 1px solid #AAAAAA;
-	font-size: 70%;
-	font-family: Arial;
-	font-weight: bold;
-	text-transform: uppercase;
-}
-table.simple {
-	border-top: 1px solid Black;
+table.prod{
 	border-right: 1px solid Black;
-}
-table.simple td {
 	border-bottom: 1px solid Black;
+	border-collapse: collapse;
+	font-size: 100%;
+	width: 100%;
+}
+table.prod th,td{
 	border-left: 1px solid Black;
-	padding: 3px 5px 3px 5px;
-}
-hr{
-	color: Black;
-	height: 1px;
-	margin-top: 5px;
-}
-/*Квитанция*/
-table.kvit{
-	width: 510px;
-	font-family: Times New Roman;
-	font-size: 13pt;
-}
-table.kvit td.left{
-	width: 157px;
-	vertical-align: top;
-	padding: 0px 0px 5px 23px;
-	border-right: 1px solid black;
-	border-bottom: 1px solid black;
-}
-table.kvit td.right{
-	vertical-align: top;
-	border-bottom: 1px solid black;
-	padding-left: 8px;
-}
-.line{
-	border-bottom: 1px solid black;
-	font-family: Microsoft Sans Serif;
-	font-size: 11px;
-}
-.right_underline{
-	float: right;
-	border-bottom: 1px solid black;
-	font-family: Microsoft Sans Serif;
-	font-size: 11px;
-	padding-left: 10px; 
-}
-table.main{
-	font-size: 13pt;
-	margin-top: 4px;
-	border-top: 1px solid black;
-}
-table.main td{
-	border-right: 1px solid black; 
-	border-bottom: 1px solid black;	
-}
-table.main td.main2{
-	font-family: Microsoft Sans Serif;
-	font-size: 11px;
+	border-top: 1px solid Black;
+	text-align: center;
+	padding: 3px;
 }

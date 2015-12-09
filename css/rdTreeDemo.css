@@ -1,0 +1,28 @@
+@charset "utf-8";
+/* CSS Document */
+
+div.rdtree_container {
+	width:450px;
+}
+
+div.rdtree_container div.demotree {
+	width:250px;float:left;
+}
+
+div.rdtree_container div.commander {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	width:200px;float:right;
+	background-color:#f0f0f0;
+	padding-bottom:3px;
+}
+
+div.rdtree_container div.commander div.head {
+	background-color:#e0e0e0;color:#000;
+	font-weight:bold;
+	padding:3px 7px;
+}
+div.rdtree_container div.commander ul.body {
+	margin-left:5px;
+}
+

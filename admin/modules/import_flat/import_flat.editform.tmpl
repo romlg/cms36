@@ -1,0 +1,305 @@
+{literal}<script type="text/javascript">
+<!--
+function SaveSubmit() {
+	document.forms.editform.elements.apply.value = 0;
+	document.forms.editform.submit();
+	return true;
+}
+function ApplySubmit() {
+	document.forms.editform.elements.apply.value = 1;
+	document.forms.editform.submit();
+}
+
+function showColors(color, name, previewid, formname) {
+	formname = formname || 'editform';
+	previewid = previewid || 'undefined';
+	color = document.forms[formname].elements[name].value || color;
+	window.open('colorpicker.html', 'color', 'width=370,height=245,status=no,modal=yes');
+}
+
+window.onload = function() {
+	try{
+		var dH = document.forms['editform'].offsetHeight;
+		var dW = document.forms['editform'].offsetWidth;
+		var test = document.getElementById('fieldset').getClientRects();
+		dW = test(0).right-test(0).left;
+		dH = test(0).bottom-test(0).top;
+		window.dialogWidth = (dW - 0 + 26) + 'px';
+		window.dialogHeight = (dH - 0 + 110) + 'px';
+	}catch(e){}
+}
+
+	
+function changeView(name){
+   try {
+		preview = document.forms.editform.elements['preview[\''+name+'\']'];
+		input 	= document.forms.editform.elements[name].value;
+		if (input == '' || input.substring(2,1) == ':'){
+			preview.style.display='none';
+		}
+		else {
+			if (input.length > 4){
+				preview.style.display='inline-block';
+			}
+		}
+	}
+	catch(e) {}
+	finally {}
+}
+
+var oldFriend;
+var i =0;
+function setFriend(fname,name,elem_id) {
+	i++;
+	if (i>2) return;
+	form = document.forms.editform;
+	if (elem_id != ''){
+		fname = 'fld['+elem_id+']['+fname+']';
+	}
+	else {
+		fname = 'fld['+fname+']';
+	}
+		if(form.elements[fname].value == '' || (form.elements[fname].value == oldFriend & oldFriend!=form.elements[name+'[0]'].value))
+	{
+		oldFriend = form.elements[name].value;
+		form.elements[fname].value = form.elements[name].value;
+	}
+	//заполняем поле названия картики(смотрим 1-й input type=text)
+	try{
+		var coll = document.all.tags("input");
+		if (coll!=null)
+		{
+		for (i=0; i<coll.length; i++)
+		  if (coll[i].type=="text"){  	
+		  	//if (coll[i].name == name) continue;
+			 if (document.getElementById(coll[i].id).value==''){
+			   var re = new RegExp('(.+)\\\\(.+)\\.(.+)','ig');
+			   var str = oldFriend;
+			   var arr = re.exec(str);
+			   //$1-folders
+			   //$2-filename
+			   //$3-exp
+			   document.getElementById(coll[i].id).value = RegExp.$2;
+			 }
+			 break;
+		  }
+		}
+	} catch(e) {}
+}
+	
+
+
+function hideRow(id) {
+	document.getElementById(id).style.display='none';
+}
+
+function showRow(id) {
+	document.getElementById(id).style.display='inline-block';
+}
+
+function showFiles(file, name, formname) {
+	formname = formname || 'editform';
+	file = document.forms[formname].elements[name].value || file;
+	file = file.substring(0, file.lastIndexOf('/'));
+	FmWin = window.open("ced.php?page=fm2&dir="+file+"&field="+name+"&formname="+formname, "linkUrl", "width=700, height=500, resizable=1, status=1");
+	if (FmWin) FmWin.focus();
+}
+
+function showImage(name) {
+	window.open('/popup.php?img='+name+'&title='+name, 'image', 'width=300, height=300, resizable=1, status=0').focus();
+	//window.open('/'+name, 'image', 'width=300, height=300, resizable=1, status=1').focus();
+}
+
+function showTree(name, formname, frame, returnid, value) {
+	formname = formname || 'editform';
+	name = name || 'url';
+	frame = frame || 'texturl';
+	returnid = returnid || 0;
+	returnid = value || '';
+	var url = showModalDialog("dialog.php?page=tree/treeurl&fieldname="+name+"&formname="+formname+"&returnid="+returnid+"&id="+document.forms(formname).elements(name).value + "&value_field=" + value,frame,"dialogWidth:360px;dialogHeight:300px");
+	if (url != null) {
+		document.forms(formname).elements(name).value=url;
+	}
+}
+	
+function showColors(color, name, previewid, formname) {
+	formname = formname || 'editform';
+	previewid = previewid || 'undefined';
+	color = document.forms[formname].elements[name].value || color;
+	color = window.showModalDialog('/admin/third/colorpicker/colorpicker.html', color, 'dialogWidth: 370px; dialogHeight:245px; help: no; status: no;');
+	if (color || color == '') {
+		document.forms[formname].elements[name].value = color;
+		if (previewid != 'undefined') document.getElementById(previewid).style.backgroundColor = color;
+	}
+}
+/*
+* автоматическое заполнение мета контента
+*/	
+function generateData() {
+	url = '/admin/page.php?page=tree&do=generateMeta&id=33';
+	loadXMLDoc(url);
+}
+
+	
+function loadXMLDoc(url) {
+	if (window.XMLHttpRequest) {
+		req = new XMLHttpRequest();
+		req.onreadystatechange = showGenerateData;			
+		req.open("POST", url, true);
+		req.send(null);
+	} else if (window.ActiveXObject) {
+		req = new ActiveXObject("Microsoft.XMLHTTP");
+		if (req) {
+		req.onreadystatechange = showGenerateData;
+		req.open("POST", url, true);
+		req.send();
+		}
+	}
+}
+	
+function showGenerateData(){
+	if (req.readyState == 4) {
+		if (req.status == 200) {
+			try{
+				response = req.responseXML.documentElement;
+				var rows = new Array();
+				XMLtoArray(response, rows);	
+				document.getElementById('fld[title]').innerHTML = rows.headers.title;
+				document.getElementById('fld[keywords]').innerHTML = rows.headers.keywords;
+				document.getElementById('fld[description]').innerHTML = rows.headers.description;
+			} catch (e) {
+			} 
+		}
+	}
+}
+	
+function XMLtoArray(response, ar){
+	if(!response) return;
+	if(!response.childNodes) return;
+
+	var count = response.childNodes.length;
+
+	for (var i=0; i<count; i++){
+		var name = response.childNodes.item(i).nodeName;
+		if (response.childNodes.item(i).childNodes.item(0)){
+			var type = response.childNodes.item(i).childNodes.item(0).nodeType;
+		} else {type = 2;}
+		
+		if (type == 1){
+			ar[name] = new Array();
+			XMLtoArray(response.childNodes.item(i), ar[name]);
+		} else if (type == 3) {
+			ar[name] = response.childNodes.item(i).childNodes.item(0).text;
+		} else {
+			ar[name] = '';
+		}
+	}
+}
+function change_type(sel) {
+	if (sel.length > 0) {
+		for (i = 0; i < sel.options.length; i++) {
+			div = document.getElementById('banner_'+sel.options(i).value);
+			if (sel.options(i).value == sel.value) {
+				div.style.display = 'block';
+			}
+			else {
+				div.style.display = 'none';
+			}
+		}
+	}
+}
+
+function set_checkbox(name) {
+	val = document.forms.editform.elements['fld[' + name + ']'].value;
+	box = document.forms.editform.elements[name];
+	if (val) {
+		box.checked = true;
+		return;
+	}
+	box.checked = false;
+}
+
+function getPages(form) {
+	ret = window.showModalDialog('dialog.php?page=tree/treecheck', form.elements['fld[pages]'].value, 'dialogWidth:350px; dialogHeight:430px;');
+	setTimeout('set_checkbox(\'pages\')', 200);
+	if (!ret) {
+		return;
+	}
+	if (ret == 'nothing') {
+		form.elements['fld[pages]'].value = '';
+		return;
+	}
+	form.elements['fld[pages]'].value = ret;
+}
+
+function getExcept(form) {
+	ret = window.showModalDialog('dialog.php?page=tree/treecheck', form.elements['fld[except]'].value, 'dialogWidth:350px; dialogHeight:430px;');
+	setTimeout('set_checkbox(\'except\')', 200);
+	if (!ret) {
+		return;
+	}
+	if (ret == 'nothing') {
+		form.elements['fld[except]'].value = '';
+		return;
+	}
+	form.elements['fld[except]'].value = ret;
+}
+
+-->
+</script>{/literal}
+
+<table width="100%" height="100%" bgcolor="#E5E5E5" cellspacing="0" cellpadding="0">
+<tr><td valign="middle"><table width="100%">
+<form target="tmp{$thisname}{$id}" action="page.php" method="post" name="editform" id="editform" onSubmit="return SaveSubmit()" enctype="multipart/form-data">
+
+<tr id="tr_fld[image]">
+	<td>{$STR_IMAGE}</td>
+	<td>
+		<nobr>
+		<!-- Поле для поста -->
+		<input type='text' value='{$image}' value_temp='{$image}' name='fld[image]' style="display:inline-block;" onpropertychange="changeView('fld[image]');">
+		<!-- Просмотр -->
+		<img src="/admin/images/icons/icon.view.gif" title="Просмотр" name="preview['fld[image]']" onClick="javascript:if(!document.forms.editform.elements['fld[image]'].value) return false; showImage(document.forms.editform.elements['fld[image]'].getAttribute('value_temp'));"  style="border-width:0px;cursor: hand;" onload ="changeView('fld[image]');">
+		<!-- Кнопка для загрузки -->
+		<button onClick="showFiles('', 'fld[image]', this.form.name); "  style="display:inline-block;border-width:1px;height:20px;"  title="Загрузить с сервера">С сервера...</button>
+		<!-- Ввод имени файла для закачки -->
+
+		<input type="file" title="Загрузить с компьютера" name="fld[image][0]" onChange="this.form.elements['fld[image]'].value=this.form.elements['fld[image][0]'].value; " style="display:'inline-block';height:20px;width:0px;border-width:1px;">
+		</nobr>
+	</td>
+</tr>
+<tr><td>{$STR_ALT}</td><td><input type="text" name="fld[alt]" value="{$alt}"></td></tr>
+<tr>
+	<td valign="top">{$STR_LINK}</td>
+	<td valign="top">
+		<input type="text" name="fld[link]" value="{$link}" />
+		<button onClick="showTree('fld[link]','editform')">&nbsp;...&nbsp;</button>	
+	</td>
+</tr>
+<tr><td>{$STR_PRIORITY}</td><td><input type="text" name="fld[priority]" value="{$priority}"></td></tr>
+<tr><td>{$STR_VISIBLE}</td><td><input type="checkbox" name="fld[visible]" value="1" {if $visible}checked{/if} /></td></tr>
+
+<tr>
+	<td></td>
+	<td>
+		<input type="checkbox" name="pages" value="1" {if $pages}checked{/if} /> {$STR_PAGES}&nbsp;&nbsp;
+			<input type="hidden" name="fld[pages]" value="{$pages}" />
+			<button onClick="getPages(this.form)">&nbsp;...&nbsp;</button>
+		<br />
+		<input type="checkbox" name="except" value="1" {if $except}checked{/if} /> {$STR_EXCEPT}&nbsp;&nbsp;
+			<input type="hidden" name="fld[except]" value="{$except}" />
+			<button onClick="getExcept(this.form)">&nbsp;...&nbsp;</button>
+	</td>
+</tr>
+<tr><td>{$STR_DESCRIPTION}</td><td><textarea name="fld[description]" cols="40" rows="5">{$description}</textarea></td></tr>
+<tr><td>&nbsp;</td><td>{$STR_WARNING}</td></tr>
+
+<input type="hidden" name="apply" value="0" />
+<input type="hidden" name="page" value="{$thisname}" />
+<input type="hidden" name="do" value="edit" />
+<input type="hidden" name="id" value="{$id}" />
+</form>
+</table></td></tr>
+</table>
+
+<iframe id="tmp{$thisname}{$id}" name="tmp{$thisname}{$id}" src="about:blank" width="0" height="0" border="0" style="visibility:hidden"></iframe>
